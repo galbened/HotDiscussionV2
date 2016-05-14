@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Hot Discussions Platform</title>
+	
+	<!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.css" crossorigin="anonymous">
+    <!-- JQuery -->
+    <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
+    <!-- Bootstrap js -->
+    <script type="text/javascript" src="/libs/bootstrap/js/bootstrap.js"></script>
+    <!-- Angular js -->
+    <!--<script type="text/javascript" src="/libs/angular/angular.js"></script>
+    <script type="text/javascript" src="/libs/angular-route/angular-route.js"></script>-->
+
+    <!-- local custom -->
+    <!--<script type="text/javascript" src="/app/app.js"></script>-->
+    <link href="/resources/stylesheets/main.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header class="text-center">
+            <h1>Welcome to the Hot Discussions Platform</h1>
+            <p>Happy Debating :)</p>
+        </header>
+
+        <div class="row" id="form-title">
+		    <div class="col-md-2"></div>
+		    <div class="col-md-8 text-center">
+		        <h5>Please Log-in before you continue to the discussions page, or <a href="/auth/register">Register</a> to the system</h5>
+		    </div>
+		    <div class="col-md-2"></div>
+		</div>
+
+		<% if (message.length > 0) { %>
+			<div class="row bg-danger text-center" id="register-error">
+			    <div class="col-md-2"></div>
+			    <div class="col-md-8 text-center">
+			        <h4><%= message %></h4>
+			    </div>
+			    <div class="col-md-2"></div>
+			</div>
+		<% } %>
+
+		<form class="form-horizontal" name="registerForm" action="/auth/login" method="post">
+		    <div class="form-group">
+		        <div class="col-md-2"></div>
+		        <label for="usernameInput" class="col-md-3 control-label">username:</label>
+		        <div class="col-md-3">
+		            <input type="text" class="form-control" id="usernameInput" placeholder="Username" name="username" required></input>
+		        </div>
+		        <div class="col-md-4"></div>
+		    </div>
+
+		    <div class="form-group">
+		        <div class="col-md-2"></div>
+		        <label for="passwordInput" class="col-md-3 control-label">password:</label>
+		        <div class="col-md-3">
+		            <input type="password" class="form-control" id="passwordInput" placeholder="Password" name="password" required></input>
+		        </div>
+		        <div class="col-md-4"></div>
+		    </div>
+
+		    <div class="form-group">
+		        <div class="col-sm-offset-4 col-sm-4">
+		            <button type="submit" class="btn btn-primary">Log in</button>
+		        </div>
+		    </div>
+
+		</form>
+
+        <footer>
+            <p>maintained by BGU</p>
+        </footer>
+    </div>
+</body>
+</html>
+

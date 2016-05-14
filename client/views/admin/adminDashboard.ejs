@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hot Discussions Platform</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.css" crossorigin="anonymous">
+    <!-- JQuery -->
+    <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
+    <!-- Bootstrap js -->
+    <script type="text/javascript" src="/libs/bootstrap/js/bootstrap.js"></script>
+    <!-- Angular js -->
+    <script type="text/javascript" src="/libs/angular/angular.js"></script>
+    <!--<script type="text/javascript" src="/libs/angular-route/angular-route.js"></script>-->
+
+    <!-- local custom -->
+    
+    <script type="text/javascript" src="/js/modules/adminDiscApp.js"></script>
+    <script type="text/javascript" src="/js/services/adminApi.js"></script>
+    
+    <link href="/resources/stylesheets/main.css" rel="stylesheet">
+    <link href="/resources/stylesheets/discussions.css" rel="stylesheet">
+</head>
+
+<body ng-app="adminDiscApp">
+    <div class="container">
+      <header class="text-center">
+          <h1>
+              Welcome to the Admin Dashboard
+          </h1>
+      </header>
+
+      <div class="row" id="form-title">
+        <div class="col-md-2"></div>
+        <div class="col-md-8 text-center">
+            <h5>Here, you can add, delete end edit the conversations available for your students</h5>
+        </div>
+        <div class="col-md-2 text-right"><a href="/admin/logout">Log Out</a></div>
+      </div>
+
+      <div ng-controller="adminDiscCtrl">
+        <table class="table table-hover table-condensed">
+
+          <thead>
+            <tr id="headRow">                                     
+              <th>תיאור</th>
+              <th>כותרת</th>
+              <th>פעולה</th>
+            </tr>
+          </thead>
+
+          <tbody ng-repeat="discussion in discussions">
+            {{discussion.length}}
+            <tr ng-show="!discussion.edit">
+              <td>{{discussion.description}}</td>
+              <td>{{discussion.title}}</td>
+              <td style="white-space:nowrap; width:10px"><a href="" ng-click="showEdit(discussion)">ערוך</a> | <a href="" ng-click="delete($index)">מחק</a></td>
+            </tr>
+
+            <tr ng-show="discussion.edit">
+              <td><input class="form-control" id="descEdit" type="text" ng-model="descEdit" ng-value="discussion.description" style="text-align: right;"></td>
+              <td><input class="form-control" id="titleEdit" type="text" ng-model="titleEdit" ng-value="discussion.title" style="text-align: right;"></td>
+              <td class="warning" style="width:10px"><span class="text-warning text-center">עריכה</span></td>
+            </tr>
+
+            <tr ng-show="discussion.edit">
+              <td colspan="3">
+                <div style="width:all;">
+                  <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 30px" ng-click="finishEdit($index, descEdit, titleEdit)">Finish</button>
+                  <button type="button" class="btn btn-default btn-sm" ng-click="cancelEdit(discussion)">Cancel</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-hover table-condensed">
+          <tbody ng-show="!pressAdd">
+            <tr>
+              <td><td>
+              <td></td>
+              <td style="width:10px"><a href="" ng-click="addDisc()">הוסף</a></td>
+            </tr>
+          </tbody>
+
+          <tbody ng-show="pressAdd">
+            <tr>
+              <td><input class="form-control" id="newDesc" type="text" ng-model="newDesc" ng-value="" style="text-align: right;" placeholder="תיאור חדש" required=""></td>
+              <td><input class="form-control" id="newTitle" type="text" ng-model="newTitle" ng-value="" style="text-align: right;" placeholder="כותרת חדשה" required=""></td>
+              <td class="warning"></td>
+            </tr>
+
+            <tr>
+              <td colspan="3">
+                <div style="width:all;">
+                  <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 30px" ng-click="finishAdding(newDesc, newTitle)">Finish</button>
+                  <button type="button" class="btn btn-default btn-sm" ng-click="cancelAdding()">Cancel</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+      <footer>
+          <p>maintained by BGU</p>
+      </footer>
+
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,26 @@
+{
+  "name": "hotdiscapp",
+  "description": "web platform for debating",
+  "main": "boot.js",
+  "authors": [
+    "Michael Sromin"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.5",
+    "bootstrap": "^3.3.6",
+    "angular-route": "^1.5.5",
+    "angular-resource": "^1.5.5"
+  },
+  "install": {
+    "path": "client/libs"
+  }
+}

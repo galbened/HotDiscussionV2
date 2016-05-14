@@ -1,0 +1,14 @@
+<h1><%= message %></h1>
+<h2><%= error.status %></h2>
+<pre><%= error.stack %></pre>
+
+
+<% if(error.status === 401){ %>
+	<script>
+		setTimeout(function(){
+			window.location.href = "/auth";
+		},2000);
+		
+	</script>
+<% } %>
+

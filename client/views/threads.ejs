@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hot Discussions Platform</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.css" crossorigin="anonymous">
+    <!-- JQuery -->
+    <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
+    <!-- Bootstrap js -->
+    <script type="text/javascript" src="/libs/bootstrap/js/bootstrap.js"></script>
+    <!-- Angular js -->
+    <script type="text/javascript" src="/libs/angular/angular.js"></script>
+    <!-- <script type="text/javascript" src="/libs/angular-route/angular-route.js"></script> -->
+
+    <!-- local custom -->
+    
+    
+    <!-- <script type="text/javascript" src="/js/services/adminApi.js"></script> -->
+    <!-- TODO: module the angularJS project... -->
+    
+    <link href="/resources/stylesheets/main.css" rel="stylesheet">
+    <link href="/resources/stylesheets/discussions.css" rel="stylesheet">
+    <base href="/discussions/">
+</head>
+
+<body ng-app="threadsApp">
+  <div class="container">
+    <header class="text-center">
+        <h1>
+          <%= title %>
+        </h1>
+        <h3>
+          <%= description %>
+        </h3>
+    </header>
+
+    <div class="row" id="form-title">
+      <div class="col-md-2"></div>
+      <div class="col-md-8 text-center">
+          <h4>Please, collaberate with your friends, and add your arguments!</h4>
+      </div>
+      <div class="col-md-2 text-right"><a href="/admin/logout">Log Out</a></div>
+    </div>
+
+    <div ng-controller="threadCtrl">
+      
+      {{debug}}
+  
+    </div>
+
+    <footer>
+        <p>maintained by BGU</p>
+    </footer>
+
+  </div>
+
+  <script type="text/javascript" src="/js/modules/threadsApp.js"></script>
+</body>
+</html>
+

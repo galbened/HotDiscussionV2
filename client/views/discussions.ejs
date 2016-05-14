@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hot Discussions Platform</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.css" crossorigin="anonymous">
+    <!-- JQuery -->
+    <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
+    <!-- Bootstrap js -->
+    <script type="text/javascript" src="/libs/bootstrap/js/bootstrap.js"></script>
+    <!-- Angular js -->
+    <script type="text/javascript" src="/libs/angular/angular.js"></script>
+    <!--<script type="text/javascript" src="/libs/angular-route/angular-route.js"></script>-->
+
+    <!-- local custom -->
+    <script type="text/javascript" src="/js/modules/discApp.js"></script>
+
+    <link href="/resources/stylesheets/main.css" rel="stylesheet">
+    <link href="/resources/stylesheets/discussions.css" rel="stylesheet">
+    
+</head>
+
+<body ng-app="discApp">
+  <div class="container">
+    <header class="text-center">
+      <h1>
+        <% if (user.local.role === 'admin'){ %>
+          <script>
+              window.location.href = "/admin/dashboard";
+          </script>
+        <% } %>
+        <% if (user.local.role === 'student') { %>
+          <%= user.local.firstname %> <%= user.local.lastname %>, Enjoy!
+        <% } %>
+      </h1>
+    </header>
+
+    <div class="row" id="form-title">
+        <div class="col-md-2"></div>
+        <div class="col-md-8 text-center">
+          <h5>Please choose the discussion you have been registered to by your instructor</h5>
+        </div>
+        <div class="col-md-2 text-right"><a href="/auth/logout">Log Out</a></div>
+    </div>
+
+    <div ng-controller="discCtrl">
+        <table class="table table-hover table-condensed" border="1">
+            <thead>
+              <tr id="headRow">                                     
+                <th>תיאור</th>
+                <th>כותרת</th>
+                <th>#</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="discussion in discussions">
+                <td>{{discussion.description}}</td>
+                <td>{{discussion.title}}</td>
+                <td style="width: 0"><a href="" ng-click="goToDisc($index)">הצטרף</a></td>
+              </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer>
+        <p>maintained by BGU</p>
+    </footer>
+
+  </div>
+
+</body>
+</html>
+

@@ -1,0 +1,17 @@
+th{
+	text-align: center;
+	vertical-align: center;
+}
+
+td{
+	text-align: center;
+	vertical-align: center;
+}
+
+#headRow{
+	background-color: #B29ADE;
+}
+
+#descEdit{
+	text-align: right;
+}
