@@ -2,10 +2,18 @@
   'use strict';
   angular
     .module('adminDashboardApp', [])
-    .controller('adminDashboardCtrl', ['$scope','$http', function($scope, $http){
+    .controller('adminDashboardCtrl', ['$scope','$http', '$window', function($scope, $http, $window){
       $scope.pressAdd = false;
 
       $scope.discussions = [];
+
+      $scope.goToDisc = function(idx){
+        var id = $scope.discussions[idx]._id;
+        var title = $scope.discussions[idx].title;
+        var description = $scope.discussions[idx].description;
+
+        $window.location.href = '/discussions/' + id + '/' + title + '/' +description;
+      };
 
       //initiate the fields of the table
       $http({

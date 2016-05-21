@@ -53,7 +53,7 @@
           <tbody ng-repeat="discussion in discussions">
             <tr ng-show="!discussion.edit">
               <td>{{discussion.description}}</td>
-              <td>{{discussion.title}}</td>
+              <td><a href="" ng-click="goToDisc($index)">{{discussion.title}}</a></td>
               <td style="white-space:nowrap; width:10px"><a href="" ng-click="showEdit(discussion)">ערוך</a> | <a href="" ng-click="delete($index)">מחק</a></td>
             </tr>
 
