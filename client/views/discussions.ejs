@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,17 +14,16 @@
     <script type="text/javascript" src="/libs/bootstrap/js/bootstrap.js"></script>
     <!-- Angular js -->
     <script type="text/javascript" src="/libs/angular/angular.js"></script>
-    <!--<script type="text/javascript" src="/libs/angular-route/angular-route.js"></script>-->
 
     <!-- local custom -->
-    <script type="text/javascript" src="/js/modules/discApp.js"></script>
+    <script type="text/javascript" src="/js/modules/discussionsDashboard.js"></script>
 
     <link href="/resources/stylesheets/main.css" rel="stylesheet">
     <link href="/resources/stylesheets/discussions.css" rel="stylesheet">
     
 </head>
 
-<body ng-app="discApp">
+<body ng-app="discussionsDashboardApp" dir="ltr">
   <div class="container">
     <header class="text-center">
       <h1>
@@ -47,7 +46,7 @@
         <div class="col-md-2 text-right"><a href="/auth/logout">Log Out</a></div>
     </div>
 
-    <div ng-controller="discCtrl">
+    <div ng-controller="iscussionsDashboardCtrl">
         <table class="table table-hover table-condensed" border="1">
             <thead>
               <tr id="headRow">                                     
@@ -58,6 +57,7 @@
             </thead>
             <tbody>
               <tr ng-repeat="discussion in discussions">
+              <!-- TODO: 1-way binding for performance stuff.. -->
                 <td>{{discussion.description}}</td>
                 <td>{{discussion.title}}</td>
                 <td style="width: 0"><a href="" ng-click="goToDisc($index)">הצטרף</a></td>

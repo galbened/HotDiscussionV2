@@ -1,17 +1,9 @@
 var path = require('path');
 var logger = require('morgan');
-var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 //var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var flash = require('connect-flash');
-
-//DB configurations
-var configDB = require('./config/database.js');
-mongoose.connect(configDB.users_url);
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'db connection error'));
-db.once('open', function(){console.log('succefully connected to mongodb')});
 
 module.exports = function(app, express, passport){
 

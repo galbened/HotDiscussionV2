@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,21 +14,29 @@
     <script type="text/javascript" src="/libs/bootstrap/js/bootstrap.js"></script>
     <!-- Angular js -->
     <script type="text/javascript" src="/libs/angular/angular.js"></script>
-    <!-- <script type="text/javascript" src="/libs/angular-route/angular-route.js"></script> -->
+    <script type="text/javascript" src="/libs/angular-animate/angular-animate.js"></script>
 
-    <!-- local custom -->
-    
-    
-    <!-- <script type="text/javascript" src="/js/services/adminApi.js"></script> -->
+    <!-- local helper libs -->
+    <script type="text/javascript" src="/libs/angular-recursion.js"></script>
+
+    <!-- local custom app js -->
+    <script type="text/javascript" src="/js/modules/argumentsPlatform.js"></script>
+    <script type="text/javascript" src="/js/services/argumentsService.js"></script>
+    <script type="text/javascript" src="/js/configs/argumentsFactory.js"></script>
+    <script type="text/javascript" src="/libs/angular-tree-widget.js"></script>
     <!-- TODO: module the angularJS project... -->
     
+    <!-- custom CSS -->
     <link href="/resources/stylesheets/main.css" rel="stylesheet">
-    <link href="/resources/stylesheets/discussions.css" rel="stylesheet">
+    <link href="/resources/stylesheets/arguments.css" rel="stylesheet">
+    <link href="/resources/stylesheets/angular-tree-widget.css" rel="stylesheet">
+    
     <base href="/discussions/">
 </head>
 
-<body ng-app="threadsApp">
-  <div class="container">
+<body ng-app="argumentsApp">
+
+  <div class="container" ng-controller="ArgumentsTreeController">
     <header class="text-center">
         <h1>
           <%= title %>
@@ -41,24 +49,52 @@
     <div class="row" id="form-title">
       <div class="col-md-2"></div>
       <div class="col-md-8 text-center">
-          <h4>Please, collaberate with your friends, and add your arguments!</h4>
+          <h4>בקשה, הנך מוזמן להשתתף בדיון עם חבריך. אנא שמור על תרבות דיון, תודה.</h4>
       </div>
-      <div class="col-md-2 text-right"><a href="/admin/logout">Log Out</a></div>
+      <div class="col-md-2 text-right"><a href="/auth/login">Log Out</a></div>
     </div>
 
-    <div ng-controller="ArgumentsCtrl">
+    <!-- new argument prompt -->
+    <div class="row dialogbox">
+
+      <div class="col-md-offset body" style="float:right">
+        <form class="form-inline">
+          <div class="form-group">
+            <div class="message">
+              <textarea class="form-control text-right" rows="3" placeholder="רשום כאן" style="width:100%" ng-model="newArgument"></textarea>
+              <button type="submit" class="btn btn-primary" style="float:right" ng-click="submitNewArgument(newArgument)">הוסף טענה חדשה</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+    <!-- existing arguments rendering -->
+    <hr class="newArgSection">
+
+    <div class="row">
+
+      <div class="col-md-12 tree">
+        <!-- <div class="tree"> -->
+          <tree nodes='treeNested'></tree>
+        <!-- </div> -->
+      </div>
+
+      <!-- end of controller -->
       
-      {{debug}}
-  
     </div>
-
-    <footer>
-        <p>maintained by BGU</p>
+    
+    <footer class="text-left">
+      <p>maintained by BGU</p>
     </footer>
+    
+      <!-- </div> -->
+
+    
 
   </div>
 
-  <script type="text/javascript" src="/js/modules/Arguments.js"></script>
 </body>
 </html>
 

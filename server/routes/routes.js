@@ -1,8 +1,8 @@
-module.exports = function(app, passport){
+module.exports = function(app, passport, autoIncrement){
     
     authRouter = require('./auth')(passport);
     adminRouter = require('./admin')(passport, isLoggedIn("/admin/login"), checkPermission('admin'));
-    restApiRouter = require('./api')();
+    restApiRouter = require('./api')(autoIncrement);
     discussionsRouter = require('./discussions')(isLoggedIn("/auth/login"));
 
     //authentication routing logic

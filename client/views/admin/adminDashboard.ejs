@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,18 +14,15 @@
     <script type="text/javascript" src="/libs/bootstrap/js/bootstrap.js"></script>
     <!-- Angular js -->
     <script type="text/javascript" src="/libs/angular/angular.js"></script>
-    <!--<script type="text/javascript" src="/libs/angular-route/angular-route.js"></script>-->
 
     <!-- local custom -->
-    
-    <script type="text/javascript" src="/js/modules/adminDiscApp.js"></script>
-    <script type="text/javascript" src="/js/services/adminApi.js"></script>
+    <script type="text/javascript" src="/js/modules/adminDashboard.js"></script>
     
     <link href="/resources/stylesheets/main.css" rel="stylesheet">
     <link href="/resources/stylesheets/discussions.css" rel="stylesheet">
 </head>
 
-<body ng-app="adminDiscApp">
+<body ng-app="adminDashboardApp">
     <div class="container">
       <header class="text-center">
           <h1>
@@ -41,8 +38,8 @@
         <div class="col-md-2 text-right"><a href="/admin/logout">Log Out</a></div>
       </div>
 
-      <div ng-controller="adminDiscCtrl">
-        <table class="table table-hover table-condensed">
+      <div ng-controller="adminDashboardCtrl">
+        <table class="table table-hover table-condensed" dir="ltr">
 
           <thead>
             <tr id="headRow">                                     
@@ -80,9 +77,9 @@
         <table class="table table-hover table-condensed">
           <tbody ng-show="!pressAdd">
             <tr>
+              <td style="width:10px"><a href="" ng-click="addDisc()">הוסף</a></td>
               <td><td>
               <td></td>
-              <td style="width:10px"><a href="" ng-click="addDisc()">הוסף</a></td>
             </tr>
           </tbody>
 

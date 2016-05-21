@@ -1,8 +1,8 @@
 (function() {
   'use strict';
   angular
-    .module('adminDiscApp', [])
-    .controller('adminDiscCtrl', ['$scope','$http', function($scope, $http){
+    .module('adminDashboardApp', [])
+    .controller('adminDashboardCtrl', ['$scope','$http', function($scope, $http){
       $scope.pressAdd = false;
 
       $scope.discussions = [];

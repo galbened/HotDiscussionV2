@@ -1,6 +1,7 @@
-var Discussion = require('../models/discussion');
+module.exports = function(autoIncrement){
 
-module.exports = function(){
+  var Discussion = require('../models/discussion');
+  var Argument = require('../models/argument')(autoIncrement);
     
   var express = require('express');
   var router = express.Router();
@@ -15,7 +16,6 @@ module.exports = function(){
 
   //post a new discussion
   router.post('/discussions', function(req, res){
-    console.log(req.body);
     var discussion = new Discussion();
     discussion.title = req.body.title;
     discussion.description = req.body.description;
@@ -51,6 +51,44 @@ module.exports = function(){
         });
       }
       res.json(disc);
+    });
+  });
+
+
+  /* ARGUMENTS API */
+  router.get('/discussions/:id/:discussionName', function(req, res, next){
+    var id = req.params.id;
+    Argument.find({disc_id: id}, function(err, discArguments){
+      if (err){
+        return next(err);
+      }
+      if(!discArguments){
+        return res.status(404).json({
+          message: 'Discussion with id ' + id + ' can not be found.'
+        });
+      }
+      res.json(discArguments);
+    });
+  });
+
+  router.post('/discussions/:id/:discussionName', function(req, res, next){
+    var id = req.params.id;
+    var argument = new Argument();
+
+    console.log(req.body);
+
+    argument.disc_id = id;
+    argument.parent_id = (req.body.parent_id ? req.body.parent_id : 0);
+    argument.user_id = req.user._id;
+    argument.username = req.user.local.username;
+    argument.content = req.body.content;
+    argument.depth = (req.body.depth ? req.body.depth : 0);
+    argument.sub_arguments = [];
+
+    argument.save(function(err, data){
+      if (err)
+        throw err;
+      res.json(data); //send the json back to the client, after saved in the database
     });
   });
 
