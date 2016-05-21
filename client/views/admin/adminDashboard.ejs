@@ -26,14 +26,15 @@
     <div class="container">
       <header class="text-center">
           <h1>
-              Welcome to the Admin Dashboard
+              מנהל המערכת, שלום רב!
           </h1>
       </header>
 
       <div class="row" id="form-title">
         <div class="col-md-2"></div>
         <div class="col-md-8 text-center">
-            <h5>Here, you can add, delete end edit the conversations available for your students</h5>
+            <!-- <h5>Here, you can add, delete end edit the conversations available for your students</h5> -->
+            <h4>כאן תוכל להוסיף, למחוק ולערוך את הדיונים שנגישים עבור הסטודנטים</h4>
         </div>
         <div class="col-md-2 text-right"><a href="/admin/logout">Log Out</a></div>
       </div>
@@ -50,7 +51,6 @@
           </thead>
 
           <tbody ng-repeat="discussion in discussions">
-            {{discussion.length}}
             <tr ng-show="!discussion.edit">
               <td>{{discussion.description}}</td>
               <td>{{discussion.title}}</td>

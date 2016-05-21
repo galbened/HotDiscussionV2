@@ -41,7 +41,7 @@
     <div class="row" id="form-title">
         <div class="col-md-2"></div>
         <div class="col-md-8 text-center">
-          <h5>Please choose the discussion you have been registered to by your instructor</h5>
+          <h4>אנא בחר את הדיון שאליו נרשמת ע"י המרצה</h4>
         </div>
         <div class="col-md-2 text-right"><a href="/auth/logout">Log Out</a></div>
     </div>
@@ -56,7 +56,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="discussion in discussions">
+              <tr ng-repeat="discussion in discussions" dir="rtl">
               <!-- TODO: 1-way binding for performance stuff.. -->
                 <td>{{discussion.description}}</td>
                 <td>{{discussion.title}}</td>
