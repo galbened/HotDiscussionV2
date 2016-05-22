@@ -23,7 +23,7 @@
         $scope.discussions = res.data;
       }, function(err){
         console.log(err.statusText);
-      });      
+      });
 
       //ADDING
       $scope.addDisc = function(){
@@ -37,7 +37,8 @@
       $scope.finishAdding = function(newDesc, newTitle){
         var newDisc = {
             title: newTitle,
-            description: newDesc
+            description: newDesc,
+            isActive: true
         };
 
         $http({
@@ -61,8 +62,10 @@
         $http({
           method: 'DELETE',
           url: '/api/discussions/' + $scope.discussions[idx]._id
-        }).then(function(res){
+        }).then(function success(res){
           $scope.discussions.splice(idx, 1);
+        }, function error(err){
+          console.log(err);
         });
       };
 

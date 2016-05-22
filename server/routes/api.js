@@ -9,7 +9,7 @@ module.exports = function(autoIncrement){
   /* DISCUSSIONS API */
   //get all the discussions
   router.get('/discussions', function(req, res, next) {
-    Discussion.find({}, function(err, data){
+    Discussion.find({isActive:true}, function(err, data){
       res.json(data);
     });
   });
@@ -34,12 +34,20 @@ module.exports = function(autoIncrement){
   });
 
   //delete a specific discussion
-  router.delete('/discussions/:id', function(req, res){
-    Discussion.remove({_id: req.params.id}, function(err, data){
+  router.delete('/discussions/:id', function(req, res, next){
+    //I think that discussions should not be totaly 'removed' from database, 
+    //but rather be assigned as not-active by appropriate field in the document
+                /*Discussion.remove({_id: req.params.id}, function(err, data){
+                  res.json({result: err ? 'error' : 'ok'});
+                });*/
+    var id = req.params.id;
+    Discussion.findByIdAndUpdate(id, {$set: {isActive: false}}, function(err, disc){
+      // console.log(disc);
       res.json({result: err ? 'error' : 'ok'});
     });
   });
 
+  //update an existing discussion
   router.put('/discussions/:id', function(req, res, next){
     var id = req.params.id;
     var body = req.body;
@@ -84,6 +92,8 @@ module.exports = function(autoIncrement){
     argument.content = req.body.content;
     argument.depth = (req.body.depth ? req.body.depth : 0);
     argument.sub_arguments = [];
+
+    //TODO: add the incoming reply to the array of sub_arguments of the parent
 
     argument.save(function(err, data){
       if (err)
