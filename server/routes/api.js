@@ -19,6 +19,7 @@ module.exports = function(autoIncrement){
     var discussion = new Discussion();
     discussion.title = req.body.title;
     discussion.description = req.body.description;
+    discussion.isActive = req.body.isActive;
     discussion.save(function(err, data){
       if (err)
         throw err;
