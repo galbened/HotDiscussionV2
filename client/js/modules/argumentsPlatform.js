@@ -71,7 +71,6 @@
       var node = args.node;
       var replyText = args.replyText;
       $scope.newNodesCount++; //TODO: deprecate?
-      console.log(node.depth);
       TreeService.postNewArgument(discId, replyText, node._id, node.depth).
       then(function (result) {
         //TODO: transfer the referenced jsons to nested jsons

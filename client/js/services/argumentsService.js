@@ -8,16 +8,12 @@
     };
 
     this.postNewArgument = function(dicId, argumentText, parentId, depth){
-      console.log(argumentText);
-      console.log(depth);
       var newDepth;
-      
     	var postData = {
           content: argumentText,
           parent_id: parentId,
           depth: depth + 1
       };
-      console.log(postData);
     	var res = $http({
           method:'POST',
           url: "/api/discussions/" + dicId + "/$",
