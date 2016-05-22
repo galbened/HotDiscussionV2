@@ -16,29 +16,8 @@ treenode ul {
     margin-bottom: 0;
 }
 
-    treenode ul li {
-        margin-right: 5px;            
-    }
-
-treenode .node-title {
-}
-
-treenode .pointer {
-    cursor: pointer;
-}
-
-treenode .node-name {
-}
-
-treenode .selected {
-    background: #BEEBFF none repeat scroll 0% 0%;
-    border-radius: 2px;
-    box-shadow: 0px 0px 1px #999 inset;
-}
-
-treenode .disabled {
-    color: darkgray;
-    cursor: not-allowed;
+treenode ul li {
+    margin-right: 5px;            
 }
 
 /*
@@ -53,27 +32,6 @@ treenode .disabled {
     background-size: contain;
 }
 
-.tree-node-ico.tree-node-expanded {
-    background-image: url('/resources/imgs/arrow-down.png');
-}
-
-.tree-node-ico.tree-node-collapsed {
-    background-image: url('/resources/imgs/arrow-right.png');
-}
-
-span > .tree-node-ico {
-    margin-right: 5px;
-}
-
-span > .tree-node-ico.tree-node-image {
-    background-image: url('/resources/imgs/folder-open.png');
-}
-
-span > .tree-node-ico.tree-node-leaf {
-    background-image: url('/resources/imgs/file.png');
-}
-
-
 
 /*
     ----------------- Animation --------------------
@@ -85,15 +43,15 @@ treenode {
     overflow: hidden;
 }
 
-    treenode.ng-hide-add, treenode.ng-hide-remove {
-        -webkit-transition: all linear .5s;
-        -moz-transition: all linear .5s;
-        -o-transition: all linear .5s;
-        transition: all linear .5s;
-        display: block !important;
-    }
+treenode.ng-hide-add, treenode.ng-hide-remove {
+    -webkit-transition: all linear .5s;
+    -moz-transition: all linear .5s;
+    -o-transition: all linear .5s;
+    transition: all linear .5s;
+    display: block !important;
+}
 
-    treenode.ng-hide {
-        opacity: 0;
-        max-height: 0;
-    }
+treenode.ng-hide {
+    opacity: 0;
+    max-height: 0;
+}

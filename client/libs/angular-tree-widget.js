@@ -16,12 +16,12 @@
         compile: function compile(tElement, tAttrs, transclude) {
           return {
             pre: function (scope) {
-              console.log('compiling the tree directive. ');
+              // console.log('compiling the tree directive. ');
               scope.nodelist = scope.nodes;
               scope.options = scope.options || (scope.options = { showIcon: true, expandOnClick: false, multipleSelect: false });
               scope.$watch(function () {
                 //debug@@
-                console.log('watched!');
+                // console.log('watched!');
                 // generateNodeList(scope.nodes);
                 (function(){return scope.nodes;})();
               });
@@ -35,9 +35,11 @@
         var vm = this;
         
         vm.submitNewReply = function(node, replyText){
-          $scope.$emit('submitted-new-reply', {node: node, replyText: vm.replyText});
-          node.replyPressed = false;
-          node.expanded = true;
+          if (vm.replyText){
+            $scope.$emit('submitted-new-reply', {node: node, replyText: vm.replyText});
+            node.replyPressed = false;
+            node.expanded = true;
+          }
         };
 
         vm.newReplyPressed = function(node){
