@@ -24,15 +24,6 @@ treenode ul li {
    --------------- Icon Style -----------------------
 */
 
-.tree-node-ico:empty {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background: transparent no-repeat scroll 50% 50%;
-    background-size: contain;
-}
-
-
 /*
     ----------------- Animation --------------------
 */

@@ -77,6 +77,7 @@
     socket.on('submitted-new-reply', function(newReply){
       var node = getNodeById($scope.treeNested, newReply.parent_id);
       node.sub_arguments.push(newReply);
+      node.expanded = true;
     });
 
     $scope.$on('submitted-new-reply', function (e, args) {

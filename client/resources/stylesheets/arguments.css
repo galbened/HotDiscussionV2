@@ -56,7 +56,7 @@
   height: auto;
   margin: 20px 10px;
   padding: 5px;
-  background-color: #DADADA;
+  background-color: #E1D6D6;
   border-radius: 3px;
   border: 5px solid #ccc;
 }
@@ -65,9 +65,9 @@
   min-height: 30px;
   border-radius: 3px;
   font-family: Arial;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #797979;
+  font-size: 12px;
+  line-height: 1;
+  color: #150202;
 }
 
 li{
@@ -84,6 +84,8 @@ hr.contentDelim {
   border: 0;
   border-top: 1px solid #8c8c8c;
   border-bottom: 1px solid #fff;
+  margin-top: 1px;
+  margin-bottom: 1px;
 }
 
 // .header right {

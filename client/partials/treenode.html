@@ -6,15 +6,15 @@
       <div class="body"> <span ng-class="{'tip tip-right': node.depth == 0, 
                                           'tip tip-up': node.depth > 0}"></span>
         <div class="message">
+          <p dir="ltr">
+            <i style="font-size: 10px">{{node.createdAt}}</i> <mark>(by: {{node.username}})</mark> 
+          </p>
+
           <p style="word-wrap: break-word;white-space: pre-line">
             <strong>{{ node.content }}</strong>
             <hr class="contentDelim">
           </p>
-          
-          <p dir="ltr">
-            <mark>(by: {{node.username}})</mark> <br> {{node.createdAt}}
-          </p>
-          
+
           <div style="background-color: #D08C8C;" class="btn btn-xs" ng-if="node.sub_arguments.length > 0" 
            ng-click="toggleNode(node)">
             <span ng-class="{'glyphicon glyphicon-chevron-up': node.expanded, 
@@ -31,7 +31,7 @@
           <div ng-show="node.replyPressed">
             <hr>
             <textarea class="form-control text-right" rows="3" placeholder="רשום כאן" ng-model="nodeCtrl.replyText" style="width:100%; margin: 5px; background-color: #DADAE5"></textarea>
-            <button type="submit" class="btn btn-primary btn-xs" ng-click="nodeCtrl.submitNewReply(node)">סיים</button>
+            <button type="submit" class="btn btn-primary btn-xs" style="" ng-click="nodeCtrl.submitNewReply(node)">סיים</button>
             <button type="submit" class="btn btn-default btn-xs" ng-click="nodeCtrl.cancelReply(node)">בטל</button>
           </div>
           
