@@ -1,12 +1,24 @@
-module.exports = function(autoIncrement){
+module.exports = function(autoIncrement, io){
 
   var Discussion = require('../models/discussion');
   var Argument = require('../models/argument')(autoIncrement);
-    
   var express = require('express');
   var router = express.Router();
 
-  /* DISCUSSIONS API */
+  var discussionNsp = io.of('/discussions');
+  var argumentsNsp = io.of('/arguments');
+  
+
+  /***
+   *          _ _                        _                 
+   *         | (_)                      (_)                
+   *       __| |_ ___  ___ _   _ ___ ___ _  ___  _ __  ___ 
+   *      / _` | / __|/ __| | | / __/ __| |/ _ \| '_ \/ __|
+   *     | (_| | \__ | (__| |_| \__ \__ | | (_) | | | \__ \
+   *      \__,_|_|___/\___|\__,_|___|___|_|\___/|_| |_|___/
+   *                                                       
+   *                                                       
+   */
   //get all the discussions
   router.get('/discussions', function(req, res, next) {
     Discussion.find({isActive:true}, function(err, data){
@@ -23,8 +35,9 @@ module.exports = function(autoIncrement){
     discussion.save(function(err, data){
       if (err)
         throw err;
-      res.json(data); //send the json back to the client, after saved in the database
+      discussionNsp.emit('new-discussion', data);
     });
+
   });
 
   //get a specific discussion
@@ -36,15 +49,16 @@ module.exports = function(autoIncrement){
 
   //delete a specific discussion
   router.delete('/discussions/:id', function(req, res, next){
-    //I think that discussions should not be totaly 'removed' from database, 
-    //but rather be assigned as not-active by appropriate field in the document
-                /*Discussion.remove({_id: req.params.id}, function(err, data){
-                  res.json({result: err ? 'error' : 'ok'});
-                });*/
+    /*
+     * I think that discussions should not be totaly 'removed' from database, 
+     * but rather be assigned as not-active by appropriate field in the document
+          Discussion.remove({_id: req.params.id}, function(err, data){
+            res.json({result: err ? 'error' : 'ok'});
+          });
+      */
     var id = req.params.id;
     Discussion.findByIdAndUpdate(id, {$set: {isActive: false}}, function(err, disc){
-      // console.log(disc);
-      res.json({result: err ? 'error' : 'ok'});
+      discussionNsp.emit('delete-discussion', disc);
     });
   });
 
@@ -59,12 +73,21 @@ module.exports = function(autoIncrement){
           message: 'Discussion with id ' + id + ' can not be found.'
         });
       }
-      res.json(disc);
+      discussionNsp.emit('edit-discussion', disc);
     });
   });
 
 
-  /* ARGUMENTS API */
+  /***
+   *                                                 _       
+   *                                                | |      
+   *       __ _ _ __ __ _ _   _ _ __ ___   ___ _ __ | |_ ___ 
+   *      / _` | '__/ _` | | | | '_ ` _ \ / _ | '_ \| __/ __|
+   *     | (_| | | | (_| | |_| | | | | | |  __| | | | |_\__ \
+   *      \__,_|_|  \__, |\__,_|_| |_| |_|\___|_| |_|\__|___/
+   *                 __/ |                                   
+   *                |___/                                    
+   */
   router.get('/discussions/:id/:discussionName', function(req, res, next){
     var id = req.params.id;
     Argument.find({disc_id: id}, function(err, discArguments){
@@ -84,8 +107,7 @@ module.exports = function(autoIncrement){
     var id = req.params.id;
     var argument = new Argument();
 
-    console.log(req.body);
-
+    // console.log(req.body);
     argument.disc_id = id;
     argument.parent_id = (req.body.parent_id ? req.body.parent_id : 0);
     argument.user_id = req.user._id;
@@ -99,7 +121,13 @@ module.exports = function(autoIncrement){
     argument.save(function(err, data){
       if (err)
         throw err;
-      res.json(data); //send the json back to the client, after saved in the database
+      // res.json(data);
+      if (argument.depth === 0){
+        argumentsNsp.emit('submitted-new-argument', data);
+      }
+      else{
+        argumentsNsp.emit('submitted-new-reply', data);
+      }
     });
   });
 

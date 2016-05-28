@@ -33,10 +33,11 @@
     .directive('treenode', ['RecursionHelper', function (RecursionHelper) {
       var nodeController = function($scope){
         var vm = this;
-        
+
         vm.submitNewReply = function(node, replyText){
           if (vm.replyText){
             $scope.$emit('submitted-new-reply', {node: node, replyText: vm.replyText});
+            // socket.$emit('submitted-new-reply', {node: node, replyText: vm.replyText});
             node.replyPressed = false;
             node.expanded = true;
           }

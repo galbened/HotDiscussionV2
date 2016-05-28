@@ -1,12 +1,66 @@
 (function() {
   'use strict';
   angular
-    .module('adminDashboardApp', [])
-    .controller('adminDashboardCtrl', ['$scope','$http', '$window', function($scope, $http, $window){
+    .module('adminDashboardApp', ['btford.socket-io', 'socketio.factory'])
+    .controller('adminDashboardCtrl', ['$scope','$http', '$window', 'socketio', function($scope, $http, $window, socketio){
+      var findDiscIdx = function(disc){
+        for (var i = 0; i < $scope.discussions.length; i++){
+          if ($scope.discussions[i]._id === disc._id){
+            return i;
+          }
+        }
+        return -1;
+      };
+
       $scope.pressAdd = false;
-
       $scope.discussions = [];
+/***
+ *                     _   _   _                
+ *                    | | | | (_)               
+ *      _ __ ___  __ _| | | |_ _ _ __ ___   ___ 
+ *     | '__/ _ \/ _` | | | __| | '_ ` _ \ / _ \
+ *     | | |  __| (_| | | | |_| | | | | | |  __/
+ *     |_|  \___|\__,_|_|  \__|_|_| |_| |_|\___|
+ *                                              
+ *                                              
+ */
+      var socket = socketio.discussions();
+      $(window).on('beforeunload', function(){
+        socket.disconnect();
+      });
 
+      socket.on('new-discussion', function(newDiscussion){
+        $scope.discussions.push(newDiscussion);
+      });
+
+      socket.on('delete-discussion', function(disc){
+        var idx = findDiscIdx(disc);
+        if (idx >= 0)
+          $scope.discussions.splice(idx, 1);
+        else{
+          console.log('error in deleting a discussion');
+        }
+      });
+
+      socket.on('edit-discussion', function(disc){
+        var idx = findDiscIdx(disc);
+        if (idx > 0)
+          $scope.discussions[idx] = disc;
+        else{
+          console.log('error in editing a discussion');
+        }
+      });
+
+/***
+ *                      _             _                            _              
+ *                     | |           | |                          (_)             
+ *       ___ ___  _ __ | |_ _ __ ___ | |______ ___  ___ _ ____   ___  ___ ___ ___ 
+ *      / __/ _ \| '_ \| __| '__/ _ \| |______/ __|/ _ | '__\ \ / | |/ __/ _ / __|
+ *     | (_| (_) | | | | |_| | | (_) | |      \__ |  __| |   \ V /| | (_|  __\__ \
+ *      \___\___/|_| |_|\__|_|  \___/|_|      |___/\___|_|    \_/ |_|\___\___|___/
+ *                                                                                
+ *                                                                                
+ */
       $scope.goToDisc = function(idx){
         var id = $scope.discussions[idx]._id;
         var title = $scope.discussions[idx].title;
@@ -45,14 +99,10 @@
           method:'POST',
           url: '/api/discussions',
           data: newDisc
-        }).then(function success(res){
-          $scope.discussions.push(res.data);
-          $scope.pressAdd = false;
-          $scope.newDesc = "";
-          $scope.newTitle = "";
-        },function error(res){
-          console.log(res.statusText);
         });
+        $scope.pressAdd = false;
+        $scope.newDesc = "";
+        $scope.newTitle = "";
         
       };
 
@@ -61,11 +111,7 @@
         // $scope.discussions.splice(idx, 1);
         $http({
           method: 'DELETE',
-          url: '/api/discussions/' + $scope.discussions[idx]._id
-        }).then(function success(res){
-          $scope.discussions.splice(idx, 1);
-        }, function error(err){
-          console.log(err);
+          url: '/api/discussions/' + $scope.discussions[idx]._id,
         });
       };
 

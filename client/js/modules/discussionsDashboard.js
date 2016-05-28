@@ -1,12 +1,66 @@
 (function() {
   'use strict';
   angular
-    .module('discussionsDashboardApp', [])
-    .controller('iscussionsDashboardCtrl', ['$scope','$http','$window', function($scope, $http, $window){
+    .module('discussionsDashboardApp', ['btford.socket-io', 'socketio.factory'])
+    .controller('iscussionsDashboardCtrl', ['$scope','$http','$window','socketio', function($scope, $http, $window, socketio){
+      
+      var findDiscIdx = function(disc){
+        for (var i = 0; i < $scope.discussions.length; i++){
+          if ($scope.discussions[i]._id === disc._id){
+            return i;
+          }
+        }
+        return -1;
+      };
+
       $scope.pressAdd = false;
-
       $scope.discussions = [];
+/***
+ *                     _   _   _                
+ *                    | | | | (_)               
+ *      _ __ ___  __ _| | | |_ _ _ __ ___   ___ 
+ *     | '__/ _ \/ _` | | | __| | '_ ` _ \ / _ \
+ *     | | |  __| (_| | | | |_| | | | | | |  __/
+ *     |_|  \___|\__,_|_|  \__|_|_| |_| |_|\___|
+ *                                              
+ *                                              
+ */
+      var socket = socketio.discussions();
+      $(window).on('beforeunload', function(){
+        socket.disconnect();
+      });
 
+      socket.on('new-discussion', function(newDiscussion){
+        $scope.discussions.push(newDiscussion);
+      });
+
+      socket.on('delete-discussion', function(disc){
+        var idx = findDiscIdx(disc);
+        if (idx > 0)
+          $scope.discussions.splice(idx, 1);
+        else{
+          console.log('error in deleting a discussion');
+        }
+      });
+
+      socket.on('edit-discussion', function(disc){
+        var idx = findDiscIdx(disc);
+        if (idx > 0)
+          $scope.discussions[idx] = disc;
+        else{
+          console.log('error in editing a discussion');
+        }
+      });
+/***
+ *                      _             _                            _              
+ *                     | |           | |                          (_)             
+ *       ___ ___  _ __ | |_ _ __ ___ | |______ ___  ___ _ ____   ___  ___ ___ ___ 
+ *      / __/ _ \| '_ \| __| '__/ _ \| |______/ __|/ _ | '__\ \ / | |/ __/ _ / __|
+ *     | (_| (_) | | | | |_| | | (_) | |      \__ |  __| |   \ V /| | (_|  __\__ \
+ *      \___\___/|_| |_|\__|_|  \___/|_|      |___/\___|_|    \_/ |_|\___\___|___/
+ *                                                                                
+ *                                                                                
+ */
       //initiate the fields of the table
       $http({
         method: 'GET',

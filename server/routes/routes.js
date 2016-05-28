@@ -1,26 +1,3 @@
-module.exports = function(app, passport, autoIncrement){
-    
-    authRouter = require('./auth')(passport);
-    adminRouter = require('./admin')(passport, isLoggedIn("/admin/login"), checkPermission('admin'));
-    restApiRouter = require('./api')(autoIncrement);
-    discussionsRouter = require('./discussions')(isLoggedIn("/auth/login"));
-
-    //authentication routing logic
-    app.use('/auth', authRouter);
-    app.use('/admin', adminRouter);
-    app.use('/api', restApiRouter);
-    app.use('/discussions', discussionsRouter);
-
-
-    //TODO - add a normal HOME PAGE, not just log-in or discussion dashboard
-    app.get('/', isLoggedIn("/auth/login"), function(req, res, next) {
-      res.redirect('/discussions');
-    });
-
-    
-
-};
-
 var isLoggedIn = function(loginRedirect){
   return function(req, res, next){
     if (req.isAuthenticated()){
@@ -42,4 +19,31 @@ var checkPermission = function(role){
       res.redirect('/auth/login');
     }
   };
+};
+
+module.exports = function(app, passport, autoIncrement, io){
+    
+    /*
+     *  Server Routing
+     */
+    authRouter = require('./auth')(passport);
+    adminRouter = require('./admin')(passport, isLoggedIn("/admin/login"), checkPermission('admin'));
+    discussionsRouter = require('./discussions')(isLoggedIn("/auth/login"));
+    app.use('/auth', authRouter);
+    app.use('/admin', adminRouter);
+    app.use('/discussions', discussionsRouter);
+    /*
+     *  Server API
+     */
+    restApiRouter = require('./api')(autoIncrement, io);
+    app.use('/api', restApiRouter);    
+
+    //TODO: add a normal HOME PAGE, not just log-in or discussion dashboard
+    app.get('/', isLoggedIn("/auth/login"), function(req, res, next) {
+      res.redirect('/discussions');
+    });
+
+    app.get('*', isLoggedIn("/auth/login"), function(req, res, next) {
+      res.redirect('/discussions');
+    });
 };

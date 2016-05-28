@@ -1,8 +1,8 @@
 (function(){
-  angular.module('argumentsApp', ['tree.service','TreeWidget'], function($locationProvider){
+  angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory'], function($locationProvider){
       $locationProvider.html5Mode(true);
   })
-  .controller('ArgumentsTreeController', ['TreeService','$scope', '$location', function (TreeService, $scope, $location) {
+  .controller('ArgumentsTreeController', ['TreeService','$scope', '$location','socketio', function (TreeService, $scope, $location, socketio) {
     var path = $location.path();
     var discId = path.split('/')[1];
 
@@ -48,11 +48,10 @@
       });
     }
 
-    // if I will need to get the node object by its ID. Now, I don't use it...
     function getNodeById(tree, nodeId) {
       if (!tree) { return null; }
       for (var i = 0; i < tree.length; i++) {
-          if (tree[i].nodeId == nodeId) {
+          if (tree[i]._id == nodeId) {
               return tree[i];
           } else {
               var child = getNodeById(tree[i].sub_arguments, nodeId);
@@ -65,33 +64,33 @@
     }     
 
     init();
-    $scope.newNodesCount = 0;
+
+    var socket = socketio.arguments();
+    $(window).on('beforeunload', function(){
+      socket.disconnect();
+    });
+
+    socket.on('submitted-new-argument', function(newArgument){
+      $scope.treeNested.push(newArgument);      
+    });
+
+    socket.on('submitted-new-reply', function(newReply){
+      var node = getNodeById($scope.treeNested, newReply.parent_id);
+      node.sub_arguments.push(newReply);
+    });
 
     $scope.$on('submitted-new-reply', function (e, args) {
       var node = args.node;
       var replyText = args.replyText;
-      $scope.newNodesCount++; //TODO: deprecate?
-      TreeService.postNewArgument(discId, replyText, node._id, node.depth).
-      then(function (result) {
-        //TODO: transfer the referenced jsons to nested jsons
-        node.sub_arguments.push(result.data);
-      }, function (err) {
-          alert("Error: " + err);
-      });
-
+      TreeService.postNewArgument(discId, replyText, node._id, node.depth);
     });
 
     $scope.submitNewArgument = function(newArgument){
       if (newArgument){
-        $scope.newNodesCount++;
-        TreeService.postNewArgument(discId, newArgument, 0)
-        .then(function success(res){
-          $scope.treeNested.push(res.data);
-        },function error(err){
-          console.log(err);
-        });
+        TreeService.postNewArgument(discId, newArgument, 0);
+        $scope.newArgument = "";
       }
-      $scope.newArgument = "";
+      
     };
 
     // ****** THIS FUNCTIONALITY IS NOT YET REQUESTED, BUR IT PROBABLY WILL SOMETIME

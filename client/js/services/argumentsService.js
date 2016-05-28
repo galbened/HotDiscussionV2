@@ -19,7 +19,7 @@
           url: "/api/discussions/" + dicId + "/$",
           data: postData
         });
-        return res;
+      return res;
     };
 
   }]);

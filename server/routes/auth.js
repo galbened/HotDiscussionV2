@@ -38,5 +38,3 @@ module.exports = function(passport){
 
   //TODO: encrypt the passwords on database?
 };
-
-//module.exports = router;
