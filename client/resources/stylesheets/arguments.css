@@ -1,14 +1,7 @@
-// ul.tree{
-//  list-style: none;
-// }
-
-// ul.tree > li {
-//  margin: 10px;
-// }
-
-// ul.tree > li > span {
-//  cursor: pointer;
-// }
+#scroller{
+  background-color: #E0E3F3;
+  width: 100%;
+}
 
 .tip {
   width: 0px;
@@ -20,7 +13,7 @@
 
 .tip-up {
   top: -25px; /* Same as body margin top + border */
-  left: 230px;
+  left: 450px;
   border-right-color: transparent;
   border-left-color: transparent;
   border-top-color: transparent;
@@ -52,9 +45,9 @@
 
 .dialogbox .body {
   position: relative;
-  max-width: 300px;
+  max-width: 500px;
   height: auto;
-  margin: 20px 10px;
+  margin: 15px 5px 0px;
   padding: 5px;
   background-color: #E1D6D6;
   border-radius: 3px;
@@ -76,17 +69,14 @@ li{
 
 hr.newArgSection {
   height: 10px;
+  margin-bottom: 0px;
   border: 0;
   box-shadow: 0 10px 10px -10px #8c8c8c inset;
+  position:relative;
 }
 
-hr.contentDelim {
-  border: 0;
-  border-top: 1px solid #8c8c8c;
-  border-bottom: 1px solid #fff;
-  margin-top: 1px;
-  margin-bottom: 1px;
-}
+
+
 
 // .header right {
 // padding-top: 8px;

@@ -1,13 +1,13 @@
-<ul>
+<ul style="padding-right:20px;">
 
   <li ng-repeat="node in nodeCtrl.nodes" class="node">
 
-    <div class="dialogbox">
-      <div class="body"> <span ng-class="{'tip tip-right': node.depth == 0, 
+    <div class="dialogbox" >
+      <div class="body" ng-style="node.lastPost && {'border': '5px solid #0E266B'}"> <span ng-class="{'tip tip-right': node.depth == 0, 
                                           'tip tip-up': node.depth > 0}"></span>
         <div class="message">
           <p dir="ltr">
-            <i style="font-size: 10px">{{node.createdAt}}</i> <mark>(by: {{node.username}})</mark> 
+            <i style="font-size: 10px">{{nodeCtrl.prettyDate(node.createdAt)}}</i> <mark>(by: {{node.username}})</mark> 
           </p>
 
           <p style="word-wrap: break-word;white-space: pre-line">

@@ -20,6 +20,7 @@
     <script type="text/javascript" src="/libs/angular-recursion.js"></script>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/libs/angular-socket-io/socket.js"></script>
+    <script type="text/javascript" src="/libs/moment/moment.js"></script>
 
     <!-- local custom app js -->
     <script type="text/javascript" src="/js/modules/argumentsPlatform.js"></script>
@@ -27,8 +28,9 @@
     <script type="text/javascript" src="/js/configs/argumentsFactory.js"></script>
     <script type="text/javascript" src="/libs/angular-tree-widget.js"></script>
     <script type="text/javascript" src="/js/configs/socketsFactory.js"></script>
-    <!-- TODO: module the angularJS project... -->
-    
+
+    <!-- <script type="text/javascript" src="/libs/jquery/jquery-scrolltofixed-min.js"></script>     -->
+
     <!-- custom CSS -->
     <link href="/resources/stylesheets/main.css" rel="stylesheet">
     <link href="/resources/stylesheets/arguments.css" rel="stylesheet">
@@ -50,33 +52,52 @@
     </header>
 
     <div class="row" id="form-title">
-      <div class="col-md-2"></div>
-      <div class="col-md-8 text-center">
+      <div class="col-md-8 col-md-offset-2 text-center">
           <h4>הנך מוזמן להשתתף בדיון עם חבריך. אנא שמור על תרבות דיון, תודה.</h4>
       </div>
-      <div class="col-md-2 text-right"><a href="/auth/login">Log Out</a></div>
     </div>
+    
+    <div id="scroller-anchor"></div> 
+    <div id="scroller">
+      <!-- new argument prompt -->
+      <div class="row">
+        <div class="col-md-offset-10 col-md-2"><a href="/auth/login">Log Out</a></div>
+      </div>
+      <div class="row dialogbox">
+  
+        <!-- TODO: add 2 small frames of invited users and online users -->
+        <!-- <div class="col-md-3">
+          online users
+        </div>
 
-    <!-- new argument prompt -->
-    <div class="row dialogbox">
+        <div class="col-md-3">
+          invited users
+        </div> -->
 
-      <div class="col-md-offset body" style="float:right">
-        <form class="form-inline">
-          <div class="form-group">
-            <div class="message">
-              <textarea class="form-control text-right" rows="3" placeholder="רשום כאן" style="width:100%" ng-model="newArgument"></textarea>
-              <button type="submit" class="btn btn-primary" style="float:right" ng-click="submitNewArgument(newArgument)">הוסף טענה חדשה</button>
+        <div class="col-md-offset-6 col-md-6 text-right body" style="width:425px; float:right">
+          <form class="form-inline">
+            <div class="form-group">
+              <div class="message">
+                <textarea class="form-control text-right" rows="4" placeholder="רשום כאן" style="width:400px" ng-model="newArgument"></textarea>
+                <div>
+                  <button type="submit" class="btn btn-primary" ng-click="submitNewArgument(newArgument)">הוסף טענה חדשה</button>
+                </div>
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
+        
       </div>
 
-    </div>
-
-    <!-- existing arguments rendering -->
     <hr class="newArgSection">
 
-    <div class="row">
+    </div>
+
+    
+
+    <!-- existing arguments rendering -->
+
+    <div class="row" id="treeConversation">
       <div class="col-md-12 tree">
           <tree nodes='treeNested'></tree>
       </div>

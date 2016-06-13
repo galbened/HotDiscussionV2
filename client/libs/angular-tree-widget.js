@@ -51,6 +51,10 @@
         vm.cancelReply = function(node){
           node.replyPressed = false;
         };
+
+        vm.prettyDate = function(date){
+          return moment(date).startOf('hour').fromNow();
+        };
       };
 
       return {
