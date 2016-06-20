@@ -36,6 +36,7 @@
 
         vm.submitNewReply = function(node, replyText){
           if (vm.replyText){
+            // console.log('ccc');
             $scope.$emit('submitted-new-reply', {node: node, replyText: vm.replyText});
             // socket.$emit('submitted-new-reply', {node: node, replyText: vm.replyText});
             node.replyPressed = false;

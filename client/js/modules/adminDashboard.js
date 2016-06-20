@@ -3,52 +3,14 @@
   angular
     .module('adminDashboardApp', ['btford.socket-io', 'socketio.factory'])
     .controller('adminDashboardCtrl', ['$scope','$http', '$window', 'socketio', function($scope, $http, $window, socketio){
-      var findDiscIdx = function(disc){
-        for (var i = 0; i < $scope.discussions.length; i++){
-          if ($scope.discussions[i]._id === disc._id){
-            return i;
-          }
-        }
-        return -1;
-      };
 
       $scope.pressAdd = false;
       $scope.discussions = [];
-/***
- *                     _   _   _                
- *                    | | | | (_)               
- *      _ __ ___  __ _| | | |_ _ _ __ ___   ___ 
- *     | '__/ _ \/ _` | | | __| | '_ ` _ \ / _ \
- *     | | |  __| (_| | | | |_| | | | | | |  __/
- *     |_|  \___|\__,_|_|  \__|_|_| |_| |_|\___|
- *                                              
- *                                              
- */
+
+      //disconnect from socket when exiting the web page
       var socket = socketio.discussions();
       $(window).on('beforeunload', function(){
         socket.disconnect();
-      });
-
-      socket.on('new-discussion', function(newDiscussion){
-        $scope.discussions.push(newDiscussion);
-      });
-
-      socket.on('delete-discussion', function(disc){
-        var idx = findDiscIdx(disc);
-        if (idx >= 0)
-          $scope.discussions.splice(idx, 1);
-        else{
-          console.log('error in deleting a discussion');
-        }
-      });
-
-      socket.on('edit-discussion', function(disc){
-        var idx = findDiscIdx(disc);
-        if (idx > 0)
-          $scope.discussions[idx] = disc;
-        else{
-          console.log('error in editing a discussion');
-        }
       });
 
 /***
@@ -92,27 +54,26 @@
         var newDisc = {
             title: newTitle,
             description: newDesc,
-            isActive: true
+            restriction: "student"
         };
 
         $http({
           method:'POST',
           url: '/api/discussions',
           data: newDisc
+        })
+        .success(function(newDiscussion){
+          $scope.discussions.push(newDiscussion);
+          socket.emit('new-discussion', newDiscussion);
+        })
+        .error(function(err, status){
+          console.log(err.statusText);
         });
+        
         $scope.pressAdd = false;
         $scope.newDesc = "";
         $scope.newTitle = "";
         
-      };
-
-      //DELETING
-      $scope.delete = function(idx){
-        // $scope.discussions.splice(idx, 1);
-        $http({
-          method: 'DELETE',
-          url: '/api/discussions/' + $scope.discussions[idx]._id,
-        });
       };
 
       //EDITING
@@ -139,11 +100,45 @@
           data: edittedDisc
         }).then(function(res){
           $scope.discussions[idx] = res.data;
+          socket.emit('edit-discussion', idx, edittedDisc);
         },function error(res){
           console.log(res.statusText);
         });
 
         $scope.discussions[idx].edit = false;
       };
+
+      $scope.updateDiscStatus = function(idx, newStatus){
+        var oldDisc = $scope.discussions[idx];
+        var edittedDisc = oldDisc;
+        edittedDisc.status = newStatus;
+
+        $http({
+          method: 'PUT',
+          url: '/api/discussions/' + $scope.discussions[idx]._id,
+          data: edittedDisc
+        }).then(function(res){
+          $scope.discussions[idx] = res.data;
+          socket.emit('edit-discussion', idx, edittedDisc);
+        },function error(res){
+          console.log(res.statusText);
+        });
+      };
+
+
+      // $scope.delete = function(idx){
+      //   // $scope.discussions.splice(idx, 1);
+      //   $http({
+      //     method: 'DELETE',
+      //     url: '/api/discussions/' + $scope.discussions[idx]._id,
+      //   })
+      //   .success(function(disc){
+      //     $scope.discussions.splice(idx, 1);
+      //   })
+      //   .error(function(err, status){
+      //     console.log(err.statusText);
+      //   });
+      // };
+
     }]);
 })();

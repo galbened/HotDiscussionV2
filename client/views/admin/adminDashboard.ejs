@@ -51,17 +51,36 @@
             <tr id="headRow">                                     
               <th>תיאור</th>
               <th>כותרת</th>
-              <th>פעולה</th>
+              <th>סטטוס</th>
             </tr>
           </thead>
 
           <tbody ng-repeat="discussion in discussions">
-            <tr ng-show="!discussion.edit">
-              <td>{{discussion.description}}</td>
-              <td><a href="" ng-click="goToDisc($index)">{{discussion.title}}</a></td>
-              <td style="white-space:nowrap; width:10px"><a href="" ng-click="showEdit(discussion)">ערוך</a> | <a href="" ng-click="delete($index)">מחק</a></td>
-            </tr>
+            
+            <tr ng-show="!discussion.edit" ng-style="(discussion.restriction === 'student' && {'background-color' : '#B9F1E4'}) || (discussion.restriction === 'instructor' && {'background-color' : '#F8EBAE'}) || (discussion.restriction === 'none' && {'background-color' : '#F39696'})">
+              <td dir="rtl">{{discussion.description}}</td>
+              <td dir="rtl"><a href="" ng-click="goToDisc($index)">{{discussion.title}}</a></td>
+              
+              <td style="white-space:nowrap; width:10px">
+                <!-- <a href="" ng-click="showEdit(discussion)">ערוך</a> | <a href="" ng-click="delete($index)">מחק</a> -->
+                <fieldset>
+                  <a href="" ng-click="showEdit(discussion)">ערוך</a> |
+                  <label>לא פעיל</label> <input type="radio" ng-model="discussion.restriction" name="{{'disc_status' + $index}}" value="none" ng-change="updateDiscStatus($index, discussion.status)"/>
+                  <label>ביקורת</label> <input type="radio" ng-model="discussion.restriction" name="{{'disc_status' + $index}}" value="instructor" ng-change="updateDiscStatus($index, discussion.status)"/>
+                  <label>פעיל</label> <input type="radio" ng-model="discussion.restriction" name="{{'disc_status' + $index}}" value="student" ng-change="updateDiscStatus($index, discussion.status)"/>
+                </fieldset>
 
+                <!-- <label class="radio inline"> 
+                  <input type="radio" name="sex" value="male" checked>
+                  <span> Male </span> 
+                <label>
+                <label class="radio inline"> 
+                    <input type="radio" name="sex" value="female">
+                    <span>Female </span> 
+                </label> -->
+              </td>
+            </tr>
+            
             <tr ng-show="discussion.edit">
               <td><input class="form-control" id="descEdit" type="text" ng-model="descEdit" ng-value="discussion.description" style="text-align: right;"></td>
               <td><input class="form-control" id="titleEdit" type="text" ng-model="titleEdit" ng-value="discussion.title" style="text-align: right;"></td>
@@ -76,6 +95,7 @@
                 </div>
               </td>
             </tr>
+
           </tbody>
         </table>
 

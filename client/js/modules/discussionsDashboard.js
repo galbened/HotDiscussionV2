@@ -2,19 +2,20 @@
   'use strict';
   angular
     .module('discussionsDashboardApp', ['btford.socket-io', 'socketio.factory'])
-    .controller('iscussionsDashboardCtrl', ['$scope','$http','$window','socketio', function($scope, $http, $window, socketio){
+    .controller('discussionsDashboardCtrl', ['$scope','$http','$window','socketio', function($scope, $http, $window, socketio){
       
-      var findDiscIdx = function(disc){
-        for (var i = 0; i < $scope.discussions.length; i++){
-          if ($scope.discussions[i]._id === disc._id){
-            return i;
-          }
-        }
-        return -1;
-      };
+      // var findDiscIdx = function(disc){
+      //   for (var i = 0; i < $scope.discussions.length; i++){
+      //     if ($scope.discussions[i]._id === disc._id){
+      //       return i;
+      //     }
+      //   }
+      //   return -1;
+      // };
 
       $scope.pressAdd = false;
       $scope.discussions = [];
+      $scope.userRole = "";
 /***
  *                     _   _   _                
  *                    | | | | (_)               
@@ -34,22 +35,17 @@
         $scope.discussions.push(newDiscussion);
       });
 
-      socket.on('delete-discussion', function(disc){
-        var idx = findDiscIdx(disc);
-        if (idx > 0)
-          $scope.discussions.splice(idx, 1);
-        else{
-          console.log('error in deleting a discussion');
-        }
-      });
+      // socket.on('delete-discussion', function(disc){
+      //   var idx = findDiscIdx(disc);
+      //   if (idx > 0)
+      //     $scope.discussions.splice(idx, 1);
+      //   else{
+      //     console.log('error in deleting a discussion');
+      //   }
+      // });
 
-      socket.on('edit-discussion', function(disc){
-        var idx = findDiscIdx(disc);
-        if (idx > 0)
-          $scope.discussions[idx] = disc;
-        else{
-          console.log('error in editing a discussion');
-        }
+      socket.on('edit-discussion', function(idx, editedDiscuusion){
+        $scope.discussions[idx] = editedDiscuusion;
       });
 /***
  *                      _             _                            _              
@@ -66,7 +62,10 @@
         method: 'GET',
         url: '/api/discussions'
       }).then(function(res){
-        $scope.discussions = res.data;
+        $scope.discussions = res.data.data;
+        // console.log($scope.discussions);
+        $scope.userRole = res.data.role;
+        // console.log($scope.userRole);
       }, function(err){
         console.log(err.statusText);
       });  

@@ -4,6 +4,7 @@ var Schema = mongoose.Schema;
 var argumentScheme = mongoose.Schema({
 	disc_id: {type:Schema.Types.ObjectId, ref: 'Discussion'},
 	parent_id: {type:Number, ref: 'Argument'},
+	main_thread_id: {type:Number, ref:'Argument'},
 	user_id: {type:Schema.Types.ObjectId, ref: 'User'},
 	username: String,
 	content: String,

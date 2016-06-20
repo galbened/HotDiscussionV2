@@ -33,7 +33,8 @@
             .push(node);
         } else {
           // parent is 0 or missing
-          nestedJson.push(node);
+          // nestedJson.push(node);
+          nestedJson.unshift(node);
         }
 
       });
@@ -46,9 +47,10 @@
       TreeService.getTree(discId).
       then(function (result) {
         // the flattened list of the tree, for the $watch of the scope
-        $scope.treeWithRef = result.data;
+
+        $scope.treeWithRef = result.data.slice(0,result.data.length-1);
         $scope.treeNested = fromReftoNestedJson($scope.treeWithRef);
-        $scope.lastPost.lastPost = true;
+        if ($scope.lastPost) $scope.lastPost.lastPost = true;
       }, function (err) {
           alert("Arguments not available, Error: " + err);
       });
@@ -101,13 +103,16 @@
  *                                              
  */
 
+    // var socket = socketio.arguments({discussion: discId});
     var socket = socketio.arguments();
+
     $(window).on('beforeunload', function(){
       socket.disconnect();
     });
 
     socket.on('submitted-new-argument', function(newArgument){
-      $scope.treeNested.push(newArgument); 
+      // $scope.treeNested.push(newArgument); 
+      $scope.treeNested.unshift(newArgument); 
       if ($scope.lastPost){
         $scope.lastPost.lastPost = false;
       }  
@@ -116,9 +121,16 @@
     });
 
     socket.on('submitted-new-reply', function(newReply){
-      var node = getNodeById($scope.treeNested, newReply.parent_id);
-      node.sub_arguments.push(newReply);
-      node.expanded = true;
+      var parentNode = getNodeById($scope.treeNested, newReply.parent_id);
+      var mainThread = getNodeById($scope.treeNested, newReply.main_thread_id);
+      // console.log(parentNode);
+      // console.log(mainThread);
+      var mainThreadInd = $scope.treeNested.indexOf(mainThread);
+      // console.log(mainThreadInd);
+      $scope.treeNested.splice(mainThreadInd, 1);
+      $scope.treeNested.unshift(mainThread);
+      parentNode.sub_arguments.push(newReply);
+      parentNode.expanded = true;
       if ($scope.lastPost){
         $scope.lastPost.lastPost = false;
       }
@@ -129,12 +141,14 @@
     $scope.$on('submitted-new-reply', function (e, args) {
       var node = args.node;
       var replyText = args.replyText;
-      TreeService.postNewArgument(discId, replyText, node._id, node.depth);
+      // console.log('bbb');
+      TreeService.postNewArgument(discId, replyText, node._id, node.depth+1, node.main_thread_id);
     });
 
     $scope.submitNewArgument = function(newArgument){
       if (newArgument){
-        TreeService.postNewArgument(discId, newArgument, 0);
+        // console.log('aaa');
+        TreeService.postNewArgument(discId, newArgument, 0, 0);
         $scope.newArgument = "";
       }
       

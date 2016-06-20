@@ -51,17 +51,20 @@
         <div class="col-md-2 text-right"><a href="/auth/logout">Log Out</a></div>
     </div>
 
-    <div ng-controller="iscussionsDashboardCtrl">
-        <table class="table table-hover table-condensed" border="1">
+    <div ng-controller="discussionsDashboardCtrl">
+
+        <table class="table table-hover table-condensed">
+            
             <thead>
               <tr id="headRow">                                     
                 <th>תיאור</th>
                 <th>כותרת</th>
-                <th>#</th>
+                <th style="width:10%">#</th>
               </tr>
             </thead>
-            <tbody>
-              <tr ng-repeat="discussion in discussions" dir="rtl">
+            
+            <tbody ng-repeat="discussion in discussions">
+              <tr ng-if="discussion.restriction === userRole">
               <!-- TODO: 1-way binding for performance stuff.. -->
                 <td>{{discussion.description}}</td>
                 <td>{{discussion.title}}</td>

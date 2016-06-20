@@ -26,7 +26,8 @@ module.exports = function(app, express, passport){
   app.use(session({
     secret: 'hsfjvhwuejhksjoviskjdheu',
     saveUninitialized: true,
-    resave: true
+    resave: true,
+    cookie: {maxAge: 3600000} //one hour
   }));
   app.use(passport.initialize()); 
   app.use(passport.session());// uses the same session from express

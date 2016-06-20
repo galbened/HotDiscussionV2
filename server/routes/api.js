@@ -19,24 +19,55 @@ module.exports = function(autoIncrement, io){
    *                                                       
    *                                                       
    */
-  //get all the discussions
+
+  //get all the discussions by the role
+  //TODO: show the discussions that the requesting user is registred to only.
+  //    this may be unnecassary for the future, and just get the arguments of the relevant discussion for
+  //    non-admin user.
   router.get('/discussions', function(req, res, next) {
-    Discussion.find({isActive:true}, function(err, data){
-      res.json(data);
-    });
+    if (req.user.local.role === "admin"){
+        Discussion.find({}, function(err, data){
+          // console.log(data);
+        res.json(data);
+      });
+    }
+    else if (req.user.local.role === "student"){
+        Discussion.find({restriction: "student"}, function(err, data){
+          // console.log(data);
+          resObj = {
+            data : data,
+            role : req.user.local.role
+          };
+          res.json(resObj);
+      });
+    }
+    else{
+        Discussion.find({restriction: "instructor"}, function(err, data){
+          resObj = {
+            data : data,
+            role : req.user.local.role
+          };
+          res.json(resObj);
+      });
+    }
+    
   });
 
   //post a new discussion
   router.post('/discussions', function(req, res){
+    // console.log('debugMesg: discussion post');
     var discussion = new Discussion();
     discussion.title = req.body.title;
     discussion.description = req.body.description;
-    discussion.isActive = req.body.isActive;
+    discussion.restriction = req.body.restriction;
+
     discussion.save(function(err, data){
       if (err)
         throw err;
-      discussionNsp.emit('new-discussion', data);
+      res.json(data);
     });
+
+    // console.log('OUT...');
 
   });
 
@@ -47,18 +78,14 @@ module.exports = function(autoIncrement, io){
     });
   });
 
-  //delete a specific discussion
+  //TODO: change it to "put" type and update the DB with the new status of the discussion.
   router.delete('/discussions/:id', function(req, res, next){
     /*
-     * I think that discussions should not be totaly 'removed' from database, 
-     * but rather be assigned as not-active by appropriate field in the document
-          Discussion.remove({_id: req.params.id}, function(err, data){
-            res.json({result: err ? 'error' : 'ok'});
-          });
+     * the discussion gets a new status 
       */
     var id = req.params.id;
     Discussion.findByIdAndUpdate(id, {$set: {isActive: false}}, function(err, disc){
-      discussionNsp.emit('delete-discussion', disc);
+      res.json(disc);
     });
   });
 
@@ -73,7 +100,19 @@ module.exports = function(autoIncrement, io){
           message: 'Discussion with id ' + id + ' can not be found.'
         });
       }
-      discussionNsp.emit('edit-discussion', disc);
+      res.json(disc);
+    });
+  });
+
+  discussionNsp.on('connection', function(socket){
+    socket.on('new-discussion', function(newDiscussion){
+      discussionNsp.emit('new-discussion', newDiscussion);
+    });
+    // socket.on('delete-discussion', function(deletedDiscussion){
+    //   discussionNsp.emit('delete-discussion', deletedDiscussion);
+    // });
+    socket.on('edit-discussion', function(idx, editedDiscuusion){
+      discussionNsp.emit('edit-discussion', idx, editedDiscuusion);
     });
   });
 
@@ -88,6 +127,25 @@ module.exports = function(autoIncrement, io){
    *                 __/ |                                   
    *                |___/                                    
    */
+
+  // var allClients = [];
+  argumentsNsp.on('connection', function(socket){
+    // var discussionId = socket.handshake.query.discussion;
+    // var discussion;
+    // Discussion.findOne({_id: discussionId}, function(err, data){
+      // discussion = data.title;
+    // socket.join(discussionId);
+    console.log('a user joined discussion');
+    // });
+    
+    
+    
+    socket.on('disconnect', function(){
+      // socket.leave(discussionId);
+      console.log('user disconnected from discussion');
+    });
+  });
+
   router.get('/discussions/:id/:discussionName', function(req, res, next){
     var id = req.params.id;
     Argument.find({disc_id: id}, function(err, discArguments){
@@ -99,6 +157,10 @@ module.exports = function(autoIncrement, io){
           message: 'Discussion with id ' + id + ' can not be found.'
         });
       }
+      discArguments[discArguments.length] = {username: req.user.local.username,
+                                             fistname: req.user.local.firstname,
+                                             lastname: req.user.local.lastname};
+      // console.log(discArguments);
       res.json(discArguments);
     });
   });
@@ -110,6 +172,7 @@ module.exports = function(autoIncrement, io){
     // console.log(req.body);
     argument.disc_id = id;
     argument.parent_id = (req.body.parent_id ? req.body.parent_id : 0);
+    argument.main_thread_id = (req.body.main_thread_id ? req.body.main_thread_id : 0);
     argument.user_id = req.user._id;
     argument.username = req.user.local.username;
     argument.content = req.body.content;
@@ -117,11 +180,11 @@ module.exports = function(autoIncrement, io){
     argument.sub_arguments = [];
 
     //TODO: add the incoming reply to the array of sub_arguments of the parent
-
     argument.save(function(err, data){
       if (err)
         throw err;
       // res.json(data);
+      // console.log('ddd');
       if (argument.depth === 0){
         argumentsNsp.emit('submitted-new-argument', data);
       }
