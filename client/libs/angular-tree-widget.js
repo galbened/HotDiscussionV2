@@ -34,11 +34,9 @@
       var nodeController = function($scope){
         var vm = this;
 
-        vm.submitNewReply = function(node, replyText){
+        vm.submitNewReply = function(node){
           if (vm.replyText){
-            // console.log('ccc');
             $scope.$emit('submitted-new-reply', {node: node, replyText: vm.replyText});
-            // socket.$emit('submitted-new-reply', {node: node, replyText: vm.replyText});
             node.replyPressed = false;
             node.expanded = true;
           }
@@ -46,7 +44,7 @@
 
         vm.newReplyPressed = function(node){
           vm.replyText = "";
-          node.replyPressed = true;
+          node.replyPressed = !node.replyPressed;
         };
 
         vm.cancelReply = function(node){
@@ -68,11 +66,10 @@
         compile: function (element) {
           // from the recursion sevice...
           return RecursionHelper.compile(element, function (scope, iElement, iAttrs, controller, transcludeFn) {
-            /* Expand/Collapse node */
+            /* Expand/Collapse node. Now this functionality is not used... */ 
             scope.toggleNode = function (node) {
               if (node.sub_arguments !== undefined) {
                 node.expanded = !node.expanded;
-                // scope.$emit('expanded-state-changed', node);
               }
             };
           });

@@ -3,88 +3,30 @@
   width: 100%;
 }
 
-.tip {
-  width: 0px;
-  height: 0px;
-  position: absolute;
-  background: transparent;
-  border: 10px solid #ccc;
+#tblWrapper {
+    width: 100%;
+    margin: 0 auto;
+    /*border-style: groove;*/
+    /*border-width: 1px;*/
 }
 
-.tip-up {
-  top: -25px; /* Same as body margin top + border */
-  left: 450px;
-  border-right-color: transparent;
-  border-left-color: transparent;
-  border-top-color: transparent;
+.tblRow {
+    padding-bottom: 20px;
+    /*border-style: groove;*/
+    /*border-width: 1px;*/
+    padding-right:10px;
+    /* float:right; */
 }
 
-.tip-down {
-  bottom: -25px;
-  left: 10px;
-  border-right-color: transparent;
-  border-left-color: transparent;
-  border-bottom-color: transparent;  
+.tblCell {
+    width: 80%;
+    float: right;
+    text-align: right;
+    /*border-style: ridge;*/
+    /*border-width: 1px;*/
+    /*background:;*/
 }
 
-.tip-left {
-  top: 10px;
-  left: -25px;
-  border-top-color: transparent;
-  border-left-color: transparent;
-  border-bottom-color: transparent;  
+.clear {
+    clear: both;
 }
-
-.tip-right {
-  top: 10px;
-  right: -25px;
-  border-top-color: transparent;
-  border-right-color: transparent;
-  border-bottom-color: transparent;  
-}
-
-.dialogbox .body {
-  position: relative;
-  max-width: 500px;
-  height: auto;
-  margin: 15px 5px 0px;
-  padding: 5px;
-  background-color: #E1D6D6;
-  border-radius: 3px;
-  border: 5px solid #ccc;
-}
-
-.body .message {
-  min-height: 30px;
-  border-radius: 3px;
-  font-family: Arial;
-  font-size: 12px;
-  line-height: 1;
-  color: #150202;
-}
-
-li{
-  list-style: none;
-}
-
-hr.newArgSection {
-  height: 10px;
-  margin-bottom: 0px;
-  border: 0;
-  box-shadow: 0 10px 10px -10px #8c8c8c inset;
-  position:relative;
-}
-
-
-
-
-// .header right {
-// padding-top: 8px;
-// float: right;
-// text-align: right;
-// }
-// .header right ul
-// {
-// margin:0;
-// padding:0;
-// }

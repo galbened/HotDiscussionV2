@@ -125,20 +125,5 @@
         });
       };
 
-
-      // $scope.delete = function(idx){
-      //   // $scope.discussions.splice(idx, 1);
-      //   $http({
-      //     method: 'DELETE',
-      //     url: '/api/discussions/' + $scope.discussions[idx]._id,
-      //   })
-      //   .success(function(disc){
-      //     $scope.discussions.splice(idx, 1);
-      //   })
-      //   .error(function(err, status){
-      //     console.log(err.statusText);
-      //   });
-      // };
-
     }]);
 })();

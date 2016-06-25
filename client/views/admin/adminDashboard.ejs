@@ -7,9 +7,8 @@
     <title>Hot Discussions Platform</title>
     
     <!-- /////////////////  JavaScript  ///////////////// -->
-    <!-- BOWER [JQuery, Bootstrap, Angular, Socketio, Angular-Socketio] -->
+    <!-- BOWER [JQuery, Angular, Socketio, Angular-Socketio] -->
     <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
-    <script type="text/javascript" src="/libs/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="/libs/angular/angular.js"></script>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/libs/angular-socket-io/socket.js"></script>
@@ -69,15 +68,6 @@
                   <label>ביקורת</label> <input type="radio" ng-model="discussion.restriction" name="{{'disc_status' + $index}}" value="instructor" ng-change="updateDiscStatus($index, discussion.status)"/>
                   <label>פעיל</label> <input type="radio" ng-model="discussion.restriction" name="{{'disc_status' + $index}}" value="student" ng-change="updateDiscStatus($index, discussion.status)"/>
                 </fieldset>
-
-                <!-- <label class="radio inline"> 
-                  <input type="radio" name="sex" value="male" checked>
-                  <span> Male </span> 
-                <label>
-                <label class="radio inline"> 
-                    <input type="radio" name="sex" value="female">
-                    <span>Female </span> 
-                </label> -->
               </td>
             </tr>
             
@@ -89,7 +79,7 @@
 
             <tr ng-show="discussion.edit">
               <td colspan="3">
-                <div style="width:all;">
+                <div style="width:100%;">
                   <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 30px" ng-click="finishEdit($index, descEdit, titleEdit)">Finish</button>
                   <button type="button" class="btn btn-default btn-sm" ng-click="cancelEdit(discussion)">Cancel</button>
                 </div>
@@ -117,7 +107,7 @@
 
             <tr>
               <td colspan="3">
-                <div style="width:all;">
+                <div style="width:100%;">
                   <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 30px" ng-click="finishAdding(newDesc, newTitle)">Finish</button>
                   <button type="button" class="btn btn-default btn-sm" ng-click="cancelAdding()">Cancel</button>
                 </div>

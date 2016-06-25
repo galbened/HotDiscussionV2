@@ -5,135 +5,98 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hot Discussions Platform</title>
-    
+
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.css" crossorigin="anonymous">
-    <!-- JQuery -->
-    <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
-    <!-- Bootstrap js -->
-    <script type="text/javascript" src="/libs/bootstrap/js/bootstrap.js"></script>
-    <!-- Angular js -->
-    <script type="text/javascript" src="/libs/angular/angular.js"></script>
-    <script type="text/javascript" src="/libs/angular-animate/angular-animate.js"></script>
-
-    <!-- local helper libs -->
-    <script type="text/javascript" src="/libs/angular-recursion.js"></script>
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="/libs/angular-socket-io/socket.js"></script>
-    <script type="text/javascript" src="/libs/moment/moment.js"></script>
-
-    <!-- local custom app js -->
-    <script type="text/javascript" src="/js/modules/argumentsPlatform.js"></script>
-    <script type="text/javascript" src="/js/services/argumentsService.js"></script>
-    <script type="text/javascript" src="/js/configs/argumentsFactory.js"></script>
-    <script type="text/javascript" src="/libs/angular-tree-widget.js"></script>
-    <script type="text/javascript" src="/js/configs/socketsFactory.js"></script>
-
-    <!-- <script type="text/javascript" src="/libs/jquery/jquery-scrolltofixed-min.js"></script>     -->
-
     <!-- custom CSS -->
     <link href="/resources/stylesheets/main.css" rel="stylesheet">
     <link href="/resources/stylesheets/arguments.css" rel="stylesheet">
-    <link href="/resources/stylesheets/angular-tree-widget.css" rel="stylesheet">
-    
+
     <base href="/discussions/">
 </head>
 
 <body ng-app="argumentsApp">
 
-  <div class="container-fluid" ng-controller="ArgumentsTreeController">
-    <header class="text-center">
-        <h1>
-          <%= title %>
-        </h1>
-        <h3>
-          <%= description %>
-        </h3>
-    </header>
+    <div class="container-fluid" ng-controller="ArgumentsTreeController">
+        <header class="text-center">
+            <h1>
+                <%= title %>
+            </h1>
+            <h3>
+                <%= description %>
+            </h3>
+        </header>
 
-    <div class="row" id="form-title">
-      <div class="col-md-8 col-md-offset-2 text-center">
-          <h4>הנך מוזמן להשתתף בדיון עם חבריך. אנא שמור על תרבות דיון, תודה.</h4>
-      </div>
-    </div>
-    
-    <div id="scroller-anchor"></div> 
-    <div id="scroller">
-      <!-- new argument prompt -->
-      <div class="row">
-
-       <!--  <div class="col-md-3">
-         <h4 class="text-center">invited</h4 class="text-center">
+        <div class="row" id="form-title">
+            <div class="col-md-8 col-md-offset-2 text-center">
+                <h4>הנך מוזמן להשתתף בדיון עם חבריך. אנא שמור על תרבות דיון, תודה.</h4>
+            </div>
         </div>
 
-        <div class="col-md-3">
-         <h4 class="text-center">online</h4 class="text-center">
-        </div>
- -->
-        <div class="col-md-6"><h5><a href="/auth/login">Log Out</a></h5></div>
-      </div>
-      <div class="row dialogbox">
-  
-        <!-- TODO: add 2 small frames of invited users and online users -->
-        <!-- <div class="col-md-3 text-center">
-         <form class="form-inline">
-            <div class="form-group">
-              <div class="message">
-                <textarea class="form-control text-right" rows="5" readonly="readonly" style="width:200px" ng-model="invitedUsersBox"></textarea>
-              </div>
+        <div id="scroller-anchor"></div>
+        <div id="scroller">
+            <!-- new argument prompt -->
+            <div class="row">
+                <div class="text-right" style="padding-right: 20px"><h5><a href="/auth/login">Log Out</a></h5></div>
             </div>
-          </form>
-        </div> -->
-
-       <!--  <div class="col-md-3 text-center">
-         <form class="form-inline">
-            <div class="form-group">
-              <div class="message">
-                <textarea class="form-control text-right" rows="5" readonly="readonly" style="width:200px" ng-model="onlineUsersBox"></textarea>
-              </div>
-            </div>
-          </form>
-        </div> -->
-
-        <div class="col-md-offset-6 col-md-6 text-right body" style="width:425px; float:right">
-          <form class="form-inline">
-            <div class="form-group">
-              <div class="message">
-                <textarea class="form-control text-right" rows="4" placeholder="רשום כאן" style="width:400px" ng-model="newArgument"></textarea>
-                <div>
-                  <button type="submit" class="btn btn-primary" ng-click="submitNewArgument(newArgument)">הוסף טענה חדשה</button>
+            <div class="row dialogbox">
+                <!-- TODO: add 2 small frames of invited users and online users -->
+                <div class="col-md-offset-6 col-md-6 text-right body" style="width:425px; float:right">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <div class="message">
+                                <textarea class="form-control text-right" rows="4" placeholder="רשום כאן" style="width:400px" ng-model="newArgument"></textarea>
+                                <div>
+                                    <button type="submit" class="btn btn-primary" ng-click="submitNewArgument(newArgument)">הוסף טענה חדשה</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-              </div>
+
             </div>
-          </form>
+
+            <hr class="newArgSection">
+
         </div>
-        
-      </div>
 
-    <hr class="newArgSection">
+
+
+        <!-- existing arguments rendering -->
+
+        <!-- <div class="row" id="treeConversation"> -->
+        <div class="row" >
+            <tree nodes='treeNested'></tree>
+        </div>
+
+        <footer class="text-left">
+            <p>maintained by BGU</p>
+        </footer>
+
+        <!-- </div> -->
+
+
 
     </div>
 
-    
 
-    <!-- existing arguments rendering -->
 
-    <div class="row" id="treeConversation">
-      <div class="col-md-12 tree">
-          <tree nodes='treeNested'></tree>
-      </div>
-    </div>
-    
-    <footer class="text-left">
-      <p>maintained by BGU</p>
-    </footer>
-    
-      <!-- </div> -->
-
-    
-
-  </div>
-
+<!-- JQuery -->
+<script type="text/javascript" src="/libs/jquery/jquery.js"></script>
+<!-- Angular js -->
+<script type="text/javascript" src="/libs/angular/angular.js"></script>
+<script type="text/javascript" src="/libs/angular-animate/angular-animate.js"></script>
+<!-- local helper libs -->
+<script type="text/javascript" src="/libs/angular-recursion.js"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/libs/angular-socket-io/socket.js"></script>
+<script type="text/javascript" src="/libs/moment/moment.js"></script>
+<!-- local custom app js -->
+<script type="text/javascript" src="/js/modules/argumentsPlatform.js"></script>
+<script type="text/javascript" src="/js/services/argumentsService.js"></script>
+<script type="text/javascript" src="/js/configs/argumentsFactory.js"></script>
+<script type="text/javascript" src="/libs/angular-tree-widget.js"></script>
+<script type="text/javascript" src="/js/configs/socketsFactory.js"></script>
 </body>
 </html>
 
