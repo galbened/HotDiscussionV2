@@ -2,7 +2,7 @@
     angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory'], function($locationProvider){
         $locationProvider.html5Mode(true);
     })
-        .controller('ArgumentsTreeController', ['TreeService','$scope', '$location','socketio', function (TreeService, $scope, $location, socketio) {
+        .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio', function (TreeService, $scope, $window, $location, socketio) {
             var path = $location.path();
             var discId = path.split('/')[1];
             var socket = socketio.arguments({discussion: discId});
@@ -57,6 +57,9 @@
                     // console.log('*********************');
                     $scope.treeWithRef = result.discArguments.slice(0,result.discArguments.length-1);
                     $scope.treeNested = fromReftoNestedJson($scope.treeWithRef);
+                    $scope.discussionTitle = result.discussion.title;
+                    $scope.discussionDescription = result.discussion.description;
+                    $scope.role = result.user.role;
                     if ($scope.lastPost) $scope.lastPost.lastPost = true;
                 });
             }
@@ -132,21 +135,27 @@
                 $scope.lastPost = newReply;
             });
 
+            socket.on('edit-discussion', function(edittedDiscussion){
+                if (edittedDiscussion.restriction === $scope.role || $scope.role === 'admin'){
+                    $scope.discussionTitle = edittedDiscussion.title;
+                    $scope.discussionDescription = edittedDiscussion.description;
+                }
+                else{
+                    $window.location.href = '/auth/logout';
+                }
+            });
+
             /************************
              ************************************************/
 
             $scope.$on('submitted-new-reply', function (e, args) {
-                // console.log('will try to send server emit for new reply..');
                 var node = args.node;
                 var replyText = args.replyText;
-                // console.log('bbb');
                 TreeService.postNewArgument(socket, replyText, node._id, node.depth+1, node.main_thread_id);
             });
 
             $scope.submitNewArgument = function(newArgumentText){
-                // console.log('trying to submit new arg..');
                 if (newArgumentText){
-                    // console.log('aaa');
                     TreeService.postNewArgument(socket, newArgumentText, 0, 0);
                     $scope.newArgument = "";
                 }

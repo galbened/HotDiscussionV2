@@ -105,15 +105,24 @@ module.exports = function(autoIncrement, io){
     });
 
     discussionNsp.on('connection', function(socket){
-        socket.on('new-discussion', function(newDiscussion){
-            discussionNsp.emit('new-discussion', newDiscussion);
-        });
-        // socket.on('delete-discussion', function(deletedDiscussion){
-        //   discussionNsp.emit('delete-discussion', deletedDiscussion);
-        // });
-        socket.on('edit-discussion', function(idx, editedDiscuusion){
-            discussionNsp.emit('edit-discussion', idx, editedDiscuusion);
-        });
+
+        if (socket.request.session.passport) {
+
+            var user = socket.request.session.passport.user;
+
+            socket.on('new-discussion', function (newDiscussion) {
+                discussionNsp.emit('new-discussion', newDiscussion);
+            });
+            // socket.on('delete-discussion', function(deletedDiscussion){
+            //   discussionNsp.emit('delete-discussion', deletedDiscussion);
+            // });
+            socket.on('edit-discussion', function (editedDiscuusion) {
+                console.log('about to emit for edit discussion to everyone');
+                console.log(editedDiscuusion._id);
+                discussionNsp.emit('edit-discussion');
+                argumentsNsp.to(editedDiscuusion._id).emit('edit-discussion', editedDiscuusion);
+            });
+        }
     });
 
 
@@ -137,21 +146,34 @@ module.exports = function(autoIncrement, io){
             var user = socket.request.session.passport.user;
             socket.join(discussionId);
 
+            /**
+             * EVENT1
+             */
             socket.on('get-all-arguments', function(){
                 // console.log('getting all the arguments from server..');
-                Argument.find({disc_id: discussionId}, function(err, discArguments){
+                Discussion.findOne({_id: discussionId}, function(err, discussion){
                     if (err){
-                        return next(err);
+                        throw err;
                     }
-                    if(!discArguments){
-                        console.log('ERROR retrieving the arguments..')
-                    }
-                    else {
-                        argumentsNsp.to(discussionId).emit('init-discussion', {discArguments: discArguments, user:user});
+                    else{
+                        Argument.find({disc_id: discussionId}, function(err, discArguments){
+                            if (err){
+                                throw err;
+                            }
+                            if(!discArguments){
+                                console.log('ERROR retrieving the arguments..')
+                            }
+                            else {
+                                argumentsNsp.to(discussionId).emit('init-discussion', {discArguments: discArguments, user:user, discussion: discussion});
+                            }
+                        });
                     }
                 });
             });
 
+            /**
+             * EVENT2
+             */
             socket.on('submitted-new-argument', function (newArgument) {
                 // console.log('got new argument from client..: ', newArgument);
                 var argument = new Argument();
@@ -175,6 +197,9 @@ module.exports = function(autoIncrement, io){
                 });
             });
 
+            /**
+             * EVENT3
+             */
             socket.on('disconnect', function () {
                 socket.leave(discussionId);
                 console.log('user disconnected from discussion');

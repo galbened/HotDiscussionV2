@@ -9,14 +9,14 @@
                 <!--<div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; ">-->
 
                <span style="word-wrap: break-word; vertical-align: top;" ng-style="node.depth===0 && {'font-weight':'bold'}">
-                   &#8226&nbsp;{{node.content}}
+                   &#8226&nbsp;{{::node.content}}
                </span>
 
 
             </div>
 
             <div class="tblCell" style="width:10%; text-align:left">
-                {{node.fname}} {{node.lname}}
+                {{::node.fname}} {{::node.lname}}
             </div>
 
             <div class="tblCell" style="width:10%; text-align:left">

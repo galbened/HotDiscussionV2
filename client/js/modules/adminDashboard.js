@@ -100,7 +100,7 @@
           data: edittedDisc
         }).then(function(res){
           $scope.discussions[idx] = res.data;
-          socket.emit('edit-discussion', idx, edittedDisc);
+          socket.emit('edit-discussion', res.data);
         },function error(res){
           console.log(res.statusText);
         });
@@ -119,7 +119,7 @@
           data: edittedDisc
         }).then(function(res){
           $scope.discussions[idx] = res.data;
-          socket.emit('edit-discussion', idx, edittedDisc);
+          socket.emit('edit-discussion', res.data);
         },function error(res){
           console.log(res.statusText);
         });
