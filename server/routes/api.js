@@ -128,80 +128,58 @@ module.exports = function(autoIncrement, io){
      *                |___/
      */
 
-    // var allClients = [];
     argumentsNsp.on('connection', function(socket){
         //TODO: support here the "online" users utility for the different discussions rooms
-        var discussionId = socket.handshake.query.discussion;
-        socket.join(discussionId);
 
-        console.log('a user joined discussion ----> ' + discussionId);
+        if (socket.request.session.passport) {
 
-        socket.on('submitted-new-argument', function(newArgument){
-            // argumentsNsp.to(discussionId).emit('submitted-new-argument', newArgument);
-            console.log('got new argument event! -- ' + newArgument);
-            socket.broadcast.to(discussionId).emit('submitted-new-argument', newArgument);
-        });
-        
+            var discussionId = socket.handshake.query.discussion;
+            var user = socket.request.session.passport.user;
+            socket.join(discussionId);
 
-        socket.on('submitted-new-reply', function(newReply){
-            // argumentsNsp.to(discussionId).emit('submitted-new-reply', newReply);
-            console.log('got new REPLY event! -- ' + newReply);
-            socket.broadcast.to(discussionId).emit('submitted-new-reply', newReply);
-        });
-
-        socket.on('disconnect', function(){
-            // socket.leave(discussionId);
-            console.log('user disconnected from discussion');
-        });
-    });
-
-    router.get('/discussions/:id/:discussionName', function(req, res, next){
-        var id = req.params.id;
-        Argument.find({disc_id: id}, function(err, discArguments){
-            if (err){
-                return next(err);
-            }
-            if(!discArguments){
-                return res.status(404).json({
-                    message: 'Discussion with id ' + id + ' can not be found.'
+            socket.on('get-all-arguments', function(){
+                // console.log('getting all the arguments from server..');
+                Argument.find({disc_id: discussionId}, function(err, discArguments){
+                    if (err){
+                        return next(err);
+                    }
+                    if(!discArguments){
+                        console.log('ERROR retrieving the arguments..')
+                    }
+                    else {
+                        argumentsNsp.to(discussionId).emit('init-discussion', {discArguments: discArguments, user:user});
+                    }
                 });
-            }
-            discArguments[discArguments.length] = {username: req.user.local.username,
-                fistname: req.user.local.firstname,
-                lastname: req.user.local.lastname};
-            // console.log(discArguments);
-            res.json(discArguments);
-        });
-    });
+            });
 
-    router.post('/discussions/:id/:discussionName', function(req, res, next){
-        var id = req.params.id;
-        var argument = new Argument();
+            socket.on('submitted-new-argument', function (newArgument) {
+                // console.log('got new argument from client..: ', newArgument);
+                var argument = new Argument();
+                argument.disc_id = discussionId;
+                argument.parent_id = (newArgument.parent_id ? newArgument.parent_id : 0);
+                argument.main_thread_id = (newArgument.main_thread_id ? newArgument.main_thread_id : 0);
+                argument.user_id = user.id;
+                argument.username = user.username;
+                argument.fname = user.fname;
+                argument.lname = user.lname;
+                argument.content = newArgument.content;
+                argument.depth = (newArgument.depth ? newArgument.depth : 0);
+                argument.sub_arguments = [];
+                //TODO: add the incoming reply to the array of sub_arguments of the parent, now it is empty and not handled at all...
+                argument.save(function(err, data){
+                    if (err)
+                        throw err;
+                    // console.log('emiting back to the client the new argument: ', data);
+                    if (argument.depth===0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
+                    else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
+                });
+            });
 
-        // console.log(req.body);
-        argument.disc_id = id;
-        argument.parent_id = (req.body.parent_id ? req.body.parent_id : 0);
-        argument.main_thread_id = (req.body.main_thread_id ? req.body.main_thread_id : 0);
-        argument.user_id = req.user._id;
-        argument.username = req.user.local.username;
-        argument.content = req.body.content;
-        argument.depth = (req.body.depth ? req.body.depth : 0);
-        argument.sub_arguments = [];
-
-        //TODO: add the incoming reply to the array of sub_arguments of the parent
-        argument.save(function(err, data){
-            if (err)
-                throw err;
-            console.log('saved!! the ' + data);
-            res.json(data);
-            // console.log('ddd');
-            // if (argument.depth === 0){
-            //     argumentsNsp.emit('submitted-new-argument', data);
-            // }
-            // else{
-            //     argumentsNsp.emit('submitted-new-reply', data);
-            // }
-        });
+            socket.on('disconnect', function () {
+                socket.leave(discussionId);
+                console.log('user disconnected from discussion');
+            });
+        }
     });
 
     return router;

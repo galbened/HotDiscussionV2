@@ -5,11 +5,11 @@ var User = require('../models/user');
 module.exports = function(passport){
 
 	passport.serializeUser(function(user, done){
-		done(null, user);
+		done(null, {id: user._id, username: user.local.username, fname: user.local.firstname, lname: user.local.lastname, role:user.local.role});
 	});
 
-	passport.deserializeUser(function(user, done){
-		User.findById(user._id, function(err, user){
+	passport.deserializeUser(function(userContext, done){
+		User.findById(userContext.id, function(err, user){
 			done(err, user);
 		});
 	});

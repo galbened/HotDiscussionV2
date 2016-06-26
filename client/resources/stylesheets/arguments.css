@@ -30,3 +30,8 @@
 .clear {
     clear: both;
 }
+
+hr.newArgSection {
+    background-color: #fff;
+    border-top: 2px dashed #8c8b8b;
+}

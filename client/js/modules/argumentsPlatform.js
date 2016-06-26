@@ -5,6 +5,7 @@
         .controller('ArgumentsTreeController', ['TreeService','$scope', '$location','socketio', function (TreeService, $scope, $location, socketio) {
             var path = $location.path();
             var discId = path.split('/')[1];
+            var socket = socketio.arguments({discussion: discId});
 
             function fromReftoNestedJson(refJson){
                 var refJsonMap = refJson.reduce(function(map, node) {
@@ -44,15 +45,19 @@
 
             //on page load...
             function init() {
-                TreeService.getTree(discId).
-                then(function (result) {
-                    // the flattened list of the tree, for the $watch of the scope
-
-                    $scope.treeWithRef = result.data.slice(0,result.data.length-1);
+                // console.log('init...');
+                socket.on('connect', function(){
+                    // console.log('conncected to Socket IO server..');
+                    // console.log('emmiting to get all the arguments into page..');
+                    socket.emit('get-all-arguments');
+                });
+                socket.on('init-discussion', function(result){
+                    // console.log('*********************');
+                    // console.log(result);
+                    // console.log('*********************');
+                    $scope.treeWithRef = result.discArguments.slice(0,result.discArguments.length-1);
                     $scope.treeNested = fromReftoNestedJson($scope.treeWithRef);
                     if ($scope.lastPost) $scope.lastPost.lastPost = true;
-                }, function (err) {
-                    alert("Arguments not available, Error: " + err);
                 });
             }
 
@@ -73,33 +78,33 @@
 
             init();
 
-            //function for sticking the "new argument" box at the top of the screen when scrolling the page
-            // setTimeout(function doIt(){
-            //   $(window).on("scroll", function(e){
-            //     var screenTop = $(window).scrollTop();
-            //     var anchorTop = $("#scroller-anchor").offset().top;
-            //     var newArgumentTop=$("#scroller");
-            //     var treeConversation = $("#treeConversation");
-            //     if (screenTop>anchorTop) {
-            //       newArgumentTop.css({position:"fixed",top:"0px", "z-index":999});
-            //       treeConversation.css({"margin-top":"200px"});
-            //     } else {
-            //       newArgumentTop.css({position:"relative"});
-            //       treeConversation.css({"margin-top":"0px"});
-            //     }
-            //   });
-            //
-            // }, 0);
-            
-            var socket = socketio.arguments({discussion: discId});
+            // function for sticking the "new argument" box at the top of the screen when scrolling the page
+            setTimeout(function doIt(){
+              $(window).on("scroll", function(e){
+                var screenTop = $(window).scrollTop();
+                var anchorTop = $("#scroller-anchor").offset().top;
+                var newArgumentTop=$("#scroller");
+                var treeConversation = $("#treeConversation");
+                if (screenTop>anchorTop) {
+                  newArgumentTop.css({position:"fixed",top:"0px", "z-index":999});
+                  treeConversation.css({"margin-top":"125px"});
+                } else {
+                  newArgumentTop.css({position:"relative"});
+                  treeConversation.css({"margin-top":"0px"});
+                }
+              });
+
+            }, 0);
+
             // var socket = socketio.arguments();
 
             $(window).on('beforeunload', function(){
                 socket.disconnect();
             });
 
-            socket.on('submitted-new-argument', function(newArgument){
-                // $scope.treeNested.push(newArgument);
+            socket.on('submitted-new-argument', function(data){
+                // console.log('got new argument from server: ' + data);
+                var newArgument = data.data;
                 $scope.treeNested.unshift(newArgument);
                 if ($scope.lastPost){
                     $scope.lastPost.lastPost = false;
@@ -108,7 +113,8 @@
                 $scope.lastPost = newArgument;
             });
 
-            socket.on('submitted-new-reply', function(newReply){
+            socket.on('submitted-new-reply', function(data){
+                var newReply = data.data;
                 var parentNode = getNodeById($scope.treeNested, newReply.parent_id);
                 var mainThread = getNodeById($scope.treeNested, newReply.main_thread_id);
                 // console.log(parentNode);
@@ -130,57 +136,19 @@
              ************************************************/
 
             $scope.$on('submitted-new-reply', function (e, args) {
+                // console.log('will try to send server emit for new reply..');
                 var node = args.node;
                 var replyText = args.replyText;
                 // console.log('bbb');
-                TreeService.postNewArgument(discId, replyText, node._id, node.depth+1, node.main_thread_id)
-                    .success(function(newReply){
-                        console.log('new reply!! ====> ' + newReply);
-                        var parentNode = getNodeById($scope.treeNested, newReply.parent_id);
-                        var mainThread = getNodeById($scope.treeNested, newReply.main_thread_id);
-                        // console.log(parentNode);
-                        // console.log(mainThread);
-                        var mainThreadInd = $scope.treeNested.indexOf(mainThread);
-                        // console.log(mainThreadInd);
-                        $scope.treeNested.splice(mainThreadInd, 1);
-                        $scope.treeNested.unshift(mainThread);
-                        parentNode.sub_arguments.push(newReply);
-                        parentNode.expanded = true;
-                        if ($scope.lastPost){
-                            $scope.lastPost.lastPost = false;
-                        }
-                        newReply.lastPost = true;
-                        $scope.lastPost = newReply;
-                        console.log('emiting new REPLY :: ' + newReply);
-                        socket.emit('submitted-new-reply', newReply);
-                    })
-                    .error(function(err, status){
-                        console.log(err.statusText);
-                    });
+                TreeService.postNewArgument(socket, replyText, node._id, node.depth+1, node.main_thread_id);
             });
 
             $scope.submitNewArgument = function(newArgumentText){
-                console.log('trying to submit new arg..');
+                // console.log('trying to submit new arg..');
                 if (newArgumentText){
-                    console.log('sending the new arg AJAX..');
                     // console.log('aaa');
-                    TreeService.postNewArgument(discId, newArgumentText, 0, 0)
-                        .success(function(newArgument){
-                            console.log('new argument!! ====> ' + newArgument);
-                            $scope.treeNested.unshift(newArgument);
-                            if ($scope.lastPost){
-                                $scope.lastPost.lastPost = false;
-                            }
-                            newArgument.lastPost = true;
-                            $scope.lastPost = newArgument;
-                            console.log('emiting new argument :: ' + newArgument);
-                            socket.emit('submitted-new-argument', newArgument);
-                        })
-                        .error(function(err, status){
-                            console.log(err.statusText);
-                        });
+                    TreeService.postNewArgument(socket, newArgumentText, 0, 0);
                     $scope.newArgument = "";
-
                 }
             };
 

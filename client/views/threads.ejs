@@ -33,31 +33,30 @@
             </div>
         </div>
 
-        <div id="scroller-anchor"></div>
-        <div id="scroller">
-            <!-- new argument prompt -->
-            <div class="row">
-                <div class="text-right" style="padding-right: 20px"><h5><a href="/auth/login">Log Out</a></h5></div>
-            </div>
-            <div class="row dialogbox">
-                <!-- TODO: add 2 small frames of invited users and online users -->
-                <div class="col-md-offset-6 col-md-6 text-right body" style="width:425px; float:right">
-                    <form class="form-inline">
-                        <div class="form-group">
-                            <div class="message">
-                                <textarea class="form-control text-right" rows="4" placeholder="רשום כאן" style="width:400px" ng-model="newArgument"></textarea>
-                                <div>
-                                    <button type="submit" class="btn btn-primary" ng-click="submitNewArgument(newArgument)">הוסף טענה חדשה</button>
-                                </div>
+        <div id="scroller-anchor" ></div>
+        <div class="row">
+            <div id="scroller">
+                <!-- new argument prompt -->
+                <div class="row">
+                    <div class="text-right col-lg-offset-10 col-lg-1" style="padding-right: 20px"><h5><a href="/auth/login">Log Out</a></h5></div>
+                    <div class="col-lg-1" style="padding-right: 20px"> <button type="submit" class="btn btn-primary" ng-click="submitNewArgument(newArgument)">פרסום רעיון חדש</button>  </div>
+                </div>
+                <div class="row" >
+                    <!-- TODO: add 2 small frames of invited users and online users -->
+                    <div class="col-md-offset-6 col-md-6 text-right body" style="width:425px; float:right">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <textarea class="form-control text-right" rows="3" placeholder="רשום כאן" style="width:900px" ng-model="newArgument"></textarea>
+
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
+
                 </div>
 
+                <hr class="newArgSection" style="margin-bottom: 0">
+
             </div>
-
-            <hr class="newArgSection">
-
         </div>
 
 
@@ -65,7 +64,7 @@
         <!-- existing arguments rendering -->
 
         <!-- <div class="row" id="treeConversation"> -->
-        <div class="row" >
+        <div class="row" id="treeConversation">
             <tree nodes='treeNested'></tree>
         </div>
 
