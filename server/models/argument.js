@@ -7,6 +7,7 @@ var argumentScheme = mongoose.Schema({
 	main_thread_id: {type:Number, ref:'Argument'},
 	user_id: {type:Schema.Types.ObjectId, ref: 'User'},
 	username: String,
+	role: String,
 	fname: String,
 	lname: String,
 	content: String,

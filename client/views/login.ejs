@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="rtl">
+<html dir="rtl" xmlns="http://www.w3.org/1999/html">
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,20 +10,19 @@
     <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.css" crossorigin="anonymous">
     <!-- JQuery -->
     <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
-    <!-- Bootstrap js -->
-    <script type="text/javascript" src="/libs/bootstrap/js/bootstrap.js"></script>
     <!-- Angular js -->
-    <!--<script type="text/javascript" src="/libs/angular/angular.js"></script>
-    <script type="text/javascript" src="/libs/angular-route/angular-route.js"></script>-->
+    <script type="text/javascript" src="/libs/angular/angular.js"></script>
+    <script type="text/javascript" src="/js/modules/userLoginApp.js"></script>
+    <!--<script type="text/javascript" src="/libs/angular-route/angular-route.js"></script>-->
 
     <!-- local custom -->
     <!--<script type="text/javascript" src="/app/app.js"></script>-->
     <link href="/resources/stylesheets/main.css" rel="stylesheet">
 </head>
 
-<body>
-    <div class="container">
-        <header class="text-center">
+<body ng-app="userLiginApp">
+    <div class="container" ng-controller="userLoginFormCtrl">
+        <header class="text-center" >
             <h1>ברוכים הבאים ל "Hot Discussions Platform"</h1>
             <p><h4>דיון נעים :)</h4></p>
         </header>
@@ -31,29 +30,29 @@
         <div class="row" id="form-title">
 		    <div class="col-md-2"></div>
 		    <div class="col-md-8 text-center">
-		        <p><h4>עליך להכנס למערכת בטרם תוכל להמשיך לדיון או <a href="/auth/register"><u>להרשם</u></a> במידה ולא ביצעת זאת בעבר.</h4></p>
+		        <p><h4>עליך להכנס למערכת בטרם תוכל להמשיך לדיון או <a href="/auth/register" class="btn btn-info btn-sm"><strong>להרשם</strong></a> במידה ולא ביצעת זאת בעבר.</h4></p>
 		        <!-- TODO: add "forgot password" functionality --> 
 				<p><h4>במידה ושכחת את ססמתך, אנא פנה למרצה. אין להרשם פעמיים למערכת!</h4></p>
 		    </div>
 		    <div class="col-md-2"></div>
 		</div>
 
-		<% if (message.length > 0) { %>
-			<div class="row bg-danger text-center" id="register-error">
-			    <div class="col-md-2"></div>
-			    <div class="col-md-8 text-center">
-			        <h4><%= message %></h4>
-			    </div>
-			    <div class="col-md-2"></div>
-			</div>
-		<% } %>
 
-		<form class="form-horizontal" name="registerForm" action="/auth/login" method="post" dir="ltr">
+        <div class="row bg-danger text-center" id="register-error" ng-if='dangerMessage!==""'>
+            <div class="col-md-2"></div>
+            <div class="col-md-8 text-center">
+                <h4>{{dangerMessage}}</h4>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+
+		<!--<form class="form-horizontal" name="registerForm" action="/auth/login" method="post" dir="ltr">-->
+        <form class="form-horizontal" name="registerForm" dir="ltr">
 		    <div class="form-group">
 		        <div class="col-md-2"></div>
 		        <label for="usernameInput" class="col-md-3 control-label">username:</label>
 		        <div class="col-md-3">
-		            <input type="text" class="form-control" id="usernameInput" placeholder="Username" name="username" required></input>
+		            <input type="text" class="form-control" id="usernameInput" placeholder="Username" name="username" ng-model="username" required/>
 		        </div>
 		        <div class="col-md-4"></div>
 		    </div>
@@ -62,16 +61,19 @@
 		        <div class="col-md-2"></div>
 		        <label for="passwordInput" class="col-md-3 control-label">password:</label>
 		        <div class="col-md-3">
-		            <input type="password" class="form-control" id="passwordInput" placeholder="Password" name="password" required></input>
+		            <input type="password" class="form-control" id="passwordInput" placeholder="Password" name="password" ng-model="password" required/>
 		        </div>
 		        <div class="col-md-4"></div>
 		    </div>
 
-		    <div class="form-group">
-		        <div class="col-sm-offset-4 col-sm-4">
-		            <button type="submit" class="btn btn-primary">Log in</button>
-		        </div>
-		    </div>
+			<div class="form-group">
+				<div class="col-sm-offset-5 col-sm-2">
+					<button type="submit" class="btn btn-primary" ng-click="instructorLogin()"><span>Log-in<br><i class="glyphicon glyphicon-user"></i><small>instructor</small></span></button>
+				</div>
+				<div class="col-sm-2">
+					<button type="submit" class="btn btn-primary" ng-click="studentLogin()"><span>Log-in<br><i class="glyphicon glyphicon-user"></i><small>student</small></span></button>
+				</div>
+			</div>
 
 		</form>
 

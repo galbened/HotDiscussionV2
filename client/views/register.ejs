@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html dir="rtl">
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Hot Discussions Platform</title>
-	
-	<!-- Bootstrap core CSS -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hot Discussions Platform</title>
+
+    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.css" crossorigin="anonymous">
     <!-- JQuery -->
     <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
@@ -22,104 +22,104 @@
 </head>
 
 <body>
-    <div class="container">
-        <header class="text-center">
-            <h1>דף הרשמה ל"Hot Discussions Platform"</h1>
-        </header>
+<div class="container">
+    <header class="text-center">
+        <h1>דף הרשמה ל"Hot Discussions Platform"</h1>
+    </header>
 
-        <div class="row" id="form-title">
-		    <div class="col-md-2"></div>
-		    <div class="col-md-8 text-center">
-		        <h4>אנא הכנס את הנתונים בשדות הבאים:</h4>
-		    </div>
-		    <div class="col-md-2"></div>
-		</div>
-
-		<% if (message.length > 0) { %>
-			<div class="row bg-danger text-center" id="register-error">
-			    <div class="col-md-2"></div>
-			    <div class="col-md-8 text-center">
-			        <h4><%= message %></h4>
-			    </div>
-			    <div class="col-md-2"></div>
-			</div>
-		<% } %>
-			
-		
-		<form class="form-horizontal" name="registerForm" action="/auth/register" method="post" dir="ltr">
-		    <div class="form-group">
-		        <div class="col-md-2"></div>
-		        <label for="usernameInput" class="col-md-3 control-label">username:</label>
-		        <div class="col-md-3">
-		            <input type="text" class="form-control" id="usernameInput" placeholder="Username" name="username" required></input>
-		        </div>
-		        <div class="col-md-4"></div>
-		    </div>
-
-		    <div class="form-group">
-		        <div class="col-md-2"></div>
-		        <label for="passwordInput" class="col-md-3 control-label">password:</label>
-		        <div class="col-md-3">
-		            <input type="password" class="form-control" id="passwordInput" placeholder="Password" name="password" required></input>
-		        </div>
-		        <div class="col-md-4"></div>
-		    </div>
-
-		    <div class="form-group">
-		        <div class="col-md-2"></div>
-		        <label for="passwordInput" class="col-md-3 control-label">First Name:</label>
-		        <div class="col-md-3">
-		            <input type="text" class="form-control" id="firstNameInput" placeholder="Your First Name" name="fname" required></input>
-		        </div>
-		        <div class="col-md-4"></div>
-		    </div>
-
-		    <div class="form-group">
-		        <div class="col-md-2"></div>
-		        <label for="passwordInput" class="col-md-3 control-label">Last Name:</label>
-		        <div class="col-md-3">
-		            <input type="text" class="form-control" id="lastNameInput" placeholder="Your Last Name" name="lname" required></input>
-		        </div>
-		        <div class="col-md-4"></div>
-		    </div>
-
-		    <div class="form-group">
-		        <div class="col-sm-offset-4 col-sm-2">
-		            <button type="submit" class="btn btn-primary">Sign Up</button>
-		        </div>
-		        <div class="col-sm-2">
-		            <button type="button" class="btn btn-warning" id="cancelBtn">Cancel</button>
-		        </div>
-		        <div class="col-sm-2">
-		            <button type="button" class="btn btn-default btn-sm" id="resetBtn">Reset</button>
-		        </div>
-		    </div>
-
-		</form>
-
-        <footer>
-            <p>maintained by BGU</p>
-        </footer>
+    <div class="row" id="form-title">
+        <div class="col-md-2"></div>
+        <div class="col-md-8 text-center">
+            <h4>אנא הכנס את הנתונים בשדות הבאים:</h4>
+        </div>
+        <div class="col-md-2"></div>
     </div>
 
-    <script>
-    	function init() {
-		    // Clear forms here
-		    document.getElementById("usernameInput").value = "";
-		    document.getElementById("passwordInput").value = "";
-		    document.getElementById("firstNameInput").value = "";
-		    document.getElementById("lastNameInput").value = "";
-		}
+    <% if (message.length > 0) { %>
+    <div class="row bg-danger text-center" id="register-error">
+        <div class="col-md-2"></div>
+        <div class="col-md-8 text-center">
+            <h4><%= message %></h4>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+    <% } %>
 
-		window.onload = init;
 
-    	$('#cancelBtn').click(function(){
-    		console.log('cancel clicked!');
-    		window.location.href = "/auth/login";
-    	});
+    <form class="form-horizontal" name="registerForm" action="/auth/register" method="post" dir="ltr">
+        <div class="form-group">
+            <div class="col-md-2"></div>
+            <label for="usernameInput" class="col-md-3 control-label">username:</label>
+            <div class="col-md-3">
+                <input type="text" class="form-control" id="usernameInput" placeholder="Username" name="username" required/>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
 
-    	$('#resetBtn').click(init);
-    </script>
+        <div class="form-group">
+            <div class="col-md-2"></div>
+            <label for="passwordInput" class="col-md-3 control-label">password:</label>
+            <div class="col-md-3">
+                <input type="password" class="form-control" id="passwordInput" placeholder="Password" name="password" required/>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-2"></div>
+            <label for="passwordInput" class="col-md-3 control-label">First Name:</label>
+            <div class="col-md-3">
+                <input type="text" class="form-control" id="firstNameInput" placeholder="Your First Name" name="fname" required/>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-2"></div>
+            <label for="passwordInput" class="col-md-3 control-label">Last Name:</label>
+            <div class="col-md-3">
+                <input type="text" class="form-control" id="lastNameInput" placeholder="Your Last Name" name="lname" required/>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-2">
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-warning" id="cancelBtn">Cancel</button>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-default btn-sm" id="resetBtn">Reset</button>
+            </div>
+        </div>
+
+    </form>
+
+    <footer>
+        <p>maintained by BGU</p>
+    </footer>
+</div>
+
+<script>
+    function init() {
+        // Clear forms here
+        document.getElementById("usernameInput").value = "";
+        document.getElementById("passwordInput").value = "";
+        document.getElementById("firstNameInput").value = "";
+        document.getElementById("lastNameInput").value = "";
+    }
+
+    window.onload = init;
+
+    $('#cancelBtn').click(function(){
+        console.log('cancel clicked!');
+        window.location.href = "/auth/login";
+    });
+
+    $('#resetBtn').click(init);
+</script>
 </body>
 </html>
 

@@ -17,6 +17,7 @@
                 var maxDate = ' ';
 
                 refJson.forEach(function(node) {
+
                     if (node.createdAt > maxDate){
                         maxDate = node.createdAt;
                         $scope.lastPost = node;
@@ -45,20 +46,17 @@
 
             //on page load...
             function init() {
-                // console.log('init...');
                 socket.on('connect', function(){
-                    // console.log('conncected to Socket IO server..');
-                    // console.log('emmiting to get all the arguments into page..');
                     socket.emit('get-all-arguments');
                 });
                 socket.on('init-discussion', function(result){
-                    // console.log('*********************');
-                    // console.log(result);
-                    // console.log('*********************');
-                    $scope.treeWithRef = result.discArguments.slice(0,result.discArguments.length-1);
+                    console.log(result.discArguments);
+                    $scope.treeWithRef = result.discArguments;
                     $scope.treeNested = fromReftoNestedJson($scope.treeWithRef);
                     $scope.discussionTitle = result.discussion.title;
                     $scope.discussionDescription = result.discussion.description;
+                    console.log('*********&*&*&*&*&*&*&*&*&*&**&**************');
+                    console.log(result.user);
                     $scope.role = result.user.role;
                     if ($scope.lastPost) $scope.lastPost.lastPost = true;
                 });
@@ -81,7 +79,9 @@
 
             init();
 
-            // function for sticking the "new argument" box at the top of the screen when scrolling the page
+            /**
+             * function for sticking the "new argument" box at the top of the screen when scrolling the page
+              */
             setTimeout(function doIt(){
               $(window).on("scroll", function(e){
                 var screenTop = $(window).scrollTop();
@@ -151,12 +151,16 @@
             $scope.$on('submitted-new-reply', function (e, args) {
                 var node = args.node;
                 var replyText = args.replyText;
-                TreeService.postNewArgument(socket, replyText, node._id, node.depth+1, node.main_thread_id);
+                console.log('submiting new reply!');
+                console.log('by : ' + $scope.role);
+                TreeService.postNewArgument(socket, replyText, node._id, node.depth+1, node.main_thread_id, $scope.role);
             });
 
             $scope.submitNewArgument = function(newArgumentText){
                 if (newArgumentText){
-                    TreeService.postNewArgument(socket, newArgumentText, 0, 0);
+                    console.log('submiting new argument!');
+                    console.log('by : ' + $scope.role);
+                    TreeService.postNewArgument(socket, newArgumentText, 0, 0, 0, $scope.role);
                     $scope.newArgument = "";
                 }
             };

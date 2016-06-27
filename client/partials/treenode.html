@@ -1,6 +1,6 @@
 <div id="tblWrapper" dir="rtl" ng-repeat="node in nodeCtrl.nodes" ng-style="node.depth===0 && {'padding-bottom': '0', 'margin-bottom': '20px', 'border-bottom-style': 'solid'}" >
 
-    <div id="rowWrapper" style="border-bottom-width: 1px; border-bottom-style:groove; ">
+    <div id="rowWrapper" style="border-bottom-width: 1px; border-bottom-style:groove; " ng-style="(node.role==='admin' && {'background-color': '#AE9EFF'}) || (node.role==='instructor' && {'background-color': '#8EF0FF'})">
 
         <div class="tblRow">
 
@@ -9,7 +9,7 @@
                 <!--<div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; ">-->
 
                <span style="word-wrap: break-word; vertical-align: top;" ng-style="node.depth===0 && {'font-weight':'bold'}">
-                   &#8226&nbsp;{{::node.content}}
+                   &#8226&nbsp;{{::node.content}} [{{node.role}}]
                </span>
 
 

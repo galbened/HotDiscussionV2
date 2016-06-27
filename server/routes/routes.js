@@ -26,16 +26,16 @@ module.exports = function(app, passport, autoIncrement, io){
     /*
      *  Server Routing
      */
-    authRouter = require('./auth')(passport);
-    adminRouter = require('./admin')(passport, isLoggedIn("/admin/login"), checkPermission('admin'));
-    discussionsRouter = require('./discussions')(isLoggedIn("/auth/login"));
+    var authRouter = require('./auth')(passport);
+    var adminRouter = require('./admin')(passport, isLoggedIn("/admin/login"), checkPermission('admin'));
+    var discussionsRouter = require('./discussions')(isLoggedIn("/auth/login"));
     app.use('/auth', authRouter);
     app.use('/admin', adminRouter);
     app.use('/discussions', discussionsRouter);
     /*
      *  Server API
      */
-    restApiRouter = require('./api')(autoIncrement, io);
+    var restApiRouter = require('./api')(autoIncrement, io);
     app.use('/api', restApiRouter);    
 
     //TODO: add a normal HOME PAGE, not just log-in or discussion dashboard

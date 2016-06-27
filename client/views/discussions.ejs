@@ -32,14 +32,14 @@
   <div class="container">
     <header class="text-center">
       <h1>
-        <% if (user.local.role === 'admin'){ %>
+        <% if (user.role === 'admin'){ %>
           <script>
               window.location.href = "/admin/dashboard";
           </script>
         <% } %>
-        <% if (user.local.role === 'student') { %>
-          <%= user.local.firstname %> <%= user.local.lastname %>, Enjoy!
-        <% } %>
+
+          <%= user.fname %> <%= user.lname %>, Enjoy!  [<%= user.role %>]
+
       </h1>
     </header>
 

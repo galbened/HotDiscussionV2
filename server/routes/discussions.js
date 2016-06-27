@@ -6,7 +6,8 @@ module.exports = function(isLoggedIn){
   /* SHOW THE DISCUSSIONS THREADS */
 
   router.get('/', isLoggedIn, function(req, res, next) {
-    res.render('discussions', {user: req.user});
+    var user = req.session.passport.user;
+    res.render('discussions', {user: user});
   });
 
   router.get('/:id/:title/:description', isLoggedIn, function(req, res, next){

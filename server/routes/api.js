@@ -25,32 +25,37 @@ module.exports = function(autoIncrement, io){
     //    this may be unnecassary for the future, and just get the arguments of the relevant discussion for
     //    non-admin user.
     router.get('/discussions', function(req, res, next) {
-        if (req.user.local.role === "admin"){
-            Discussion.find({}, function(err, data){
-                // console.log(data);
-                res.json(data);
-            });
-        }
-        else if (req.user.local.role === "student"){
-            Discussion.find({restriction: "student"}, function(err, data){
-                // console.log(data);
-                resObj = {
-                    data : data,
-                    role : req.user.local.role
-                };
-                res.json(resObj);
-            });
-        }
-        else{
-            Discussion.find({restriction: "instructor"}, function(err, data){
-                resObj = {
-                    data : data,
-                    role : req.user.local.role
-                };
-                res.json(resObj);
-            });
-        }
+        var user = req.session.passport.user;
+        if (user){
+            var role = user.role;
+            switch (role) {
+                case "admin":
+                    Discussion.find({}, function(err, data){
+                        // console.log(data);
+                        res.json(data);
+                    });
+                    break;
+                case "student":
+                    Discussion.find({restriction: "student"}, function(err, data){
+                        // console.log(data);
+                        resObj = {
+                            data : data,
+                            role : role
+                        };
+                        res.json(resObj);
+                    });
+                    break;
+                case "instructor":
+                    Discussion.find({restriction: "instructor"}, function(err, data){
+                        resObj = {
+                            data : data,
+                            role : role
+                        };
+                        res.json(resObj);
+                    });
+            }
 
+        }
     });
 
     //post a new discussion
@@ -144,13 +149,14 @@ module.exports = function(autoIncrement, io){
 
             var discussionId = socket.handshake.query.discussion;
             var user = socket.request.session.passport.user;
+            console.log('user on server=======> ' + JSON.stringify(user));
             socket.join(discussionId);
 
             /**
              * EVENT1
              */
             socket.on('get-all-arguments', function(){
-                // console.log('getting all the arguments from server..');
+                console.log('getting all the arguments from server..');
                 Discussion.findOne({_id: discussionId}, function(err, discussion){
                     if (err){
                         throw err;
@@ -164,7 +170,8 @@ module.exports = function(autoIncrement, io){
                                 console.log('ERROR retrieving the arguments..')
                             }
                             else {
-                                argumentsNsp.to(discussionId).emit('init-discussion', {discArguments: discArguments, user:user, discussion: discussion});
+                                console.log('GET THE ARGS IN SERVER FOR DISC: ' + discussion.title + ', the arguments: ' + discArguments.length);
+                                socket.emit('init-discussion', {discArguments: discArguments, user:user, discussion: discussion});
                             }
                         });
                     }
@@ -182,6 +189,7 @@ module.exports = function(autoIncrement, io){
                 argument.main_thread_id = (newArgument.main_thread_id ? newArgument.main_thread_id : 0);
                 argument.user_id = user.id;
                 argument.username = user.username;
+                argument.role = newArgument.role;
                 argument.fname = user.fname;
                 argument.lname = user.lname;
                 argument.content = newArgument.content;
