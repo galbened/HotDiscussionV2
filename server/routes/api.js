@@ -195,13 +195,26 @@ module.exports = function(autoIncrement, io){
                 argument.content = newArgument.content;
                 argument.depth = (newArgument.depth ? newArgument.depth : 0);
                 argument.sub_arguments = [];
-                //TODO: add the incoming reply to the array of sub_arguments of the parent, now it is empty and not handled at all...
                 argument.save(function(err, data){
                     if (err)
                         throw err;
-                    // console.log('emiting back to the client the new argument: ', data);
-                    if (argument.depth===0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
-                    else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
+                    //TODO: add here to save the new argument's id into its parent children array...Now not used anyway..
+                    Argument.findOne({_id: argument.main_thread_id}, function(err, mainArg) {
+                        if (mainArg){
+                            mainArg.update_field = "update!";
+                            mainArg.save(function (err) {
+                                if (err) throw err;
+                                console.log('emiting the others!');
+                                if (argument.depth === 0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
+                                else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
+                            })
+                        }
+                        else{
+                            if (argument.depth === 0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
+                            else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
+                        }
+                    })
+
                 });
             });
 

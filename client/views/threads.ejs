@@ -17,66 +17,56 @@
 
 <body ng-app="argumentsApp">
 
-    <div class="container-fluid" ng-controller="ArgumentsTreeController">
-        <header class="text-center">
-            <h1>
-                {{discussionTitle}}
-            </h1>
-            <h3>
-                {{discussionDescription}}
-            </h3>
-        </header>
+<div class="container-fluid" ng-controller="ArgumentsTreeController">
+    <header class="text-center">
+        <h1>{{discussionTitle}}</h1>
+        <h3>{{discussionDescription}}</h3>
+    </header>
 
-        <div class="row" id="form-title">
-            <div class="col-md-8 col-md-offset-2 text-center">
-                <h4>הנך מוזמן להשתתף בדיון עם חבריך. אנא שמור על תרבות דיון, תודה.</h4>
+    <div id="scroller-anchor" ></div>
+    <div class="row">
+        <div id="scroller">
+            <!-- new argument prompt -->
+            <div class="row">
+                <div class="text-right col-lg-offset-10 col-lg-1" style="padding-right: 20px"><h5><a href="/auth/login">Log Out</a></h5></div>
+                <div class="col-lg-1" style="padding-right: 20px"> <button type="submit" class="btn btn-primary" ng-click="submitNewArgument(newArgument)">פרסום רעיון חדש</button>  </div>
             </div>
-        </div>
+            <div class="row" >
+                <!-- TODO: add 2 small frames of invited users and online users -->
+                <div class="col-md-offset-6 col-md-6 text-right body" style="width:425px; float:right">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <textarea class="form-control text-right" rows="3" placeholder="רשום כאן" style="width:900px" ng-model="newArgument"></textarea>
 
-        <div id="scroller-anchor" ></div>
-        <div class="row">
-            <div id="scroller">
-                <!-- new argument prompt -->
-                <div class="row">
-                    <div class="text-right col-lg-offset-10 col-lg-1" style="padding-right: 20px"><h5><a href="/auth/login">Log Out</a></h5></div>
-                    <div class="col-lg-1" style="padding-right: 20px"> <button type="submit" class="btn btn-primary" ng-click="submitNewArgument(newArgument)">פרסום רעיון חדש</button>  </div>
-                </div>
-                <div class="row" >
-                    <!-- TODO: add 2 small frames of invited users and online users -->
-                    <div class="col-md-offset-6 col-md-6 text-right body" style="width:425px; float:right">
-                        <form class="form-inline">
-                            <div class="form-group">
-                                <textarea class="form-control text-right" rows="3" placeholder="רשום כאן" style="width:900px" ng-model="newArgument"></textarea>
-
-                            </div>
-                        </form>
-                    </div>
-
+                        </div>
+                    </form>
                 </div>
 
-                <hr class="newArgSection" style="margin-bottom: 0">
-
             </div>
+
+            <hr class="newArgSection" style="margin-bottom: 0">
+
         </div>
-
-
-
-        <!-- existing arguments rendering -->
-
-        <!-- <div class="row" id="treeConversation"> -->
-        <div class="row" id="treeConversation">
-            <tree nodes='treeNested'></tree>
-        </div>
-
-        <footer class="text-left">
-            <p>maintained by BGU</p>
-        </footer>
-
-        <!-- </div> -->
-
-
-
     </div>
+
+
+
+    <!-- existing arguments rendering -->
+
+    <!-- <div class="row" id="treeConversation"> -->
+    <div class="row" id="treeConversation">
+        <tree nodes='treeNested'></tree>
+    </div>
+
+    <footer class="text-left">
+        <p>maintained by BGU</p>
+    </footer>
+
+    <!-- </div> -->
+
+
+
+</div>
 
 
 

@@ -9,7 +9,9 @@
                 <!--<div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; ">-->
 
                <span style="word-wrap: break-word; vertical-align: top;" ng-style="node.depth===0 && {'font-weight':'bold'}">
-                   &#8226&nbsp;{{::node.content}} [{{node.role}}]
+                   &#8226&nbsp;{{::node.content}} <!-- TODO:add icon (glyphcon) of the role of the user -->
+                   <br>
+                   <span ng-if="node.lastPost">last-post!!</span>
                </span>
 
 

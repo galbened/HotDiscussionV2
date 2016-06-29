@@ -40,8 +40,23 @@
                     }
 
                 });
+                console.log('lastone===> ' + JSON.stringify($scope.lastPost));
                 return nestedJson;
 
+            }
+
+            function sortArgumnets(argArray){
+                argArray.sort(function(argA,argB){
+                    if(argA.updatedAt < argB.updatedAt){
+                        return 1;
+                    }
+                    if (argA.updatedAt > argB.updatedAt){
+                        return -1;
+                    }
+                    else{
+                        return 0;
+                    }
+                })
             }
 
             //on page load...
@@ -50,15 +65,25 @@
                     socket.emit('get-all-arguments');
                 });
                 socket.on('init-discussion', function(result){
-                    console.log(result.discArguments);
+                    // console.log(result.discArguments);
                     $scope.treeWithRef = result.discArguments;
                     $scope.treeNested = fromReftoNestedJson($scope.treeWithRef);
+                    console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+                    console.log('************');
+                    console.log($scope.treeNested);
+                    sortArgumnets($scope.treeNested);
+                    console.log('************');
+                    console.log($scope.treeNested);
+                    console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
                     $scope.discussionTitle = result.discussion.title;
                     $scope.discussionDescription = result.discussion.description;
-                    console.log('*********&*&*&*&*&*&*&*&*&*&**&**************');
-                    console.log(result.user);
+                    // console.log('*********&*&*&*&*&*&*&*&*&*&**&**************');
+                    // console.log(result.user);
                     $scope.role = result.user.role;
                     if ($scope.lastPost) $scope.lastPost.lastPost = true;
+                    console.log('**************');
+                    console.log($scope.lastPost || 'no last Post!');
+                    console.log('**************');
                 });
             }
 
