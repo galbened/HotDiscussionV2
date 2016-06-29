@@ -9,20 +9,20 @@
                 <!--<div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; ">-->
 
                <span style="word-wrap: break-word; vertical-align: top;" ng-style="node.depth===0 && {'font-weight':'bold'}">
-                   &#8226&nbsp;{{::node.content}} <!-- TODO:add icon (glyphcon) of the role of the user -->
-                   <br>
-                   <span ng-if="node.lastPost">last-post!!</span>
+                   &#8226;&nbsp;{{::node.content}} <!-- TODO:add icon (glyphcon) of the role of the user -->
+                   <!--<br>-->
                </span>
 
 
             </div>
 
             <div class="tblCell" style="width:10%; text-align:left">
-                {{::node.fname}} {{::node.lname}}
+                <span>{{::node.fname}} {{::node.lname}}</span>
             </div>
 
-            <div class="tblCell" style="width:10%; text-align:left">
+            <div class="tblCell" style="width:10%; text-align:left" ng-style="node.lastPost && {'background-color':'#FEFFBC'}">
                 <i style="font-size: 10px">{{nodeCtrl.prettyDate(node.createdAt)}}</i>
+                <span ng-class="[{'glyphicon glyphicon-refresh' : node.lastPost}]"></span>
             </div>
 
             <div class="tblCell" style="width:5%; text-align:center ;margin-bottom: 5px">

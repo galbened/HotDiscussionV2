@@ -200,16 +200,19 @@ module.exports = function(autoIncrement, io){
                         throw err;
                     //TODO: add here to save the new argument's id into its parent children array...Now not used anyway..
                     Argument.findOne({_id: argument.main_thread_id}, function(err, mainArg) {
+                        console.log('updating the timestamp of the mainThread..');
                         if (mainArg){
-                            mainArg.update_field = "update!";
+                            mainArg.updatedAt = Date.now();
                             mainArg.save(function (err) {
                                 if (err) throw err;
-                                console.log('emiting the others!');
+                                console.log('UPDATED!! emiting the others for the change....');
                                 if (argument.depth === 0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
                                 else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
                             })
                         }
                         else{
+                            console.log('there is no mainthread to this one...');
+                            console.log('NO UPDATE TO MAIN...emiting the others for the change....');
                             if (argument.depth === 0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
                             else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
                         }

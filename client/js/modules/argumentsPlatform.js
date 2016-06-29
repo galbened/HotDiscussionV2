@@ -68,22 +68,15 @@
                     // console.log(result.discArguments);
                     $scope.treeWithRef = result.discArguments;
                     $scope.treeNested = fromReftoNestedJson($scope.treeWithRef);
-                    console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
-                    console.log('************');
                     console.log($scope.treeNested);
+                    console.log('*******************************');
                     sortArgumnets($scope.treeNested);
-                    console.log('************');
                     console.log($scope.treeNested);
-                    console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+                    console.log('*******************************');
                     $scope.discussionTitle = result.discussion.title;
                     $scope.discussionDescription = result.discussion.description;
-                    // console.log('*********&*&*&*&*&*&*&*&*&*&**&**************');
-                    // console.log(result.user);
                     $scope.role = result.user.role;
                     if ($scope.lastPost) $scope.lastPost.lastPost = true;
-                    console.log('**************');
-                    console.log($scope.lastPost || 'no last Post!');
-                    console.log('**************');
                 });
             }
 
@@ -124,8 +117,6 @@
 
             }, 0);
 
-            // var socket = socketio.arguments();
-
             $(window).on('beforeunload', function(){
                 socket.disconnect();
             });
@@ -145,10 +136,7 @@
                 var newReply = data.data;
                 var parentNode = getNodeById($scope.treeNested, newReply.parent_id);
                 var mainThread = getNodeById($scope.treeNested, newReply.main_thread_id);
-                // console.log(parentNode);
-                // console.log(mainThread);
                 var mainThreadInd = $scope.treeNested.indexOf(mainThread);
-                // console.log(mainThreadInd);
                 $scope.treeNested.splice(mainThreadInd, 1);
                 $scope.treeNested.unshift(mainThread);
                 parentNode.sub_arguments.push(newReply);

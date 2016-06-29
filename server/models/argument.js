@@ -12,8 +12,7 @@ var argumentScheme = mongoose.Schema({
 	lname: String,
 	content: String,
 	depth: Number,
-	sub_arguments: [{type:Number, ref: 'Argument'}],
-	update_field: String //used for updating the timestamp of the document from mongoose. Not used for any other logic..
+	sub_arguments: [{type:Number, ref: 'Argument'}]
 
 },{
 	timestamps:true
