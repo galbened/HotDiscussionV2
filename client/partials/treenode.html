@@ -1,6 +1,6 @@
 <div id="tblWrapper" dir="rtl" ng-repeat="node in nodeCtrl.nodes" ng-style="node.depth===0 && {'padding-bottom': '0', 'margin-bottom': '20px', 'border-bottom-style': 'solid'}" >
 
-    <div id="rowWrapper" style="border-bottom-width: 1px; border-bottom-style:groove; " ng-style="(node.role==='admin' && {'background-color': '#AE9EFF'}) || (node.role==='instructor' && {'background-color': '#8EF0FF'})">
+    <div id="rowWrapper" style="border-bottom-width: 1px; border-bottom-style:groove; " ng-style="(node.role==='admin' && {'background-color': '#92FFEB'}) || (node.role==='instructor' && {'background-color': '#F8FFFB'})">
 
         <div class="tblRow">
 
@@ -8,19 +8,36 @@
 
                 <!--<div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; ">-->
 
-               <span style="word-wrap: break-word; vertical-align: top;" ng-style="node.depth===0 && {'font-weight':'bold'}">
-                   &#8226;&nbsp;{{::node.content}} <!-- TODO:add icon (glyphcon) of the role of the user -->
+               <span style="width:70%" ng-style="node.depth===0 && {'font-weight':'bold'}">
+
+                     <overflow-content class=non-expanded content="node.content"></overflow-content> <!-- TODO:add icon (glyphcon) of the role of the user -->
+                   <!--</overflowExpender>-->
                    <!--<br>-->
                </span>
 
+                <div ng-show="node.replyPressed" ng-style="{'padding-right':(node.depth+1) * 4 + 'px'}">
+
+                    <div style="width:75%" >
+                        <textarea class="form-control text-right" rows="4" placeholder="תגובתך.." ng-model="nodeCtrl.replyText" style="width:900px; margin: 5px; background-color: #DADAE5"></textarea>
+                        <button type="submit" class="btn btn-primary btn-xs" ng-click="nodeCtrl.submitNewReply(node)">שליחה</button>
+                        <button type="submit" class="btn btn-default btn-xs" ng-click="nodeCtrl.cancelReply(node)">ביטול</button>
+                    </div>
+
+                </div>
+
 
             </div>
+
+
 
             <div class="tblCell" style="width:10%; text-align:left">
                 <span>{{::node.fname}} {{::node.lname}}</span>
+                <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}"></span>
+                <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}"></span>
             </div>
 
-            <div class="tblCell" style="width:10%; text-align:left" ng-style="node.lastPost && {'background-color':'#FEFFBC'}">
+            <div class="tblCell" style="width:10%; text-align:left">
+                <span ng-class="[{'glyphicon glyphicon-refresh' : node.lastPost}]"></span>
                 <i style="font-size: 10px">{{nodeCtrl.prettyDate(node.createdAt)}}</i>
                 <span ng-class="[{'glyphicon glyphicon-refresh' : node.lastPost}]"></span>
             </div>
@@ -36,15 +53,7 @@
         </div><div class="clear"></div>
 
 
-        <div class="tblRow" ng-show="node.replyPressed" ng-style="{'padding-right':(node.depth+1) * 20 + 'px'}">
 
-            <div class="tblCell" style="width:75%" >
-                <textarea class="form-control text-right" rows="4" placeholder="תגובתך.." ng-model="nodeCtrl.replyText" style="width:900px; margin: 5px; background-color: #DADAE5"></textarea>
-                <button type="submit" class="btn btn-primary btn-xs" ng-click="nodeCtrl.submitNewReply(node)">שליחה</button>
-                <button type="submit" class="btn btn-default btn-xs" ng-click="nodeCtrl.cancelReply(node)">ביטול</button>
-            </div>
-
-        </div>
 
     </div>
 

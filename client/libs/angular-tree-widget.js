@@ -8,6 +8,55 @@
 (function () {
     'use strict';
     angular.module('TreeWidget', ['ngAnimate', 'RecursionHelper'])
+        .directive('overflowContent', function($timeout){
+            function link(scope, element, attrs, ctrl){
+                $timeout(function() {
+                    var elm2 = element.clone();
+                    elm2.css({display: 'inline', width: 'auto', visibility: 'hidden'});
+                    elm2.appendTo('body');
+
+                    if (elm2.width() > element.width()){
+                        console.log('FUCK YEA!');
+                        console.log(element.text());
+                        scope.kaftor = true;
+                    }
+                    elm2.remove();
+                }, 300);
+            }
+
+            function overflowController($scope, $element){
+                var vm = this;
+
+                vm.expand = function(){
+                    if (!$scope.expanded){
+                        $element.removeClass('non-expanded');
+                        $element.addClass('expanded');
+                        $scope.expanded = true;
+                    }
+                    else{
+                        $element.removeClass('expanded');
+                        $element.addClass('non-expanded');
+                        $scope.expanded = false;
+                    }
+                }
+            }
+
+            return {
+                strict:'A',
+                scope:{content:'='},
+                template:
+                    '<span>' +
+                    '   &#8226;&nbsp;{{::overflowCtrl.content}}' +
+                    '</span>' +
+                    '<div>' +
+                        '<button ng-if="kaftor" class="btn btn-info btn-xs" ng-click="overflowCtrl.expand()"><span class="glyphicon glyphicon-resize-full"></span></button>' +
+                    '</div>',
+                controller: overflowController,
+                controllerAs: 'overflowCtrl',
+                bindToController: true,
+                link:link
+            }
+        })
         .directive('tree', function () {
             return {
                 restrict: "E",
@@ -52,7 +101,8 @@
                 };
 
                 vm.prettyDate = function(date){
-                    return moment(date).startOf('hour').fromNow();
+                    // return moment(date).startOf('hour').fromNow();
+                    return moment(date).format('MMMM Do YYYY, h:mm a');
                 };
             };
 

@@ -35,3 +35,15 @@ hr.newArgSection {
     background-color: #fff;
     border-top: 2px dashed #8c8b8b;
 }
+
+.non-expanded {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.expanded {
+    word-wrap: break-word;
+    vertical-align: top;
+}
