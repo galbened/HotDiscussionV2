@@ -47,3 +47,28 @@ hr.newArgSection {
     word-wrap: break-word;
     vertical-align: top;
 }
+
+#onlineUsers {
+    padding:0;
+    margin:0;
+    /*border: 1px solid black;*/
+    /*list-style: none;*/
+    /*list-style-image: url('/resources/imgs/user.gif');*/
+}
+
+#onlineUser{
+    list-style-type:none;
+    /*noinspection CssUnknownTarget*/
+    background: url('/resources/imgs/user.gif');
+    background-repeat:no-repeat;
+    background-position:left center;
+    padding-left:25px;
+    margin: 0;
+    vertical-align: middle;
+}
+
+/*#onlineUser:before{*/
+    /*content:'';*/
+    /*display: inline-block;*/
+    /*background: url('/resources/imgs/user.gif');*/
+/*}*/

@@ -141,7 +141,15 @@ module.exports = function(autoIncrement, io){
      *                 __/ |
      *                |___/
      */
-
+    function containts(array, obj, key){
+        for (var i = 0; i < array.length; i++) {
+            if (array[i][key] === obj[key]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    argumentsNsp.adapter.onlineUsernames = [];
     argumentsNsp.on('connection', function(socket){
         //TODO: support here the "online" users utility for the different discussions rooms
 
@@ -149,8 +157,11 @@ module.exports = function(autoIncrement, io){
 
             var discussionId = socket.handshake.query.discussion;
             var user = socket.request.session.passport.user;
-            console.log('user on server=======> ' + JSON.stringify(user));
             socket.join(discussionId);
+            if (containts(argumentsNsp.adapter.onlineUsernames, user, 'username') === -1) {
+                argumentsNsp.adapter.onlineUsernames.push(user);
+                argumentsNsp.to(discussionId).emit('user-joined', user);
+            }
 
             /**
              * EVENT1
@@ -170,8 +181,8 @@ module.exports = function(autoIncrement, io){
                                 console.log('ERROR retrieving the arguments..')
                             }
                             else {
-                                console.log('GET THE ARGS IN SERVER FOR DISC: ' + discussion.title + ', the arguments: ' + discArguments.length);
-                                socket.emit('init-discussion', {discArguments: discArguments, user:user, discussion: discussion});
+                                var onlineUsers = argumentsNsp.adapter.onlineUsernames;
+                                argumentsNsp.to(discussionId).emit('init-discussion', {discArguments: discArguments, user:user, discussion: discussion, onlineUsers:onlineUsers});
                             }
                         });
                     }
@@ -225,8 +236,13 @@ module.exports = function(autoIncrement, io){
              * EVENT3
              */
             socket.on('disconnect', function () {
+                var idx = argumentsNsp.adapter.onlineUsernames.indexOf(user);
+                if (idx > -1){
+                    argumentsNsp.adapter.onlineUsernames.splice(idx, 1);
+                }
                 socket.leave(discussionId);
-                console.log('user disconnected from discussion');
+                argumentsNsp.to(discussionId).emit('user-left', user);
+                console.log('user ' + user.username + ' disconnected from discussion');
             });
         }
     });

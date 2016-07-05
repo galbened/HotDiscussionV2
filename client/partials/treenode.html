@@ -37,9 +37,8 @@
             </div>
 
             <div class="tblCell" style="width:10%; text-align:left">
-                <span ng-class="[{'glyphicon glyphicon-refresh' : node.lastPost}]"></span>
+                <img ng-if="node.lastPost" ng-src="/resources/imgs/new_icon.gif"/>
                 <i style="font-size: 10px">{{nodeCtrl.prettyDate(node.createdAt)}}</i>
-                <span ng-class="[{'glyphicon glyphicon-refresh' : node.lastPost}]"></span>
             </div>
 
             <div class="tblCell" style="width:5%; text-align:center ;margin-bottom: 5px">

@@ -16,8 +16,6 @@
                     elm2.appendTo('body');
 
                     if (elm2.width() > element.width()){
-                        console.log('FUCK YEA!');
-                        console.log(element.text());
                         scope.kaftor = true;
                     }
                     elm2.remove();

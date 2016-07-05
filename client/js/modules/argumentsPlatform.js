@@ -3,6 +3,8 @@
         $locationProvider.html5Mode(true);
     })
         .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio', function (TreeService, $scope, $window, $location, socketio) {
+            $scope.onlineUsers = [];
+
             var path = $location.path();
             var discId = path.split('/')[1];
             var socket = socketio.arguments({discussion: discId});
@@ -65,9 +67,10 @@
                     socket.emit('get-all-arguments');
                 });
                 socket.on('init-discussion', function(result){
-                    // console.log(result.discArguments);
+                    // console.log(result);
                     $scope.treeWithRef = result.discArguments;
                     $scope.treeNested = fromReftoNestedJson($scope.treeWithRef);
+                    $scope.onlineUsers = result.onlineUsers;
                     // console.log($scope.treeNested);
                     // console.log('*******************************');
                     sortArgumnets($scope.treeNested);
@@ -158,21 +161,29 @@
                 }
             });
 
+            socket.on('user-joined', function(newUser){
+                $scope.onlineUsers.push(newUser);
+            });
+
+            socket.on('user-left', function(userLeft){
+                $scope.onlineUsers.splice(userLeft, 1);
+            });
+
             /************************
              ************************************************/
 
             $scope.$on('submitted-new-reply', function (e, args) {
                 var node = args.node;
                 var replyText = args.replyText;
-                console.log('submiting new reply!');
-                console.log('by : ' + $scope.role);
+                // console.log('submiting new reply!');
+                // console.log('by : ' + $scope.role);
                 TreeService.postNewArgument(socket, replyText, node._id, node.depth+1, node.main_thread_id, $scope.role);
             });
 
             $scope.submitNewArgument = function(newArgumentText){
                 if (newArgumentText){
-                    console.log('submiting new argument!');
-                    console.log('by : ' + $scope.role);
+                    // console.log('submiting new argument!');
+                    // console.log('by : ' + $scope.role);
                     TreeService.postNewArgument(socket, newArgumentText, 0, 0, 0, $scope.role);
                     $scope.newArgument = "";
                 }
