@@ -3,8 +3,8 @@
         .service("TreeService", function () {
 
             this.postNewArgument = function(socket, argumentText, parentId, depth, main_thread_id, role){
-                console.log('sending the new arg AJAX..');
-                console.log("by role--> " + role);
+                // console.log('sending the new arg AJAX..');
+                // console.log("by role--> " + role);
                 var new_main_thread_id;
                 if (!depth){
                     new_main_thread_id = 0;

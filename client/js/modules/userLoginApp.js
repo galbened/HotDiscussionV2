@@ -7,7 +7,7 @@
             $scope.dangerMessage = "";
             
             $scope.studentLogin = function(){
-                console.log('logging in as a student..');
+                // console.log('logging in as a student..');
                 var data = {
                     username: $scope.username,
                     password: $scope.password,
@@ -19,7 +19,7 @@
                     data: data
                 })
                     .success(function(res){
-                        console.log(res);
+                        // console.log(res);
                         if (res.message === 'logged-in'){
                             $window.location.href = '/discussions';
                         }
@@ -33,7 +33,7 @@
             }
 
             $scope.instructorLogin = function(){
-                console.log('logging in as an instructor..');
+                // console.log('logging in as an instructor..');
                 var data = {
                     username: $scope.username,
                     password: $scope.password,
@@ -45,7 +45,7 @@
                     data: data
                 })
                     .success(function(res){
-                        console.log(res);
+                        // console.log(res);
                         if (res.message === 'logged-in'){
                             $window.location.href = '/discussions';
                         }
