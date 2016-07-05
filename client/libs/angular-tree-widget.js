@@ -19,10 +19,11 @@
                         scope.kaftor = true;
                     }
                     elm2.remove();
+
                 }, 300);
             }
 
-            function overflowController($scope, $element){
+            function overflowController($scope, $element, $filter){
                 var vm = this;
 
                 vm.expand = function(){
@@ -36,7 +37,8 @@
                         $element.addClass('non-expanded');
                         $scope.expanded = false;
                     }
-                }
+                };
+
             }
 
             return {
@@ -44,7 +46,7 @@
                 scope:{content:'='},
                 template:
                     '<span>' +
-                    '   &#8226;&nbsp;{{::overflowCtrl.content}}' +
+                    '   &#8226;&nbsp; <span ng-bind-html="overflowCtrl.content | linky:\'_blank\'"> </span>' +
                     '</span>' +
                     '<div>' +
                         '<button ng-if="kaftor" class="btn btn-info btn-xs" ng-click="overflowCtrl.expand()"><span class="glyphicon glyphicon-resize-full"></span></button>' +

@@ -1,5 +1,5 @@
 (function(){
-    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory'], function($locationProvider){
+    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize'], function($locationProvider){
         $locationProvider.html5Mode(true);
     })
         .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio', function (TreeService, $scope, $window, $location, socketio) {

@@ -27,7 +27,7 @@ angular.module('btford.socket-io', []).
       };
 
       return function socketFactory (options) {
-        var options = options || {};
+        options = options || {};
         var socket = options.ioSocket || io.connect();
         var prefix = options.prefix === undefined ? defaultPrefix : options.prefix ;
         var defaultScope = options.scope || $rootScope;
