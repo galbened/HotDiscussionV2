@@ -182,7 +182,7 @@ module.exports = function(autoIncrement, io){
                             }
                             else {
                                 var onlineUsers = argumentsNsp.adapter.onlineUsernames;
-                                argumentsNsp.to(discussionId).emit('init-discussion', {discArguments: discArguments, user:user, discussion: discussion, onlineUsers:onlineUsers});
+                                socket.emit('init-discussion', {discArguments: discArguments, user:user, discussion: discussion, onlineUsers:onlineUsers});
                             }
                         });
                     }

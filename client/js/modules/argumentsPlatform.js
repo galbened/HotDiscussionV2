@@ -67,7 +67,7 @@
                     socket.emit('get-all-arguments');
                 });
                 socket.on('init-discussion', function(result){
-                    // console.log(result);
+                    console.log(result);
                     $scope.treeWithRef = result.discArguments;
                     $scope.treeNested = fromReftoNestedJson($scope.treeWithRef);
                     $scope.onlineUsers = result.onlineUsers;
@@ -152,6 +152,8 @@
             });
 
             socket.on('edit-discussion', function(edittedDiscussion){
+                // console.log('edit is coming!');
+                // console.log(edittedDiscussion);
                 if (edittedDiscussion.restriction === $scope.role || $scope.role === 'admin'){
                     $scope.discussionTitle = edittedDiscussion.title;
                     $scope.discussionDescription = edittedDiscussion.description;
