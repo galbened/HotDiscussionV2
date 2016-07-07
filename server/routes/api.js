@@ -122,8 +122,8 @@ module.exports = function(autoIncrement, io){
             //   discussionNsp.emit('delete-discussion', deletedDiscussion);
             // });
             socket.on('edit-discussion', function (editedDiscuusion) {
-                console.log('about to emit for edit discussion to everyone');
-                console.log(editedDiscuusion._id);
+                // console.log('about to emit for edit discussion to everyone');
+                // console.log(editedDiscuusion._id);
                 discussionNsp.emit('edit-discussion');
                 argumentsNsp.to(editedDiscuusion._id).emit('edit-discussion', editedDiscuusion);
             });
@@ -141,33 +141,32 @@ module.exports = function(autoIncrement, io){
      *                 __/ |
      *                |___/
      */
-    function containts(array, obj, key){
-        for (var i = 0; i < array.length; i++) {
-            if (array[i][key] === obj[key]) {
-                return i;
-            }
+
+    function contains(myArray, searchTerm, property) {
+        for(var i = 0, len = myArray.length; i < len; i++) {
+            if (myArray[i][property] === searchTerm) return i;
         }
         return -1;
     }
-    argumentsNsp.adapter.onlineUsernames = [];
+
     argumentsNsp.on('connection', function(socket){
         //TODO: support here the "online" users utility for the different discussions rooms
 
-        if (socket.request.session.passport) {
+        if (socket.request.session.passport && socket.request.session.passport.user) {
 
             var discussionId = socket.handshake.query.discussion;
             var user = socket.request.session.passport.user;
+            // console.log(socket.request.session.passport);
             socket.join(discussionId);
-            if (containts(argumentsNsp.adapter.onlineUsernames, user, 'username') === -1) {
-                argumentsNsp.adapter.onlineUsernames.push(user);
-                argumentsNsp.to(discussionId).emit('user-joined', user);
-            }
+            
+            argumentsNsp.to(discussionId).emit('user-joined', user);
+            // console.log('user ' + user.username + ' joined the discussion!');
 
             /**
              * EVENT1
              */
             socket.on('get-all-arguments', function(){
-                console.log('getting all the arguments from server..');
+                // console.log('getting all the arguments from server..');
                 Discussion.findOne({_id: discussionId}, function(err, discussion){
                     if (err){
                         throw err;
@@ -181,7 +180,16 @@ module.exports = function(autoIncrement, io){
                                 console.log('ERROR retrieving the arguments..')
                             }
                             else {
-                                var onlineUsers = argumentsNsp.adapter.onlineUsernames;
+                                var onlineUsers = [];
+                                // console.log('==================================>');
+                                Object.keys(argumentsNsp.adapter.rooms[discussionId].sockets).forEach(function(sid){
+                                    var aUser = argumentsNsp.sockets[sid].request.session.passport.user;
+                                    // console.log(aUser);
+                                    var idx = contains(onlineUsers, aUser.username, 'username');
+                                    if (idx < 0) onlineUsers.push(argumentsNsp.sockets[sid].request.session.passport.user);
+                                });
+                                // console.log('<==================================');
+                                // console.log(onlineUsers);
                                 socket.emit('init-discussion', {discArguments: discArguments, user:user, discussion: discussion, onlineUsers:onlineUsers});
                             }
                         });
@@ -211,19 +219,19 @@ module.exports = function(autoIncrement, io){
                         throw err;
                     //TODO: add here to save the new argument's id into its parent children array...Now not used anyway..
                     Argument.findOne({_id: argument.main_thread_id}, function(err, mainArg) {
-                        console.log('updating the timestamp of the mainThread..');
+                        // console.log('updating the timestamp of the mainThread..');
                         if (mainArg){
                             mainArg.updatedAt = Date.now();
                             mainArg.save(function (err) {
                                 if (err) throw err;
-                                console.log('UPDATED!! emiting the others for the change....');
+                                // console.log('UPDATED!! emiting the others for the change....');
                                 if (argument.depth === 0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
                                 else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
                             })
                         }
                         else{
-                            console.log('there is no mainthread to this one...');
-                            console.log('NO UPDATE TO MAIN...emiting the others for the change....');
+                            // console.log('there is no mainthread to this one...');
+                            // console.log('NO UPDATE TO MAIN...emiting the others for the change....');
                             if (argument.depth === 0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
                             else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
                         }
@@ -235,15 +243,44 @@ module.exports = function(autoIncrement, io){
             /**
              * EVENT3
              */
-            socket.on('disconnect', function () {
-                var idx = argumentsNsp.adapter.onlineUsernames.indexOf(user);
-                if (idx > -1){
-                    argumentsNsp.adapter.onlineUsernames.splice(idx, 1);
-                }
-                socket.leave(discussionId);
-                argumentsNsp.to(discussionId).emit('user-left', user);
-                console.log('user ' + user.username + ' disconnected from discussion');
+            socket.on('update-online-users-list', function () {
+                // console.log('*********************************');
+                var onlineUsers = [];
+                Object.keys(argumentsNsp.adapter.rooms[discussionId].sockets).forEach(function(sid){
+                    var aUser = argumentsNsp.sockets[sid].request.session.passport.user;
+                    // console.log(aUser);
+                    var idx = contains(onlineUsers, aUser.username, 'username');
+                    if (idx < 0) onlineUsers.push(argumentsNsp.sockets[sid].request.session.passport.user);
+                });
+                // console.log(onlineUsers);
+                // console.log('*********************************');
+                argumentsNsp.to(discussionId).emit('new-online-users-list', onlineUsers);
             });
+
+            /**
+             * EVENT4
+             */
+            socket.on('disconnect', function () {
+                console.log('DISCONNECT EVENT! by: ' + user.username);
+                socket.leave(discussionId);
+                if (argumentsNsp.adapter.rooms[discussionId]) {
+                    argumentsNsp.to(discussionId).emit('user-left');
+                }
+            });
+
+            /**
+             * EVENT5
+             */
+            socket.on('logout-user', function () {
+                Object.keys(argumentsNsp.adapter.rooms[discussionId].sockets).forEach(function(sid){
+                    if (argumentsNsp.sockets[sid].request.session.passport.user.username === user.username){
+                        argumentsNsp.sockets[sid].emit('logout-redirect', '/auth/logout');
+                        argumentsNsp.sockets[sid].request.logout();
+                    }
+                });
+            });
+
+
         }
     });
 

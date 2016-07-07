@@ -98,6 +98,13 @@
                 return null;
             }
 
+            function contains(myArray, searchTerm, property) {
+                for(var i = 0, len = myArray.length; i < len; i++) {
+                    if (myArray[i][property] === searchTerm) return i;
+                }
+                return -1;
+            }
+
             init();
 
             /**
@@ -111,7 +118,7 @@
                 var treeConversation = $("#treeConversation");
                 if (screenTop>anchorTop) {
                   newArgumentTop.css({position:"fixed",top:"0px", "z-index":999});
-                  treeConversation.css({"margin-top":"125px"});
+                  treeConversation.css({"margin-top":"160px"});
                 } else {
                   newArgumentTop.css({position:"relative"});
                   treeConversation.css({"margin-top":"0px"});
@@ -152,23 +159,30 @@
             });
 
             socket.on('edit-discussion', function(edittedDiscussion){
-                // console.log('edit is coming!');
-                // console.log(edittedDiscussion);
                 if (edittedDiscussion.restriction === $scope.role || $scope.role === 'admin'){
                     $scope.discussionTitle = edittedDiscussion.title;
                     $scope.discussionDescription = edittedDiscussion.description;
                 }
                 else{
-                    $window.location.href = '/auth/logout';
+                    socket.emit('logout-user');
                 }
             });
 
             socket.on('user-joined', function(newUser){
-                $scope.onlineUsers.push(newUser);
+                var idx = contains($scope.onlineUsers, newUser.username, 'username');
+                if (idx<0) $scope.onlineUsers.push(newUser);
             });
 
-            socket.on('user-left', function(userLeft){
-                $scope.onlineUsers.splice(userLeft, 1);
+            socket.on('user-left', function(){
+                socket.emit('update-online-users-list');
+            });
+
+            socket.on('new-online-users-list', function(newOnlineUsers){
+                $scope.onlineUsers = newOnlineUsers;
+            });
+
+            socket.on('logout-redirect', function(redirect){
+                $window.location.href = redirect;
             });
 
             /************************
@@ -189,6 +203,10 @@
                     TreeService.postNewArgument(socket, newArgumentText, 0, 0, 0, $scope.role);
                     $scope.newArgument = "";
                 }
+            };
+            
+            $scope.logoutUser = function(){
+                socket.emit('logout-user');
             };
 
             // ****** THIS FUNCTIONALITY IS NOT YET REQUESTED, BUR IT PROBABLY WILL SOMETIME

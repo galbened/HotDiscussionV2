@@ -32,7 +32,7 @@
                 <div class="col-md-6 text-right body" style="float:right">
                     <div style="width:40%">
                         <button type="submit" class="btn btn-primary" ng-click="submitNewArgument(newArgument)">פרסום רעיון חדש</button>
-                        <span style="float: left;"><h5><a href="/auth/login">Log Out</a></h5></span>
+                        <span style="float: left;"><h5><a href="" ng-click="logoutUser()">Log Out</a></h5></span>
                     </div>
 
                     <div class="form-group" style="width: 90%;">
@@ -63,7 +63,7 @@
             </div>
 
 
-            <hr class="newArgSection" style="margin-bottom: 0">
+            <hr class="newArgSection" style="margin-bottom:0; margin-top:0">
 
         </div>
     </div>
@@ -72,7 +72,6 @@
 
     <!-- existing arguments rendering -->
 
-    <!-- <div class="row" id="treeConversation"> -->
     <div class="row" id="treeConversation">
         <tree nodes='treeNested'></tree>
     </div>
