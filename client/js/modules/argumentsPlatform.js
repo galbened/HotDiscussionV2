@@ -9,6 +9,8 @@
             var discId = path.split('/')[1];
             var socket = socketio.arguments({discussion: discId});
 
+            var lastFivePosts = [];
+
             function fromReftoNestedJson(refJson){
                 var refJsonMap = refJson.reduce(function(map, node) {
                     map[node._id] = node;
@@ -18,12 +20,12 @@
 
                 var maxDate = ' ';
 
+                var nodesCopy = [];
+
                 refJson.forEach(function(node) {
 
-                    if (node.createdAt > maxDate){
-                        maxDate = node.createdAt;
-                        $scope.lastPost = node;
-                    }
+                    nodesCopy.push(node);
+
                     //expend all the nodes as default state...
                     if (node.expanded === undefined && node.sub_arguments !== undefined) {
                         node.expanded = true;
@@ -40,11 +42,47 @@
                         // nestedJson.push(node);
                         nestedJson.unshift(node);
                     }
-
                 });
-                // console.log('lastone===> ' + JSON.stringify($scope.lastPost));
+
+                //initiating last five comments array
+                initLastFivePosts(nodesCopy);
+
                 return nestedJson;
 
+            }
+
+            function updateLastFivePosts(newNode){
+                //adds new created node to the last five, removing the oldest of the five
+                lastFivePosts.unshift(newNode);
+                newNode.lastPost = true;
+
+                if(lastFivePosts.length>5)
+                {
+                    lastFivePosts[5].lastPost = false;
+                    lastFivePosts.pop();
+                }
+            }
+
+            function initLastFivePosts(nodesCopy){
+                //sorting by all nodes by date created
+                nodesCopy.sort(function(argA,argB){
+                    if(argA.createdAt < argB.createdAt){
+                        return 1;
+                    }
+                    if (argA.createdAt > argB.createdAt){
+                        return -1;
+                    }
+                    else{
+                        return 0;
+                    }
+                });
+
+                //takes most recent 5 nodes or less than 5
+                for(var index = 0;index<5 && index<nodesCopy.length;index++)
+                {
+                    nodesCopy[index].lastPost = true;
+                    lastFivePosts.push(nodesCopy[index]);
+                }
             }
 
             function sortArgumnets(argArray){
@@ -79,7 +117,6 @@
                     $scope.discussionTitle = result.discussion.title;
                     $scope.discussionDescription = result.discussion.description;
                     $scope.role = result.user.role;
-                    if ($scope.lastPost) $scope.lastPost.lastPost = true;
                 });
             }
 
@@ -135,14 +172,12 @@
                 // console.log('got new argument from server: ' + data);
                 var newArgument = data.data;
                 $scope.treeNested.unshift(newArgument);
-                if ($scope.lastPost){
-                    $scope.lastPost.lastPost = false;
-                }
-                newArgument.lastPost = true;
-                $scope.lastPost = newArgument;
+
+                updateLastFivePosts(newArgument);
             });
 
             socket.on('submitted-new-reply', function(data){
+
                 var newReply = data.data;
                 var parentNode = getNodeById($scope.treeNested, newReply.parent_id);
                 var mainThread = getNodeById($scope.treeNested, newReply.main_thread_id);
@@ -151,11 +186,8 @@
                 $scope.treeNested.unshift(mainThread);
                 parentNode.sub_arguments.push(newReply);
                 parentNode.expanded = true;
-                if ($scope.lastPost){
-                    $scope.lastPost.lastPost = false;
-                }
-                newReply.lastPost = true;
-                $scope.lastPost = newReply;
+
+                updateLastFivePosts(newReply);
             });
 
             socket.on('edit-discussion', function(edittedDiscussion){
