@@ -211,6 +211,7 @@ module.exports = function(autoIncrement, io){
                 argument.role = newArgument.role;
                 argument.fname = user.fname;
                 argument.lname = user.lname;
+                argument.color = user.color;
                 argument.content = newArgument.content;
                 argument.depth = (newArgument.depth ? newArgument.depth : 0);
                 argument.sub_arguments = [];

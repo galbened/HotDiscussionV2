@@ -48,10 +48,10 @@ hr.newArgSection {
 #onlineUser{
     list-style-type:none;
     /*noinspection CssUnknownTarget*/
-    background: url('/resources/imgs/user.gif');
+    /*background: url('/resources/imgs/user.gif');
     background-repeat:no-repeat;
     background-position:left center;
-    padding-left:25px;
-    margin: 0;
+    padding-left:25px;*/
+    margin: 2px;
     vertical-align: middle;
 }

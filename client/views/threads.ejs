@@ -48,7 +48,10 @@
                         <h5 style="padding:0; margin:0">:On-line</h5>
 
                         <ul id="onlineUsers" ng-repeat="onlineUser in onlineUsers" >
-                            <li id="onlineUser">{{onlineUser.fname}} {{onlineUser.lname}}</li>
+                            <li id="onlineUser">
+                                {{onlineUser.fname}} {{onlineUser.lname}}
+                                <span style="color: {{onlineUser.color}}" class="glyphicon glyphicon-user"></span>
+                            </li>
                         </ul>
 
                     </div>

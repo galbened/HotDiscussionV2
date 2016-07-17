@@ -6,6 +6,7 @@ var userScheme = mongoose.Schema({
 		password: String,
 		firstname: String,
 		lastname: String,
+		color: String,
 		role: String
 	}
 });

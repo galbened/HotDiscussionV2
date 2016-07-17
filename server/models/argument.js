@@ -10,6 +10,7 @@ var argumentScheme = mongoose.Schema({
 	role: String,
 	fname: String,
 	lname: String,
+	color: String,
 	content: String,
 	depth: Number,
 	sub_arguments: [{type:Number, ref: 'Argument'}]

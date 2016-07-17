@@ -5,7 +5,7 @@ var User = require('../models/user');
 module.exports = function(passport){
 
 	passport.serializeUser(function(user, done){
-		done(null, {id: user._id, username: user.local.username, fname: user.local.firstname, lname: user.local.lastname, role:user.local.role});
+		done(null, {id: user._id, username: user.local.username, fname: user.local.firstname, lname: user.local.lastname, color: user.local.color, role:user.local.role});
 	});
 
 	passport.deserializeUser(function(userContext, done){
@@ -29,11 +29,22 @@ module.exports = function(passport){
 					if (user){
 						return done(null, false, req.flash('registerMessage', 'That username is already taken'));
 					}else{
+
+						function getRandomColor() {
+							var letters = '0123456789ABCDEF'.split('');
+							var color = '#';
+							for (var i = 0; i < 6; i++ ) {
+								color += letters[Math.floor(Math.random() * 16)];
+							}
+							return color;
+						}
+
 						var newUser = new User();
 						newUser.local.username = username;
 						newUser.local.password = password;
 						newUser.local.firstname = req.body.fname;
 						newUser.local.lastname = req.body.lname;
+						newUser.local.color = getRandomColor();
 						// newUser.local.role = "student";
 
 						newUser.save(function(err){

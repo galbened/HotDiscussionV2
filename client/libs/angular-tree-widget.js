@@ -38,15 +38,16 @@
                         $scope.expanded = false;
                     }
                 };
-
             }
 
             return {
                 strict:'A',
-                scope:{content:'='},
+                scope:{content:'=', color:'='},
                 template:
                     '<span>' +
-                    '   &#8226;&nbsp; <span ng-bind-html="overflowCtrl.content | linky:\'_blank\'"> </span>' +
+                    //'   &#8226;&nbsp; <span ng-bind-html="overflowCtrl.content | linky:\'_blank\'"> </span>' +
+                    '<span ng-style="{color: overflowCtrl.color}" class="glyphicon glyphicon-user"></span> ' +
+                    '&nbsp; <span ng-bind-html="overflowCtrl.content | linky:\'_blank\'"> </span>' +
                     '</span>' +
                     '<div>' +
                         '<button ng-if="kaftor" class="btn btn-info btn-xs" ng-click="overflowCtrl.expand()"><span class="glyphicon glyphicon-resize-full"></span></button>' +
@@ -62,6 +63,7 @@
                 restrict: "E",
                 scope: { nodes: '=',  options: '=?'},
                 template: "<treenode nodes='nodes' tree='nodelist' role='role' options='options' ></treenode>",
+                //pre function compiles before the template, that's where we get the nodelist from
                 compile: function compile(tElement, tAttrs, transclude) {
                     return {
                         pre: function (scope) {
