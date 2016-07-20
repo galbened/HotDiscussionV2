@@ -53,8 +53,16 @@
                                 <span style="color: {{onlineUser.color}}" class="glyphicon glyphicon-user"></span>
                             </li>
                         </ul>
+                    </div> <br>
 
-                    </div>
+                    <!-- UPDATE #1 - shows notification for new messages in instructor discussion from other users
+
+                    <span ng-class="{'glyphicon glyphicon-globe': newMessages}" ng-click="refreshDiscussion()" title="יש הודעות חדשות בדיון.">
+                        <button type="button" class="btn btn-default" ng-click="refreshDiscussion()"></button>
+                    </span>
+
+                    -->
+                    <span ng-class="{'glyphicon glyphicon-globe': newMessages}" title="יש הודעות חדשות בדיון, נא לרענן את הדף."></span>
                 </div>
 
                 <div class="col-md-3 text-right body" style="float:right">

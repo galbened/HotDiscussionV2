@@ -3,7 +3,7 @@
     <div id="rowWrapper" style="border-bottom-width: 1px; border-bottom-style:groove; " ng-style="(node.role==='admin' && {'background-color': '#92FFEB'}) || (node.role==='instructor' && {'background-color': '#F8FFFB'})">
 
         <div class="tblRow">
-            <div class="tblCell" style="width:75%; " ng-style="{'padding-right':node.depth * 20 + 'px'}">
+            <div class="tblCell" style="width:73%; " ng-style="{'padding-right':node.depth * 20 + 'px'}">
 
                 <!--<div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; ">-->
 
@@ -35,9 +35,11 @@
                 <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}"></span>
             </div>
 
-            <div class="tblCell" style="width:10%; text-align:left">
-                <img ng-if="node.lastPost" ng-src="/resources/imgs/new_icon.gif"/>
+            <div class="tblCell" style="width:12%; text-align:center">
+            <!--div class="tblCell" style="width:13%; text-align:left"-->
+                <img ng-if="node.lastPost" style="max-width: 100%;max-height: 100%;" ng-src="/resources/imgs/new_icon.gif"/>
                 <i style="font-size: 10px">{{nodeCtrl.prettyDate(node.createdAt)}}</i>
+                <!--span ng-class="{'glyphicon glyphicon-globe': node.role==='instructor'}"></span-->
             </div>
 
             <div class="tblCell" style="width:5%; text-align:center ;margin-bottom: 5px">

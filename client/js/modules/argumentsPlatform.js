@@ -99,6 +99,10 @@
                 })
             }
 
+            $scope.refreshDiscussion = function() {
+                init();
+            }
+
             //on page load...
             function init() {
                 socket.on('connect', function(){
@@ -117,6 +121,10 @@
                     $scope.discussionTitle = result.discussion.title;
                     $scope.discussionDescription = result.discussion.description;
                     $scope.role = result.user.role;
+
+                    // UPDATE #1 - retrieving discussion restriction and current session username into scope
+                    $scope.discussionRestriction = result.discussion.restriction;
+                    $scope.username = result.user.username;
                 });
             }
 
@@ -171,7 +179,16 @@
             socket.on('submitted-new-argument', function(data){
                 // console.log('got new argument from server: ' + data);
                 var newArgument = data.data;
-                $scope.treeNested.unshift(newArgument);
+
+                // UPDATE #1 - condition added on 18/07 - only student discussions should see live updates from other users
+                if(($scope.discussionRestriction == "student")||($scope.username == newArgument.username)) {
+                    $scope.treeNested.unshift(newArgument);
+                }
+                else
+                    $scope.newMessages = true;
+                /*
+                 else TODO notifications for instructor discussion
+                 */
 
                 updateLastFivePosts(newArgument);
             });
@@ -182,10 +199,19 @@
                 var parentNode = getNodeById($scope.treeNested, newReply.parent_id);
                 var mainThread = getNodeById($scope.treeNested, newReply.main_thread_id);
                 var mainThreadInd = $scope.treeNested.indexOf(mainThread);
-                $scope.treeNested.splice(mainThreadInd, 1);
-                $scope.treeNested.unshift(mainThread);
-                parentNode.sub_arguments.push(newReply);
-                parentNode.expanded = true;
+
+                // UPDATE #1 - condition added on 18/07 - only student discussions should see live updates from other users
+                if(($scope.discussionRestriction == "student")||($scope.username == newReply.username)) {
+                    $scope.treeNested.splice(mainThreadInd, 1);
+                    $scope.treeNested.unshift(mainThread);
+                    parentNode.sub_arguments.push(newReply);
+                    parentNode.expanded = true;
+                }
+                else
+                    $scope.newMessages = true;
+                /*
+                else TODO notifications for instructor discussion
+                 */
 
                 updateLastFivePosts(newReply);
             });
