@@ -29,16 +29,20 @@
                 <img align="left" ng-if="node.lastPost" style="max-height: 25px;" ng-src="/resources/imgs/new_icon.gif"/>
             </div>
 
-            <div class="tblCell" style="width:15%; text-align:center">
+            <div class="tblCell" style="width:13%; text-align:center">
                 <i style="font-size: 10px">{{nodeCtrl.prettyDate(node.createdAt)}}</i>
             </div>
 
-            <div class="tblCell" style="width:10%; text-align:center ;margin-bottom: 5px" align="left">
+            <div class="tblCell" style="width:7%; text-align:center">
+                <i>
+                    <p><small>#{{ ::node._id }}</small></p>
+                </i>
+            </div>
 
+            <div class="tblCell" style="width:5%; text-align:center ;margin-bottom: 5px" align="left">
                 <span class="glyphicon glyphicon-pencil btn btn-primary btn-xs" aria-hidden="true" ng-click="nodeCtrl.newReplyPressed(node)">
                     <small>תגובה</small>
                 </span>
-
             </div>
 
         </div><div class="clear"></div>
