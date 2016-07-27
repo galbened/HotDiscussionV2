@@ -26,7 +26,13 @@
             function overflowController($scope, $element, $filter){
                 var vm = this;
 
-                vm.expand = function(){
+                vm.expand = function(event){
+
+                    //When called by a link press - should NOT expand or collapse
+                    if(event.target.tagName == "A")
+                        return;
+                    //--
+
                     if (!$scope.expanded){
                         $element.removeClass('non-expanded');
                         $element.addClass('expanded');
@@ -45,13 +51,9 @@
                 scope:{content:'=', color:'='},
                 template:
                     '<span>' +
-                    //'   &#8226;&nbsp; <span ng-bind-html="overflowCtrl.content | linky:\'_blank\'"> </span>' +
                     '<span ng-style="{color: overflowCtrl.color}" class="glyphicon glyphicon-user"></span> ' +
-                    '&nbsp; <span ng-bind-html="overflowCtrl.content | linky:\'_blank\'"> </span>' +
-                    '</span>' +
-                    '<div>' +
-                        '<button ng-if="kaftor" class="btn btn-info btn-xs" ng-click="overflowCtrl.expand()"><span class="glyphicon glyphicon-resize-full"></span></button>' +
-                    '</div>',
+                    '&nbsp; <span style="cursor: pointer; cursor: hand;" ng-click="overflowCtrl.expand($event)" ng-bind-html="overflowCtrl.content | linky:\'_blank\'"> </span>' +
+                    '</span>',
                 controller: overflowController,
                 controllerAs: 'overflowCtrl',
                 bindToController: true,

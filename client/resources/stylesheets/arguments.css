@@ -37,6 +37,7 @@ hr.newArgSection {
 
 .expanded {
     word-wrap: break-word;
+    white-space: pre-line;
     vertical-align: top;
 }
 

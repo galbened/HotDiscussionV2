@@ -177,19 +177,8 @@
             });
 
             socket.on('submitted-new-argument', function(data){
-                // console.log('got new argument from server: ' + data);
                 var newArgument = data.data;
-
-                // UPDATE #1 - condition added on 18/07 - only student discussions should see live updates from other users
-                if(($scope.discussionRestriction == "student")||($scope.username == newArgument.username)) {
-                    $scope.treeNested.unshift(newArgument);
-                }
-                else
-                    $scope.newMessages = true;
-                /*
-                 else TODO notifications for instructor discussion
-                 */
-
+                $scope.treeNested.unshift(newArgument);
                 updateLastFivePosts(newArgument);
             });
 
@@ -200,18 +189,19 @@
                 var mainThread = getNodeById($scope.treeNested, newReply.main_thread_id);
                 var mainThreadInd = $scope.treeNested.indexOf(mainThread);
 
-                // UPDATE #1 - condition added on 18/07 - only student discussions should see live updates from other users
-                if(($scope.discussionRestriction == "student")||($scope.username == newReply.username)) {
+                // UPDATE #1 - condition added on 18/07 - only student discussions should see live updates from other users on top
+                if($scope.discussionRestriction == "student") {
                     $scope.treeNested.splice(mainThreadInd, 1);
                     $scope.treeNested.unshift(mainThread);
-                    parentNode.sub_arguments.push(newReply);
-                    parentNode.expanded = true;
                 }
-                else
-                    $scope.newMessages = true;
+                //else
+                //    $scope.newMessages = true;
                 /*
                 else TODO notifications for instructor discussion
                  */
+
+                parentNode.sub_arguments.push(newReply);
+                parentNode.expanded = true;
 
                 updateLastFivePosts(newReply);
             });

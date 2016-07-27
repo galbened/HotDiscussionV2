@@ -215,6 +215,19 @@ module.exports = function(autoIncrement, io){
                 argument.content = newArgument.content;
                 argument.depth = (newArgument.depth ? newArgument.depth : 0);
                 argument.sub_arguments = [];
+
+                // 27/07/16 - Looking up discussion restriction
+                var discRest = "";
+                Discussion.findOne({_id: argument.disc_id}, function(err, disc) {
+                    if (err){
+                        throw err;
+                    }
+                    else{
+                        discRest = disc.restriction;
+                    }
+                });
+                //-- 27/07/16
+
                 argument.save(function(err, data){
                     if (err)
                         throw err;
@@ -222,17 +235,19 @@ module.exports = function(autoIncrement, io){
                     Argument.findOne({_id: argument.main_thread_id}, function(err, mainArg) {
                         // console.log('updating the timestamp of the mainThread..');
                         if (mainArg){
-                            mainArg.updatedAt = Date.now();
+                            // 27/07/16 - New instructor discussion comments should not update the main thread update date - initiating a new field
+                            // Not using role because of admin - should be discussion restriction based.
+                            if(discRest == "student")
+                                mainArg.updatedAt = Date.now();
+                            //-- 27/07/16
+                            //mainArg.updatedAt = Date.now();
                             mainArg.save(function (err) {
                                 if (err) throw err;
-                                // console.log('UPDATED!! emiting the others for the change....');
                                 if (argument.depth === 0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
                                 else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
                             })
                         }
                         else{
-                            // console.log('there is no mainthread to this one...');
-                            // console.log('NO UPDATE TO MAIN...emiting the others for the change....');
                             if (argument.depth === 0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
                             else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
                         }
