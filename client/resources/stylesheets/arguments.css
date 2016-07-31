@@ -58,7 +58,7 @@ hr.newArgSection {
 }
 
 .iconFlash {
-    animation: blink 1.2s ease-in infinite;
+    animation: blink 1.0s ease-in infinite;
 }
 
 @keyframes blink {

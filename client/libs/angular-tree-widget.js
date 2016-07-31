@@ -15,9 +15,11 @@
                     elm2.css({display: 'inline', width: 'auto', visibility: 'hidden'});
                     elm2.appendTo('body');
 
-                    if (elm2.width() > element.width()){
-                        scope.kaftor = true;
+                    //enable expansion of content when the text overflows or there is a newline
+                    if((elm2.width() > element.width()) || (ctrl.node.content.indexOf("\n")!=-1)){
+                        scope.expandContent = true;
                     }
+
                     elm2.remove();
 
                 }, 300);
@@ -46,10 +48,7 @@
                 };
 
                 vm.iconFlashFlip = function(node){
-                    if(node.iconHovering)
-                        node.iconHovering = false;
-                    else
-                        node.iconHovering = true;
+                    node.iconHovering = !node.iconHovering;
                 };
 
                 vm.isChildHovered = function(children){
@@ -69,7 +68,9 @@
                     '<span>' +
                         '<span ng-mouseover="ofCtrl.iconFlashFlip(ofCtrl.node)" ng-mouseleave="ofCtrl.iconFlashFlip(ofCtrl.node)" title = " הודעה מאת: {{::ofCtrl.node.fname}} {{::ofCtrl.node.lname}}"' +
                         'ng-style="{color: ofCtrl.node.color}" class="glyphicon glyphicon-user" ng-class="ofCtrl.isChildHovered(ofCtrl.node.sub_arguments)"></span> ' +
-                        '&nbsp; <span style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span>' +
+                        '&nbsp;' +
+                        '<span ng-if="expandContent" style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span>' +
+                        '<span ng-if="!expandContent" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span>' +
                     '</span>',
                 controller: overflowController,
                 controllerAs: 'ofCtrl',
