@@ -42,6 +42,8 @@
                         // nestedJson.push(node);
                         nestedJson.unshift(node);
                     }
+
+                    node.iconHovering = false;
                 });
 
                 //initiating last five comments array

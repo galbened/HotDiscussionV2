@@ -6,7 +6,7 @@
             <div class="tblCell" style="width:50%; " ng-style="{'padding-right':node.depth * 20 + 'px'}">
 
                <span style="width:70%" ng-style="node.depth===0 && {'font-weight':'bold'}">
-                     <overflow-content class=non-expanded content="node.content" color="node.color"></overflow-content>
+                     <overflow-content class=non-expanded node="node"></overflow-content>
                </span>
 
                 <div ng-show="node.replyPressed" ng-style="{'padding-right':(node.depth+1) * 4 + 'px'}">

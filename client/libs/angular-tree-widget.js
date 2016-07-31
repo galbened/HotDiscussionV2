@@ -44,18 +44,35 @@
                         $scope.expanded = false;
                     }
                 };
+
+                vm.iconFlashFlip = function(node){
+                    if(node.iconHovering)
+                        node.iconHovering = false;
+                    else
+                        node.iconHovering = true;
+                };
+
+                vm.isChildHovered = function(children){
+                    var res = "";
+                    if(children != null)
+                        for (var i = 0; i < children.length; i++)
+                            if(children[i].iconHovering)
+                                res = "iconFlash";
+                    return res;
+                };
             }
 
             return {
                 strict:'A',
-                scope:{content:'=', color:'='},
+                scope:{node:'='},
                 template:
                     '<span>' +
-                    '<span ng-style="{color: overflowCtrl.color}" class="glyphicon glyphicon-user"></span> ' +
-                    '&nbsp; <span style="cursor: pointer; cursor: hand;" ng-click="overflowCtrl.expand($event)" ng-bind-html="overflowCtrl.content | linky:\'_blank\'"> </span>' +
+                        '<span ng-mouseover="ofCtrl.iconFlashFlip(ofCtrl.node)" ng-mouseleave="ofCtrl.iconFlashFlip(ofCtrl.node)" title = " הודעה מעת: {{::ofCtrl.node.fname}} {{::ofCtrl.node.lname}}"' +
+                        'ng-style="{color: ofCtrl.node.color}" class="glyphicon glyphicon-user" ng-class="ofCtrl.isChildHovered(ofCtrl.node.sub_arguments)"></span> ' +
+                        '&nbsp; <span style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span>' +
                     '</span>',
                 controller: overflowController,
-                controllerAs: 'overflowCtrl',
+                controllerAs: 'ofCtrl',
                 bindToController: true,
                 link:link
             }
