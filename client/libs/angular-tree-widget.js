@@ -67,7 +67,7 @@
                 scope:{node:'='},
                 template:
                     '<span>' +
-                        '<span ng-mouseover="ofCtrl.iconFlashFlip(ofCtrl.node)" ng-mouseleave="ofCtrl.iconFlashFlip(ofCtrl.node)" title = " הודעה מעת: {{::ofCtrl.node.fname}} {{::ofCtrl.node.lname}}"' +
+                        '<span ng-mouseover="ofCtrl.iconFlashFlip(ofCtrl.node)" ng-mouseleave="ofCtrl.iconFlashFlip(ofCtrl.node)" title = " הודעה מאת: {{::ofCtrl.node.fname}} {{::ofCtrl.node.lname}}"' +
                         'ng-style="{color: ofCtrl.node.color}" class="glyphicon glyphicon-user" ng-class="ofCtrl.isChildHovered(ofCtrl.node.sub_arguments)"></span> ' +
                         '&nbsp; <span style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span>' +
                     '</span>',
