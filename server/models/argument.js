@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var argumentScheme = mongoose.Schema({
+	treeStructureUpdatedAt: Date,
 	disc_id: {type:Schema.Types.ObjectId, ref: 'Discussion'},
 	parent_id: {type:Number, ref: 'Argument'},
 	main_thread_id: {type:Number, ref:'Argument'},
@@ -13,6 +14,7 @@ var argumentScheme = mongoose.Schema({
 	color: String,
 	content: String,
 	depth: Number,
+	hidden: Boolean,
 	sub_arguments: [{type:Number, ref: 'Argument'}]
 
 },{

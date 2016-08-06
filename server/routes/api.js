@@ -203,6 +203,7 @@ module.exports = function(autoIncrement, io){
             socket.on('submitted-new-argument', function (newArgument) {
                 // console.log('got new argument from client..: ', newArgument);
                 var argument = new Argument();
+                argument.treeStructureUpdatedAt = Date.now();
                 argument.disc_id = discussionId;
                 argument.parent_id = (newArgument.parent_id ? newArgument.parent_id : 0);
                 argument.main_thread_id = (newArgument.main_thread_id ? newArgument.main_thread_id : 0);
@@ -212,6 +213,7 @@ module.exports = function(autoIncrement, io){
                 argument.fname = user.fname;
                 argument.lname = user.lname;
                 argument.color = user.color;
+                argument.hidden = false;
                 argument.content = newArgument.content;
                 argument.depth = (newArgument.depth ? newArgument.depth : 0);
                 argument.sub_arguments = [];
@@ -238,7 +240,7 @@ module.exports = function(autoIncrement, io){
                             // 27/07/16 - New instructor discussion comments should not update the main thread update date - initiating a new field
                             // Not using role because of admin - should be discussion restriction based.
                             if(discRest == "student")
-                                mainArg.updatedAt = Date.now();
+                                mainArg.treeStructureUpdatedAt = Date.now();
                             //-- 27/07/16
                             //mainArg.updatedAt = Date.now();
                             mainArg.save(function (err) {
@@ -292,6 +294,29 @@ module.exports = function(autoIncrement, io){
                     if (argumentsNsp.sockets[sid].request.session.passport.user.username === user.username){
                         argumentsNsp.sockets[sid].emit('logout-redirect', '/auth/logout');
                         argumentsNsp.sockets[sid].request.logout();
+                    }
+                });
+            });
+
+            /**
+             * EVENT6 - admin hid or revealed argument
+             */
+            socket.on('flip-argument-hidden-status', function (data) {
+                var argumentID = data._id;
+                Argument.findOne({_id: argumentID}, function(err, argument) {
+                    if (err){
+                        throw err;
+                    }
+                    else{
+                        argument.hidden = !argument.hidden;
+                        argument.save(function (err) {
+                            if (err){
+                                throw err;
+                            }
+                            else{
+                                argumentsNsp.to(argument.disc_id).emit('flip-argument-hidden-status', {_id: argumentID});
+                            }
+                        })
                     }
                 });
             });

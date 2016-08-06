@@ -11,13 +11,17 @@
         .directive('overflowContent', function($timeout){
             function link(scope, element, attrs, ctrl){
                 $timeout(function() {
+
+                    //check for content length
                     var elm2 = element.clone();
                     elm2.css({display: 'inline', width: 'auto', visibility: 'hidden'});
                     elm2.appendTo('body');
 
                     //enable expansion of content when the text overflows or there is a newline
                     if((elm2.width() > element.width()) || (ctrl.node.content.indexOf("\n")!=-1)){
-                        scope.expandContent = true;
+                        //don't expand hidden nodes
+                        if(!ctrl.node.hidden)
+                            scope.expandContent = true;
                     }
 
                     elm2.remove();
@@ -25,7 +29,7 @@
                 }, 300);
             }
 
-            function overflowController($scope, $element, $filter){
+            function overflowController($scope, $element, $filter,$sce){
                 var vm = this;
 
                 vm.expand = function(event){
@@ -59,18 +63,32 @@
                                 res = "iconFlash";
                     return res;
                 };
+
+                vm.hideContent = function(node){
+                    var res = "";
+                    if(node.hidden) {
+                        res = "** תוכן הוסתר על ידי המנהל :( **";
+                        res = "<span style='color:red;'>" + res + "</span>";
+                        res = $sce.trustAsHtml(res);
+                    }
+                    else {
+                        res = node.content;
+                        res = $filter('linky')(res, '_blank');
+                    }
+                    return res;
+                }
             }
 
             return {
                 strict:'A',
-                scope:{node:'='},
+                scope:{node:'=',role:'='},
                 template:
                     '<span>' +
                         '<span ng-mouseover="ofCtrl.iconFlashFlip(ofCtrl.node)" ng-mouseleave="ofCtrl.iconFlashFlip(ofCtrl.node)" title = " הודעה מאת: {{::ofCtrl.node.fname}} {{::ofCtrl.node.lname}}"' +
                         'ng-style="{color: ofCtrl.node.color}" class="glyphicon glyphicon-user" ng-class="ofCtrl.isChildHovered(ofCtrl.node.sub_arguments)"></span> ' +
                         '&nbsp;' +
-                        '<span ng-if="expandContent" style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span>' +
-                        '<span ng-if="!expandContent" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span>' +
+                        '<span ng-if="expandContent" style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" ng-bind-html="ofCtrl.hideContent(ofCtrl.node)"> </span>' +
+                        '<span ng-if="!expandContent" ng-bind-html="ofCtrl.hideContent(ofCtrl.node)"> </span>' +
                     '</span>',
                 controller: overflowController,
                 controllerAs: 'ofCtrl',
@@ -78,10 +96,13 @@
                 link:link
             }
         })
+
+
+
         .directive('tree', function () {
             return {
                 restrict: "E",
-                scope: { nodes: '=',  options: '=?'},
+                scope: { nodes: '=', role:'=', options: '=?'},
                 template: "<treenode nodes='nodes' tree='nodelist' role='role' options='options' ></treenode>",
                 //pre function compiles before the template, that's where we get the nodelist from
                 compile: function compile(tElement, tAttrs, transclude) {
@@ -118,6 +139,11 @@
                     node.replyPressed = !node.replyPressed;
                 };
 
+                vm.flipArgumentHiddenStatus = function(node){
+                    var argumentID = node._id;
+                    $scope.$emit('flip-argument-hidden-status', {_id : argumentID});
+                };
+
                 vm.cancelReply = function(node){
                     node.replyPressed = false;
                 };
@@ -130,7 +156,7 @@
 
             return {
                 restrict: "E",
-                scope: { nodes: '=', tree: '=', options: '=?' },
+                scope: { nodes: '=', tree: '=', options: '=?' , role:'='},
                 controller: nodeController,
                 controllerAs: 'nodeCtrl',
                 bindToController: true,

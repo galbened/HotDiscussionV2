@@ -89,10 +89,10 @@
 
             function sortArgumnets(argArray){
                 argArray.sort(function(argA,argB){
-                    if(argA.updatedAt < argB.updatedAt){
+                    if(argA.treeStructureUpdatedAt < argB.treeStructureUpdatedAt){
                         return 1;
                     }
-                    if (argA.updatedAt > argB.updatedAt){
+                    if (argA.treeStructureUpdatedAt > argB.treeStructureUpdatedAt){
                         return -1;
                     }
                     else{
@@ -111,7 +111,6 @@
                     socket.emit('get-all-arguments');
                 });
                 socket.on('init-discussion', function(result){
-                    console.log(result);
                     $scope.treeWithRef = result.discArguments;
                     $scope.treeNested = fromReftoNestedJson($scope.treeWithRef);
                     $scope.onlineUsers = result.onlineUsers;
@@ -157,6 +156,7 @@
             /**
              * function for sticking the "new argument" box at the top of the screen when scrolling the page
               */
+            /*
             setTimeout(function doIt(){
               $(window).on("scroll", function(e){
                 var screenTop = $(window).scrollTop();
@@ -164,16 +164,19 @@
                 var newArgumentTop=$("#scroller");
                 var treeConversation = $("#treeConversation");
                 if (screenTop>anchorTop) {
+                    //screen top is no longer larger than anchor top after scrolling
+                    console.log("bla")
                   newArgumentTop.css({position:"fixed",top:"0px", "z-index":999});
-                  treeConversation.css({"margin-top":"160px"});
+                  //treeConversation.css({"margin-top":"200px"});
                 } else {
+                    //
                   newArgumentTop.css({position:"relative"});
-                  treeConversation.css({"margin-top":"0px"});
+                  //treeConversation.css({"margin-top":"0px"});
                 }
               });
 
             }, 0);
-
+*/
             $(window).on('beforeunload', function(){
                 socket.disconnect();
             });
@@ -235,6 +238,12 @@
                 $window.location.href = redirect;
             });
 
+            socket.on('flip-argument-hidden-status', function(data){
+                var argumentID = data._id;
+                var node = getNodeById($scope.treeNested, argumentID);
+                node.hidden = !node.hidden;
+            });
+
             /************************
              ************************************************/
 
@@ -258,6 +267,12 @@
             $scope.logoutUser = function(){
                 socket.emit('logout-user');
             };
+
+            $scope.$on('flip-argument-hidden-status', function (e,data) {
+                var argumentID = data._id;
+                socket.emit('flip-argument-hidden-status',{_id: argumentID});
+            });
+
 
             // ****** THIS FUNCTIONALITY IS NOT YET REQUESTED, BUR IT PROBABLY WILL SOMETIME
             // $scope.removeNode = function () {

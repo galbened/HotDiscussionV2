@@ -1,6 +1,10 @@
 #scroller{
   background-color: #E0E3F3;
   width: 100%;
+  top:0px;
+  position:fixed;
+  z-index:999;
+  padding-top:15px;
 }
 
 #tblWrapper {
@@ -8,9 +12,17 @@
     margin: 0 auto;
 }
 
+#treeConversation{
+    padding:10px;
+}
+
 .tblRow {
-    padding-bottom: 20px;
     padding-right:10px;
+    margin-top: 2px;
+}
+
+.rowButtomMgr{
+    margin-bottom: 2px;
 }
 
 .tblCell {

@@ -18,74 +18,54 @@
 <body ng-app="argumentsApp">
 
 <div class="container-fluid" ng-controller="ArgumentsTreeController">
-    <header class="text-center">
-        <h1>{{discussionTitle}}</h1>
-        <h3>{{discussionDescription}}</h3>
-    </header>
+        <div class="row">
+            <div id="scroller">
+                <!-- new argument prompt -->
+                <div class="row">
+                    <div class="col-md-4 text-right body" style="float:right">
+                        <div style="width:90%">
+                            <button type="submit" class="btn btn-primary" ng-click="submitNewArgument(newArgument)">פרסום רעיון חדש</button>
+                            <span style="float: left;"><h5><a href="" ng-click="logoutUser()">Log Out</a></h5></span>
+                        </div>
 
-    <div id="scroller-anchor" ></div>
-    <div class="row">
-        <div id="scroller">
-            <!-- new argument prompt -->
-            <div class="row">
-
-                <div class="col-md-6 text-right body" style="float:right">
-                    <div style="width:40%">
-                        <button type="submit" class="btn btn-primary" ng-click="submitNewArgument(newArgument)">פרסום רעיון חדש</button>
-                        <span style="float: left;"><h5><a href="" ng-click="logoutUser()">Log Out</a></h5></span>
+                        <div class="form-group" style="width: 90%;">
+                            <form class="form-inline">
+                                <textarea class="form-control text-right" rows="3" placeholder="רשום כאן" style="resize: none;width:100%" ng-model="newArgument"></textarea>
+                            </form>
+                        </div>
                     </div>
 
-                    <div class="form-group" style="width: 90%;">
-                        <form class="form-inline">
-                            <textarea class="form-control text-right" rows="3" placeholder="רשום כאן" style="width:100%" ng-model="newArgument"></textarea>
-                        </form>
+                    <div class="col-md-3 text-left body" >
+                        <div style="display: inline-block; border-style:solid; border-width:1px; padding:0; margin:0">
+                            <h5 style="padding:0; margin:0">:On-line</h5>
+
+                            <ul id="onlineUsers" ng-repeat="onlineUser in onlineUsers" >
+                                <li id="onlineUser">
+                                    {{onlineUser.fname}} {{onlineUser.lname}}
+                                    <span style="color: {{onlineUser.color}}" class="glyphicon glyphicon-user"></span>
+                                </li>
+                            </ul>
+                        </div> <br>
+                    </div>
+
+                    <div  class="col-md-5 text-center body">
+                        <h1>{{discussionTitle}}</h1>
+                        <h3>{{discussionDescription}}</h3>
                     </div>
 
                 </div>
 
-                <div class="col-md-3 text-left body" >
-                    <div style="display: inline-block; border-style:solid; border-width:1px; padding:0; margin:0">
-                        <h5 style="padding:0; margin:0">:On-line</h5>
 
-                        <ul id="onlineUsers" ng-repeat="onlineUser in onlineUsers" >
-                            <li id="onlineUser">
-                                {{onlineUser.fname}} {{onlineUser.lname}}
-                                <span style="color: {{onlineUser.color}}" class="glyphicon glyphicon-user"></span>
-                            </li>
-                        </ul>
-                    </div> <br>
-
-                    <!-- UPDATE #1 - shows notification for new messages in instructor discussion from other users
-
-                    <span ng-class="{'glyphicon glyphicon-globe': newMessages}" ng-click="refreshDiscussion()" title="יש הודעות חדשות בדיון.">
-                        <button type="button" class="btn btn-default" ng-click="refreshDiscussion()"></button>
-                    </span>
-
-
-                    <span ng-class="{'glyphicon glyphicon-globe': newMessages}" title="יש הודעות חדשות בדיון, נא לרענן את הדף."></span>
-                    -->
-                </div>
-
-                <div class="col-md-3 text-right body" style="float:right">
-                    <span><!-- PUT SOMETHING HERE MAYBE? --></span>
-
-                </div>
-
+                <hr class="newArgSection" style="margin-bottom:0; margin-top:0">
 
             </div>
-
-
-            <hr class="newArgSection" style="margin-bottom:0; margin-top:0">
-
         </div>
-    </div>
 
 
 
     <!-- existing arguments rendering -->
-
-    <div class="row" id="treeConversation">
-        <tree nodes='treeNested'></tree>
+    <div class="row" id="treeConversation" style="margin-top:100px">
+        <tree nodes='treeNested' role='role'></tree>
     </div>
 
     <footer class="text-left">
