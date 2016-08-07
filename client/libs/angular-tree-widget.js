@@ -7,30 +7,39 @@
 
 (function () {
     'use strict';
-    angular.module('TreeWidget', ['ngAnimate', 'RecursionHelper'])
+    angular.module('TreeWidget', ['ngAnimate', 'RecursionHelper','ngSanitize'])
         .directive('overflowContent', function($timeout){
-            function link(scope, element, attrs, ctrl){
-                $timeout(function() {
+            function link($scope, $element, $attrs, $ctrl){
+                $scope.$watch('nodeChanged', function(){
+                    $timeout(function() {
 
-                    //check for content length
-                    var elm2 = element.clone();
-                    elm2.css({display: 'inline', width: 'auto', visibility: 'hidden'});
-                    elm2.appendTo('body');
+                        //check for content length
+                        var elm2 = $element.clone();
+                        elm2.css({display: 'inline', width: 'auto', visibility: 'hidden'});
+                        elm2.appendTo('body');
 
-                    //enable expansion of content when the text overflows or there is a newline
-                    if((elm2.width() > element.width()) || (ctrl.node.content.indexOf("\n")!=-1)){
-                        //don't expand hidden nodes
-                        if(!ctrl.node.hidden)
-                            scope.expandContent = true;
-                    }
+                        //enable expansion of content when the text overflows or there is a newline
+                        if ((elm2.width() > $element.width()) || ($ctrl.node.content.indexOf("\n") != -1)) {
+                            //don't expand hidden nodes
+                            $scope.expandContent = true;
+                        }
+                        else
+                            $scope.expandContent = false;
 
-                    elm2.remove();
-
-                }, 300);
+                        elm2.remove();
+                    },300)
+                },true);
             }
 
-            function overflowController($scope, $element, $filter,$sce){
+            function overflowController($scope, $element, $filter, $sce){
                 var vm = this;
+                $scope.nodeChanged = vm.node;
+
+                var res = "** תוכן הוסתר על ידי המנהל :( **";
+                res = "<span style='color:red;'>" + res + "</span>";
+                res = $sce.trustAsHtml(res);
+
+                $scope.hiddenMessage = res;
 
                 vm.expand = function(event){
 
@@ -63,20 +72,6 @@
                                 res = "iconFlash";
                     return res;
                 };
-
-                vm.hideContent = function(node){
-                    var res = "";
-                    if(node.hidden) {
-                        res = "** תוכן הוסתר על ידי המנהל :( **";
-                        res = "<span style='color:red;'>" + res + "</span>";
-                        res = $sce.trustAsHtml(res);
-                    }
-                    else {
-                        res = node.content;
-                        res = $filter('linky')(res, '_blank');
-                    }
-                    return res;
-                }
             }
 
             return {
@@ -87,8 +82,9 @@
                         '<span ng-mouseover="ofCtrl.iconFlashFlip(ofCtrl.node)" ng-mouseleave="ofCtrl.iconFlashFlip(ofCtrl.node)" title = " הודעה מאת: {{::ofCtrl.node.fname}} {{::ofCtrl.node.lname}}"' +
                         'ng-style="{color: ofCtrl.node.color}" class="glyphicon glyphicon-user" ng-class="ofCtrl.isChildHovered(ofCtrl.node.sub_arguments)"></span> ' +
                         '&nbsp;' +
-                        '<span ng-if="expandContent" style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" ng-bind-html="ofCtrl.hideContent(ofCtrl.node)"> </span>' +
-                        '<span ng-if="!expandContent" ng-bind-html="ofCtrl.hideContent(ofCtrl.node)"> </span>' +
+                        '<span ng-if="ofCtrl.node.hidden" ng-bind-html="hiddenMessage"></span>' +
+                        '<span ng-if="expandContent && !ofCtrl.node.hidden" style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span>' +
+                        '<span ng-if="!expandContent && !ofCtrl.node.hidden" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span>' +
                     '</span>',
                 controller: overflowController,
                 controllerAs: 'ofCtrl',
