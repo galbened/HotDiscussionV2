@@ -11,6 +11,8 @@
 
             var lastFivePosts = [];
 
+            setTreeConversationTop();
+
             function fromReftoNestedJson(refJson){
                 var refJsonMap = refJson.reduce(function(map, node) {
                     map[node._id] = node;
@@ -176,7 +178,15 @@
               });
 
             }, 0);
-*/
+
+            */
+
+            function setTreeConversationTop(){
+                var scrollerHeight = $('#scroller').height();
+                var treeConversation = $("#treeConversation");
+                treeConversation.css({"margin-top":scrollerHeight});
+            }
+
             $(window).on('beforeunload', function(){
                 socket.disconnect();
             });
