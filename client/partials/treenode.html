@@ -1,9 +1,9 @@
-<div id="tblWrapper" dir="rtl" ng-repeat="node in nodeCtrl.nodes" ng-style="node.depth===0 && {'padding-bottom': '0', 'margin-bottom': '20px', 'border-bottom-style': 'solid'}" >
+<div id="tblWrapper" dir="rtl" ng-repeat="node in nodeCtrl.nodes" ng-style="node.depth===0 && {'padding-bottom': '0', 'margin-bottom': '20px', 'background-color':'#f2f2f2', 'border-radius': '5px 5px 0px 0px'}" >
 
-    <div id="rowWrapper" style="border-bottom-width: 1px; border-bottom-style:groove; " ng-style="(node.role==='admin' && {'background-color': '#92FFEB'}) || (node.role==='instructor' && {'background-color': '#F8FFFB'})">
+    <div id="rowWrapper" style="border-bottom-width: 1px; border-bottom-style:groove; " ng-style="(node.role==='admin' && {'background-color': '#92FFEB', 'border-radius': '5px 5px 0px 0px'}) || (node.role==='instructor' && {'background-color': '#ffffe6', 'border-radius': '5px 5px 0px 0px'})">
 
         <div class="tblRow">
-            <div class="tblCell" style="width:50%; " ng-style="{'padding-right':node.depth * 20 + 'px'}">
+            <div class="tblCell" style="width:55%; " ng-style="{'padding-right':node.depth * 20 + 'px'}">
 
                <span style="width:70%" ng-style="node.depth===0 && {'font-weight':'bold'}">
                      <overflow-content class=non-expanded node="node" role="node.color"></overflow-content>
@@ -19,35 +19,35 @@
 
             </div>
 
-            <div class="tblCell" style="width:5%; text-align:left; min-height: 1px;">
-                <div ng-if="nodeCtrl.role == 'admin'">
+            <div class="tblCell" style="width:5%; text-align:center; min-height: 1px;">
+                <div ng-if="nodeCtrl.role == 'admin'" class="btn btn-xs">
                     <span ng-class="{'glyphicon glyphicon-eye-open': node.hidden}" ng-click="nodeCtrl.flipArgumentHiddenStatus(node)"></span>
                     <span ng-class="{'glyphicon glyphicon-eye-close': !node.hidden}" ng-click="nodeCtrl.flipArgumentHiddenStatus(node)"></span>
                 </div>
             </div>
 
-            <div class="tblCell" style="width:15%; text-align:left">
-                <span>{{::node.fname}} {{::node.lname}}</span>
-                <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}"></span>
-                <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}"></span>
+            <div class="tblCell" style="width:6%; min-height: 1px; text-align:center">
+                <span style="color:firebrick" title="הודעה חדשה" ng-class="{'glyphicon glyphicon-fire': node.lastPost}"></span>
             </div>
 
-            <div class="tblCell" style="width:5%; min-height: 1px;">
-                <img align="left" ng-if="node.lastPost" style="max-height: 25px;" ng-src="/resources/imgs/new_icon.gif"/>
+            <div class="tblCell" style="width:13%; text-align:center">
+                <span><small> {{::node.fname}} {{::node.lname}} </small></span>
+                <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}"></span>
+                <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}"></span>
             </div>
 
             <div class="tblCell" style="width:13%; text-align:center">
                 <i style="font-size: 10px">{{nodeCtrl.prettyDate(node.createdAt)}}</i>
             </div>
 
-            <div class="tblCell" style="width:7%; text-align:center">
+            <div class="tblCell" style="width:5%; text-align:center">
                 <i>
                     <small>#{{ ::node._id }}</small>
                 </i>
             </div>
 
-            <div class="tblCell rowButtomMgr" style="width:5%; text-align:center" align="left">
-                <span class="glyphicon glyphicon-comment btn btn-primary btn-xs" aria-hidden="true" ng-click="nodeCtrl.newReplyPressed(node)"></span>
+            <div class="tblCell rowButtomMgr" style="width:3%; text-align:center">
+                <span title="תגובה" class="glyphicon glyphicon-comment btn btn-primary btn-xs" aria-hidden="true" ng-click="nodeCtrl.newReplyPressed(node)"></span>
             </div>
             <!--div class="tblCell" style="width:5%; text-align:center" align="left">
                 <span class="glyphicon glyphicon-pencil btn btn-primary btn-xs" aria-hidden="true" ng-click="nodeCtrl.newReplyPressed(node)">
