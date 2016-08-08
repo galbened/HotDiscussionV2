@@ -30,23 +30,23 @@
                 <span style="color:firebrick" title="הודעה חדשה" ng-class="{'glyphicon glyphicon-fire': node.lastPost}"></span>
             </div>
 
-            <div class="tblCell" style="width:13%; text-align:center">
+            <div class="tblCell" style="width:13%; text-align:left">
                 <span><small> {{::node.fname}} {{::node.lname}} </small></span>
                 <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}"></span>
                 <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}"></span>
             </div>
 
-            <div class="tblCell" style="width:13%; text-align:center">
+            <div class="tblCell" style="width:13%; text-align:left">
                 <i style="font-size: 10px">{{nodeCtrl.prettyDate(node.createdAt)}}</i>
             </div>
 
-            <div class="tblCell" style="width:5%; text-align:center">
+            <div class="tblCell" style="width:5%; text-align:left">
                 <i>
                     <small>#{{ ::node._id }}</small>
                 </i>
             </div>
 
-            <div class="tblCell rowButtomMgr" style="width:3%; text-align:center">
+            <div class="tblCell rowButtomMgr" style="width:3%; text-align:left; padding-left:2px">
                 <span title="תגובה" class="glyphicon glyphicon-comment btn btn-primary btn-xs" aria-hidden="true" ng-click="nodeCtrl.newReplyPressed(node)"></span>
             </div>
             <!--div class="tblCell" style="width:5%; text-align:center" align="left">
