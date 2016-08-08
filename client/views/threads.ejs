@@ -17,7 +17,7 @@
 
 <body ng-app="argumentsApp">
 
-<div class="container-fluid" ng-controller="ArgumentsTreeController">
+<div class="container-fluid" ng-controller="ArgumentsTreeController"  ng-cloak>
         <div class="row">
             <div id="scroller">
                 <!-- new argument prompt -->
@@ -61,8 +61,6 @@
             </div>
         </div>
 
-
-
     <!-- existing arguments rendering -->
     <div class="row" id="treeConversation">
         <tree nodes='treeNested' role='role'></tree>
@@ -97,6 +95,7 @@
 <script type="text/javascript" src="/js/configs/argumentsFactory.js"></script>
 <script type="text/javascript" src="/libs/angular-tree-widget.js"></script>
 <script type="text/javascript" src="/js/configs/socketsFactory.js"></script>
+
 </body>
 </html>
 
