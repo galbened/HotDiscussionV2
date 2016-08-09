@@ -1,7 +1,7 @@
 (function() {
   'use strict';
   angular
-    .module('adminDashboardApp', ['btford.socket-io', 'socketio.factory'])
+    .module('adminDashboardApp', ['btford.socket-io', 'socketio.factory','bootstrapModalApp'])
     .controller('adminDashboardCtrl', ['$scope','$http', '$window', 'socketio', function($scope, $http, $window, socketio){
 
       $scope.pressAdd = false;
@@ -9,6 +9,11 @@
 
       //disconnect from socket when exiting the web page
       var socket = socketio.discussions();
+
+      $scope.$on('request socket', function(){
+          $scope.$broadcast('discussion-socketIO', socket);
+      });
+
       $(window).on('beforeunload', function(){
         socket.disconnect();
       });

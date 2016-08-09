@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hot Discussions Platform</title>
-    
+
     <!-- /////////////////  JavaScript  ///////////////// -->
     <!-- BOWER [JQuery, Bootstrap, Angular, Socketio, Angular-Socketio] -->
     <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
@@ -13,9 +13,13 @@
     <script type="text/javascript" src="/libs/angular/angular.js"></script>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/libs/angular-socket-io/socket.js"></script>
+    <script type="text/javascript" src="/libs/angular-animate/angular-animate.js"></script>
+    <script type="text/javascript" src="/libs/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+
     <!-- LOCALs -->
     <script type="text/javascript" src="/js/configs/socketsFactory.js"></script>
     <script type="text/javascript" src="/js/modules/discussionsDashboard.js"></script>
+    <script type="text/javascript" src="/js/modules/uiBootstrapModal.js"></script>
     <!-- \\\\\\\\\\\\\\\\\\  JavaScript  \\\\\\\\\\\\\\\\\\ -->
 
     <!-- //////////////////  CSS  ///////////////////// -->
@@ -25,61 +29,67 @@
     <link href="/resources/stylesheets/main.css" rel="stylesheet">
     <link href="/resources/stylesheets/discussions.css" rel="stylesheet">
     <!-- \\\\\\\\\\\\\\\\\\  CSS  \\\\\\\\\\\\\\\\\\\\ -->
-    
+
 </head>
 
-<body ng-app="discussionsDashboardApp" dir="ltr">
+<body ng-app="discussionsDashboardApp" ng-controller="discussionsDashboardCtrl">
   <div class="container">
     <header class="text-center">
-      <h1>
-        <% if (user.role === 'admin'){ %>
-          <script>
-              window.location.href = "/admin/dashboard";
-          </script>
-        <% } %>
+        <div class="row">
+            <div class="col-md-2 text-right"><a href="/auth/logout">Log Out</a></div>
 
-          <%= user.fname %> <%= user.lname %>, Enjoy!  [<%= user.role %>]
+            <div class="col-md-8 text-center">
+                <h1>
+                <% if (user.role === 'admin'){ %>
+                  <script>
+                      window.location.href = "/admin/dashboard";
+                  </script>
+                    <% } %>
+      שלום
+                    <%= user.fname %> <%= user.lname %>,
+                    התחברת למערכת כ-
+                    <%= user.role %>.
+                </h1>
+            </div>
 
-      </h1>
+            <div class="col-md-2" ng-controller="ModalCtrl">
+                <button class="button" style="vertical-align:middle;marign:30px" ng-click="open()"><span>ביוגרפיה</span></button>
+            </div>
+        </div>
     </header>
 
-    <div class="row" id="form-title">
-        <div class="col-md-2"></div>
-        <div class="col-md-8 text-center">
-          <h4>אנא בחר את הדיון שאליו נרשמת ע"י המרצה</h4>
-        </div>
-        <div class="col-md-2 text-right"><a href="/auth/logout">Log Out</a></div>
-    </div>
-
-    <div ng-controller="discussionsDashboardCtrl">
-
+    <div>
         <table class="table table-hover table-condensed">
-            
+
             <thead>
               <tr id="headRow">
-                <th>תיאור</th>
-                <th>כותרת</th>
                 <th style="width:10%">#</th>
+                <th>כותרת</th>
+                <th>תיאור</th>
               </tr>
             </thead>
-            
+
             <tbody ng-repeat="discussion in discussions">
               <tr ng-if="discussion.restriction === userRole">
-              <!-- TODO: 1-way binding for performance stuff.. -->
-                <td>{{discussion.description}}</td>
-                <td>{{discussion.title}}</td>
+              <!-- TODO: 1-way binding for performance stuff..-->
                 <td style="width: 0"><a href="" ng-click="goToDisc($index)">הצטרף</a></td>
+                <td>{{discussion.title}}</td>
+                <td>{{discussion.description}}</td>
               </tr>
             </tbody>
         </table>
+
     </div>
+
+      <!-- bio button flashes on page load (chrome), but only when there is an input element on page - very weird... -->
+      <input hidden>
+      <!-- that's why that's heer -->
 
     <footer>
         <p>maintained by BGU</p>
     </footer>
 
   </div>
-
 </body>
 </html>
 

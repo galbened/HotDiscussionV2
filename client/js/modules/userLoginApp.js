@@ -2,7 +2,7 @@
     'use strict';
     angular
         .module('userLiginApp', [])
-        .controller('userLoginFormCtrl', ['$scope','$http', '$window', function($scope, $http, $window){
+        .controller('userLoginFormCtrl', ['$scope','$http', '$window','$timeout', function($scope, $http, $window,$timeout){
             
             $scope.dangerMessage = "";
             
@@ -19,7 +19,7 @@
                     data: data
                 })
                     .success(function(res){
-                        // console.log(res);
+                        //console.log(res)
                         if (res.message === 'logged-in'){
                             $window.location.href = '/discussions';
                         }

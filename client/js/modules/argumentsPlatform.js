@@ -1,5 +1,5 @@
 (function(){
-    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize'], function($locationProvider){
+    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize','ui.bootstrap'], function($locationProvider){
         $locationProvider.html5Mode(true);
     })
         .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio', function (TreeService, $scope, $window, $location, socketio) {
@@ -9,9 +9,21 @@
             var discId = path.split('/')[1];
             var socket = socketio.arguments({discussion: discId});
 
-            var lastFivePosts = [];
+            var lastPostsArray = [];
+            const lastPostsArraySIZE = 10;
 
             setTreeConversationTop();
+
+            $scope.$on('request-user-info-update', function(e,node){
+                socket.on('sending-user-info', function(data){
+                    if(data.userInfo == null)
+                        node.userInfo = "משתמש זה לא כתב ביוגרפיה."
+                    else
+                        node.userInfo = data.userInfo
+                });
+
+                socket.emit('requesting-user-info', {_id:node.user_id})
+            });
 
             function fromReftoNestedJson(refJson){
                 var refJsonMap = refJson.reduce(function(map, node) {
@@ -49,25 +61,25 @@
                 });
 
                 //initiating last five comments array
-                initLastFivePosts(nodesCopy);
+                initLastPostsArray(nodesCopy);
 
                 return nestedJson;
 
             }
 
-            function updateLastFivePosts(newNode){
+            function updateLastPostsArray(newNode){
                 //adds new created node to the last five, removing the oldest of the five
-                lastFivePosts.unshift(newNode);
+                lastPostsArray.unshift(newNode);
                 newNode.lastPost = true;
 
-                if(lastFivePosts.length>5)
+                if(lastPostsArray.length>lastPostsArraySIZE)
                 {
-                    lastFivePosts[5].lastPost = false;
-                    lastFivePosts.pop();
+                    lastPostsArray[lastPostsArraySIZE].lastPost = false;
+                    lastPostsArray.pop();
                 }
             }
 
-            function initLastFivePosts(nodesCopy){
+            function initLastPostsArray(nodesCopy){
                 //sorting by all nodes by date created
                 nodesCopy.sort(function(argA,argB){
                     if(argA.createdAt < argB.createdAt){
@@ -81,11 +93,11 @@
                     }
                 });
 
-                //takes most recent 5 nodes or less than 5
-                for(var index = 0;index<5 && index<nodesCopy.length;index++)
+                //takes most recent lastPostsArraySIZE nodes or less than lastPostsArraySIZE
+                for(var index = 0;index<lastPostsArraySIZE && index<nodesCopy.length;index++)
                 {
                     nodesCopy[index].lastPost = true;
-                    lastFivePosts.push(nodesCopy[index]);
+                    lastPostsArray.push(nodesCopy[index]);
                 }
             }
 
@@ -194,7 +206,7 @@
             socket.on('submitted-new-argument', function(data){
                 var newArgument = data.data;
                 $scope.treeNested.unshift(newArgument);
-                updateLastFivePosts(newArgument);
+                updateLastPostsArray(newArgument);
             });
 
             socket.on('submitted-new-reply', function(data){
@@ -218,7 +230,7 @@
                 parentNode.sub_arguments.push(newReply);
                 parentNode.expanded = true;
 
-                updateLastFivePosts(newReply);
+                updateLastPostsArray(newReply);
             });
 
             socket.on('edit-discussion', function(edittedDiscussion){
@@ -277,6 +289,7 @@
             $scope.logoutUser = function(){
                 socket.emit('logout-user');
             };
+
 
             $scope.$on('flip-argument-hidden-status', function (e,data) {
                 var argumentID = data._id;

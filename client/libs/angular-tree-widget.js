@@ -122,6 +122,11 @@
             var nodeController = function($scope){
                 var vm = this;
 
+                vm.getPostUserInfo = function(node){
+                    //node.userInfo = "טוען.."
+                    $scope.$emit('request-user-info-update', node);
+                };
+
                 vm.submitNewReply = function(node){
                     if (vm.replyText){
                         $scope.$emit('submitted-new-reply', {node: node, replyText: vm.replyText});

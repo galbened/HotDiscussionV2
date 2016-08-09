@@ -1,7 +1,7 @@
 (function() {
     'use strict';
     angular
-        .module('discussionsDashboardApp', ['btford.socket-io', 'socketio.factory'])
+        .module('discussionsDashboardApp', ['btford.socket-io', 'socketio.factory','bootstrapModalApp'])
         .controller('discussionsDashboardCtrl', ['$scope','$http','$window','socketio', function($scope, $http, $window, socketio){
 
             // var findDiscIdx = function(disc){
@@ -27,6 +27,11 @@
              *
              */
             var socket = socketio.discussions();
+
+            $scope.$on('request socket', function(){
+                $scope.$broadcast('discussion-socketIO', socket);
+            });
+
             $(window).on('beforeunload', function(){
                 socket.disconnect();
             });
@@ -57,6 +62,8 @@
                     console.log(err.statusText);
                 });
             });
+
+
             /***
              *                      _             _                            _
              *                     | |           | |                          (_)

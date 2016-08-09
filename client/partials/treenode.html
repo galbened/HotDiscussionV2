@@ -31,9 +31,11 @@
             </div>
 
             <div class="tblCell" style="width:13%; text-align:left">
-                <span><small> {{::node.fname}} {{::node.lname}} </small></span>
+                <span style="cursor: pointer;" uib-popover-html="node.userInfo ? node.userInfo : 'טוען...'" popover-is-open="popoverIsOpen"
+                      ng-click="popoverIsOpen = !popoverIsOpen;nodeCtrl.getPostUserInfo(node)" ng-mouseleave="popoverIsOpen = false">
+                    <small> {{::node.fname}} {{::node.lname}} </small>
                 <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}"></span>
-                <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}"></span>
+                <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}"></span></span>
             </div>
 
             <div class="tblCell" style="width:13%; text-align:left">

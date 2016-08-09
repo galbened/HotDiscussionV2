@@ -1,6 +1,7 @@
 module.exports = function(autoIncrement, io){
 
     var Discussion = require('../models/discussion');
+    var User = require('../models/user');
     var Argument = require('../models/argument')(autoIncrement);
     var express = require('express');
     var router = express.Router();
@@ -112,7 +113,6 @@ module.exports = function(autoIncrement, io){
     discussionNsp.on('connection', function(socket){
 
         if (socket.request.session.passport) {
-
             var user = socket.request.session.passport.user;
 
             socket.on('new-discussion', function (newDiscussion) {
@@ -126,6 +126,27 @@ module.exports = function(autoIncrement, io){
                 // console.log(editedDiscuusion._id);
                 discussionNsp.emit('edit-discussion');
                 argumentsNsp.to(editedDiscuusion._id).emit('edit-discussion', editedDiscuusion);
+            });
+
+            socket.on('requesting-user-info', function () {
+                User.findOne({_id: user.id}, function(err, user) {
+                    if (err){
+                        throw err;
+                    }
+                    else{
+                        discussionNsp.emit('sending-user-info', {userInfo:user.local.info});
+                    }
+                });
+            });
+
+            socket.on('updating-user-info', function (data) {
+                var userInfo = data.userInfo;
+
+                User.findByIdAndUpdate(user.id, {$set: {"local.info": userInfo}}, function(err, res) {
+                    if (err){
+                        throw err;
+                    }
+                })
             });
         }
     });
@@ -317,6 +338,17 @@ module.exports = function(autoIncrement, io){
                                 argumentsNsp.to(argument.disc_id).emit('flip-argument-hidden-status', {_id: argumentID});
                             }
                         })
+                    }
+                });
+            });
+
+            socket.on('requesting-user-info', function (data) {
+                User.findOne({_id: data._id}, function(err, user) {
+                    if (err){
+                        throw err;
+                    }
+                    else{
+                        argumentsNsp.to(discussionId).emit('sending-user-info', {userInfo:user.local.info});
                     }
                 });
             });
