@@ -92,3 +92,7 @@ hr.newArgSection {
     -webkit-transform: scaleX(-1);
     -ms-transform: scaleX(-1);
 }
+
+.popover {
+    max-width: 450px;
+}
