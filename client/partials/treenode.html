@@ -31,8 +31,9 @@
             </div>
 
             <div class="tblCell" style="width:13%; text-align:left">
-                <span style="cursor: pointer;" uib-popover-html="node.userInfo ? node.userInfo : 'טוען...'" popover-is-open="popoverIsOpen"
-                      ng-click="popoverIsOpen = !popoverIsOpen;nodeCtrl.getPostUserInfo(node)" ng-mouseleave="popoverIsOpen = false">
+                <!--span style="cursor: pointer;" uib-popover-html="node.userInfo ? node.userInfo : 'טוען...'" popover-is-open="popoverIsOpen"-->
+                <span style="cursor: pointer;" uib-popover-html="node.userInfo" popover-is-open="isOpen" ng-mouseleave="isOpen=false"
+                      ng-click="isOpen = !isOpen;nodeCtrl.getPostUserInfo(node)" popover-popup-delay="100">
                     <small> {{::node.fname}} {{::node.lname}} </small>
                 <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}"></span>
                 <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}"></span></span>

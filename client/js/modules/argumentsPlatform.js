@@ -40,6 +40,8 @@
 
                     nodesCopy.push(node);
 
+                    node.userInfo = "טוען...";
+
                     //expend all the nodes as default state...
                     if (node.expanded === undefined && node.sub_arguments !== undefined) {
                         node.expanded = true;
