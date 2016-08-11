@@ -28,9 +28,11 @@
              */
             var socket = socketio.discussions();
 
-            $scope.$on('request socket', function(){
-                $scope.$broadcast('discussion-socketIO', socket);
-            });
+            //$scope.$on('request socket', function(){
+            //    $scope.$broadcast('discussion-socketIO', socket);
+            //});
+
+            $scope.socket = socket;
 
             $(window).on('beforeunload', function(){
                 socket.disconnect();

@@ -3,13 +3,13 @@ angular.module('bootstrapModalApp').controller('ModalCtrl', function ($scope, $u
 
     $scope.animationsEnabled = true;
 
-    var socket;
+    var socket = $scope.socket;
 
-    $scope.$on('discussion-socketIO', function (e,discussionSocket) {
-        socket = discussionSocket;
-    });
+    //$scope.$on('discussion-socketIO', function (e,discussionSocket) {
+    //    socket = discussionSocket;
+    //});
 
-    $scope.$emit('request socket');
+    //$scope.$emit('request socket');
 
     setTimeout(function(){$scope.open = function () {
 
