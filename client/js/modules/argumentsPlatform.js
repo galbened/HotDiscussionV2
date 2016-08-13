@@ -12,6 +12,8 @@
             var lastPostsArray = [];
             const lastPostsArraySIZE = 10;
 
+            var focusedNodes = [];
+
             setTreeConversationTop();
 
             $scope.$on('request-user-info-update', function(e,node){
@@ -142,6 +144,8 @@
                     // UPDATE #1 - retrieving discussion restriction and current session username into scope
                     $scope.discussionRestriction = result.discussion.restriction;
                     $scope.username = result.user.username;
+
+                    $scope.originalFocus = $scope.treeNested;
                 });
             }
 
@@ -207,21 +211,22 @@
 
             socket.on('submitted-new-argument', function(data){
                 var newArgument = data.data;
-                $scope.treeNested.unshift(newArgument);
+                $scope.originalFocus.unshift(newArgument);
                 updateLastPostsArray(newArgument);
             });
 
             socket.on('submitted-new-reply', function(data){
 
                 var newReply = data.data;
-                var parentNode = getNodeById($scope.treeNested, newReply.parent_id);
-                var mainThread = getNodeById($scope.treeNested, newReply.main_thread_id);
-                var mainThreadInd = $scope.treeNested.indexOf(mainThread);
+                var parentNode = getNodeById($scope.originalFocus, newReply.parent_id);
+                var mainThread = getNodeById($scope.originalFocus, newReply.main_thread_id);
+
+                var mainThreadInd = $scope.originalFocus.indexOf(mainThread);
 
                 // UPDATE #1 - condition added on 18/07 - only student discussions should see live updates from other users on top
                 if($scope.discussionRestriction == "student") {
-                    $scope.treeNested.splice(mainThreadInd, 1);
-                    $scope.treeNested.unshift(mainThread);
+                    $scope.originalFocus.splice(mainThreadInd, 1);
+                    $scope.originalFocus.unshift(mainThread);
                 }
                 //else
                 //    $scope.newMessages = true;
@@ -264,7 +269,7 @@
 
             socket.on('flip-argument-hidden-status', function(data){
                 var argumentID = data._id;
-                var node = getNodeById($scope.treeNested, argumentID);
+                var node = getNodeById($scope.originalFocus, argumentID);
                 node.hidden = !node.hidden;
             });
 
@@ -286,6 +291,35 @@
                     TreeService.postNewArgument(socket, newArgumentText, 0, 0, 0, $scope.role);
                     $scope.newArgument = "";
                 }
+            };
+
+            $scope.$on('focus-on-node', function (e, args) {
+                //saving previous focus, position and new node (nextNode)
+                var node = args.node;
+
+                focusedNodes.push({focus: $scope.treeNested, scrollerPos:$window.scrollY, nextNode:node});
+
+                node.isFocused = true;
+                $scope.treeNested = [node];
+
+                $window.scrollTo(0, 0);
+
+                $scope.backButton = true;
+            });
+
+            $scope.clickBackButton = function(){
+                var previous = focusedNodes.pop();
+
+                //console.log(previous)
+
+                previous.nextNode.isFocused = false;
+
+                $scope.treeNested = previous.focus;
+
+                setTimeout(function(){$window.scrollBy(0,previous.scrollerPos - $window.scrollY)},50);
+
+                if(focusedNodes.length == 0)
+                    $scope.backButton = false;
             };
             
             $scope.logoutUser = function(){

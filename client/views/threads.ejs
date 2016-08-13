@@ -48,8 +48,6 @@
                         <br>
                     </div>
 
-
-
                     <div class="col-md-5 text-center body" style="color:white;">
                             <h3>{{discussionTitle}}</h3>
                             <h4>{{discussionDescription}}</h4>
@@ -63,11 +61,6 @@
             </div>
         </div>
 
-
-
-
-
-
     <!-- existing arguments rendering -->
     <div class="row" id="treeConversation">
         <tree nodes='treeNested' role='role'></tree>
@@ -77,6 +70,9 @@
         <p>maintained by BGU</p>
     </footer>
 
+    <div style="text-align:center;">
+        <button class="btn btn-xs btn-warning floatingBackBtn" ng-if="backButton" ng-click="clickBackButton()">« חזרה</button>
+    </div>
     <!-- </div> -->
 
 </div>

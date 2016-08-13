@@ -19,7 +19,7 @@
                         elm2.appendTo('body');
 
                         //enable expansion of content when the text overflows or there is a newline
-                        if ((elm2.width() > $element.width()) || ($ctrl.node.content.indexOf("\n") != -1)) {
+                        if ((elm2.width()+ 24 > $element.width()) || ($ctrl.node.content.indexOf("\n") != -1)) {
                             //don't expand hidden nodes
                             $scope.expandContent = true;
                         }
@@ -99,7 +99,7 @@
             return {
                 restrict: "E",
                 scope: { nodes: '=', role:'=', options: '=?'},
-                template: "<treenode nodes='nodes' tree='nodelist' role='role' options='options' ></treenode>",
+                template: "<treenode nodes='nodes' tree='nodelist' role='role' options='options'></treenode>",
                 //pre function compiles before the template, that's where we get the nodelist from
                 compile: function compile(tElement, tAttrs, transclude) {
                     return {
@@ -121,6 +121,59 @@
         .directive('treenode', ['RecursionHelper', function (RecursionHelper) {
             var nodeController = function($scope){
                 var vm = this;
+
+                $scope.nodeStyle = function(node){
+                    var styleRes = {};
+                    switch (node.role) {
+                        case 'student':
+                            if(node.depth==0)
+                                styleRes = {'background-color': '#f2f2f2' , 'border-radius': '5px 5px 0px 0px'};
+                            else
+                                styleRes = {'background-color': '#f2f2f2'};
+                            break;
+                        case 'admin':
+                            if(node.depth==0)
+                                styleRes = {'background-color': '#37fb99' , 'border-radius': '5px 5px 0px 0px'};
+                            else
+                                styleRes = {'background-color': '#37fb99'};
+                            break;
+                        case 'instructor':
+                            if(node.depth==0)
+                                styleRes = {'background-color': '#ffffcc' , 'border-radius': '5px 5px 0px 0px'};
+                            else
+                                styleRes = {'background-color': '#ffffcc'};
+                            break;
+                    }
+                    return styleRes;
+                }
+
+                /* number of children nodes and if it contains a new post - functionality for continue button
+                $scope.checkNodeChildrenNew = false;
+
+                $scope.countNodeChildren = function(tree) {
+                    console.log("bla")
+                    return countNodeChildrenRec(tree);
+                }
+
+                function countNodeChildrenRec(tree){
+                    var counter = 0;
+                    if(!tree){
+                        return 0;
+                    }
+                    for(var i = 0; i < tree.length; i++) {
+                        if(tree[i].lastPost){
+                            $scope.checkNodeChildrenNew = true;
+                        }
+                        counter = counter + countNodeChildrenRec(tree[i].sub_arguments) + 1;
+                    }
+                    return counter;
+                };
+                */
+
+
+                vm.focusOnNode = function(node){
+                    $scope.$emit('focus-on-node', {node : node});
+                };
 
                 vm.getPostUserInfo = function(node){
                     //node.userInfo = "טוען.."
@@ -157,7 +210,7 @@
 
             return {
                 restrict: "E",
-                scope: { nodes: '=', tree: '=', options: '=?' , role:'='},
+                scope: { nodes: '=', tree: '=', options: '=?' , role:'=', focusing:'='},
                 controller: nodeController,
                 controllerAs: 'nodeCtrl',
                 bindToController: true,

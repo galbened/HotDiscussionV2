@@ -20,6 +20,10 @@
         socket.disconnect();
       });
 
+      socket.on('new-discussion', function(newDiscussion){
+         $scope.discussions.unshift(newDiscussion);
+      });
+
 /***
  *                      _             _                            _              
  *                     | |           | |                          (_)             
@@ -43,7 +47,7 @@
         method: 'GET',
         url: '/api/discussions'
       }).then(function(res){
-        $scope.discussions = res.data;
+        $scope.discussions = res.data.reverse();
       }, function(err){
         console.log(err.statusText);
       });
@@ -70,7 +74,7 @@
           data: newDisc
         })
         .success(function(newDiscussion){
-          $scope.discussions.push(newDiscussion);
+          //$scope.discussions.push(newDiscussion);
           socket.emit('new-discussion', newDiscussion);
         })
         .error(function(err, status){

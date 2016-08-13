@@ -61,9 +61,8 @@
           <tbody ng-repeat="discussion in discussions">
             
             <tr ng-show="!discussion.edit" ng-style="(discussion.restriction === 'student' && {'background-color' : '#B9F1E4'}) || (discussion.restriction === 'instructor' && {'background-color' : '#F8EBAE'}) || (discussion.restriction === 'none' && {'background-color' : '#F39696'})">
-              <td dir="rtl">{{discussion.description}}</td>
-              <td dir="rtl"><a href="" ng-click="goToDisc($index)">{{discussion.title}}</a></td>
-              
+                  <td dir="rtl" style="cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.description}}</td>
+                  <td dir="rtl" style="cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.title}}</td>
               <td style="white-space:nowrap; width:10px">
                 <!-- <a href="" ng-click="showEdit(discussion)">ערוך</a> | <a href="" ng-click="delete($index)">מחק</a> -->
                 <fieldset>

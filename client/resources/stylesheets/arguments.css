@@ -96,3 +96,13 @@ hr.newArgSection {
 .popover {
     max-width: 450px;
 }
+
+.floatingBackBtn {
+    width: 100px;
+    height: 40px;
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    z-index:9999;
+    text-align: center;
+}

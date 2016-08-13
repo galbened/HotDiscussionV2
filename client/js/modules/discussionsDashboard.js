@@ -39,7 +39,7 @@
             });
 
             socket.on('new-discussion', function(newDiscussion){
-                $scope.discussions.push(newDiscussion);
+                $scope.discussions.unshift(newDiscussion);
             });
 
             // socket.on('delete-discussion', function(disc){
@@ -81,7 +81,7 @@
                 method: 'GET',
                 url: '/api/discussions'
             }).then(function(res){
-                $scope.discussions = res.data.data;
+                $scope.discussions = res.data.data.reverse();
                 // console.log($scope.discussions);
                 $scope.userRole = res.data.role;
                 // console.log($scope.userRole);
@@ -94,7 +94,7 @@
                 var title = $scope.discussions[idx].title;
                 var description = $scope.discussions[idx].description;
 
-                $window.location.href = '/discussions/' + id + '/' + title + '/' +description;
+                $window.location.href = '/discussions/' + id + '/' + title + '/' + description;
             };
         }]);
 })();

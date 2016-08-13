@@ -63,16 +63,14 @@
 
             <thead>
               <tr id="headRow">
-                <th style="width:10%">#</th>
                 <th>כותרת</th>
                 <th>תיאור</th>
               </tr>
             </thead>
 
             <tbody ng-repeat="discussion in discussions">
-              <tr ng-if="discussion.restriction === userRole">
+              <tr ng-if="discussion.restriction === userRole" ng-click="goToDisc($index)" style="cursor: pointer; cursor: hand;">
               <!-- TODO: 1-way binding for performance stuff..-->
-                <td style="width: 0"><a href="" ng-click="goToDisc($index)">הצטרף</a></td>
                 <td>{{discussion.title}}</td>
                 <td>{{discussion.description}}</td>
               </tr>
