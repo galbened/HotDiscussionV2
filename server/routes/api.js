@@ -174,8 +174,10 @@ module.exports = function(autoIncrement, io){
             socket.on('request-all-logged-users', function(){
                 var loggedUsers = [];
 
-                Object.keys(io.sockets.sockets).forEach(function(sid){
-                    var user = io.sockets.sockets[sid].request.session.passport.user;
+                //console.log(io.sockets)
+
+                Object.keys(io.sockets.connected).forEach(function(sid){
+                    var user = io.sockets.connected[sid].request.session.passport.user;
                     loggedUsers.push(user.fname + " " + user.lname);
                 });
                 socket.emit('send-all-logged-users',{loggedUsers:loggedUsers});
