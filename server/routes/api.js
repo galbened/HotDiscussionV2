@@ -172,6 +172,12 @@ module.exports = function(autoIncrement, io){
             });
 
             socket.on('request-all-logged-users', function(){
+                var srvSockets = io.sockets.sockets;
+                console.log("-------------------")
+                console.log(Object.keys(srvSockets).length)
+                console.log("-------------------")
+
+                /*
                 var loggedUsers = [];
 
                 var baseNsp = discussionNsp;
@@ -189,6 +195,7 @@ module.exports = function(autoIncrement, io){
                 });
 
                 socket.emit('send-all-logged-users',{loggedUsers:loggedUsers});
+                */
             });
         }
     });
