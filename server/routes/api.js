@@ -177,25 +177,17 @@ module.exports = function(autoIncrement, io){
                 console.log(Object.keys(srvSockets).length)
                 console.log("-------------------")
 
-                /*
                 var loggedUsers = [];
 
-                var baseNsp = discussionNsp;
-
-                Object.keys(baseNsp.sockets).forEach(function(sid){
-                    var user = baseNsp.sockets[sid].request.session.passport.user;
-                    loggedUsers.push(user.fname + " " + user.lname);
-                });
-
-                baseNsp = argumentsNsp;
-
-                Object.keys(baseNsp.sockets).forEach(function(sid){
-                    var user = baseNsp.sockets[sid].request.session.passport.user;
-                    loggedUsers.push(user.fname + " " + user.lname);
+                Object.keys(srvSockets).forEach(function(sid){
+                    if(srvSockets[sid].request.session.passport)
+                    {
+                        var user = srvSockets[sid].request.session.passport.user;
+                        loggedUsers.push(user.fname + " " + user.lname);
+                    }
                 });
 
                 socket.emit('send-all-logged-users',{loggedUsers:loggedUsers});
-                */
             });
         }
     });
