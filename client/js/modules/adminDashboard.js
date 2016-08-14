@@ -158,7 +158,6 @@
             edittedDisc.permittedPoster_lname = undefined;
         }
 
-
         $http({
           method: 'PUT',
           url: '/api/discussions/' + $scope.discussions[idx]._id,

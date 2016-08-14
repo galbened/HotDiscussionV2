@@ -112,8 +112,26 @@ module.exports = function(autoIncrement, io){
                     message: 'Discussion with id ' + id + ' can not be found.'
                 });
             }
-            res.json(disc);
+
+            if(!body.moderator_id){
+                disc.moderator_id = undefined;
+                disc.moderator_fname = undefined;
+                disc.moderator_lname = undefined;
+            }
+            if(!body.permittedPoster_id){
+                disc.permittedPoster_id = undefined;
+                disc.permittedPoster_fname = undefined;
+                disc.permittedPoster_lname = undefined;
+            }
+
+            disc.save(function(err, data){
+                if (err)
+                    throw err;
+                res.json(data);
+            });
         });
+
+
     });
 
     discussionNsp.on('connection', function(socket){

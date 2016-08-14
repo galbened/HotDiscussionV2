@@ -82,7 +82,7 @@
               <td style="width:15%">
                 <select class="form-control" ng-init="tempForPermitted = lookupUser[discussion.permittedPoster_id]" ng-model="tempForPermitted" id="permittedPosterEdit" dir="ltr"
                         ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
-                    <option value=''>
+                    <option value="">
                         -- Everybody --
                     </option>
                 </select>
@@ -90,7 +90,7 @@
               <td style="width:15%">
                   <select class="form-control" ng-init="tempForMod = lookupUser[discussion.moderator_id]" ng-model="tempForMod" id="userEdit" dir="ltr"
                           ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
-                      <option value=''>
+                      <option value="">
                           -- No moderator --
                       </option>
                   </select>
