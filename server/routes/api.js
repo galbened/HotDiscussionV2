@@ -8,6 +8,7 @@ module.exports = function(autoIncrement, io){
 
     var discussionNsp = io.of('/discussions');
     var argumentsNsp = io.of('/arguments');
+    var baseNsp = io.of('/');
 
 
     /***
@@ -174,10 +175,8 @@ module.exports = function(autoIncrement, io){
             socket.on('request-all-logged-users', function(){
                 var loggedUsers = [];
 
-                //console.log(io.sockets)
-
-                Object.keys(io.sockets.connected).forEach(function(sid){
-                    var user = io.sockets.connected[sid].request.session.passport.user;
+                Object.keys(baseNsp.sockets).forEach(function(sid){
+                    var user = baseNsp.sockets[sid].request.session.passport.user;
                     loggedUsers.push(user.fname + " " + user.lname);
                 });
                 socket.emit('send-all-logged-users',{loggedUsers:loggedUsers});
