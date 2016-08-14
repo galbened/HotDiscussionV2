@@ -31,9 +31,11 @@ module.exports = function(autoIncrement, io){
             var role = user.role;
             switch (role) {
                 case "admin":
-                    Discussion.find({}, function(err, data){
-                        // console.log(data);
-                        res.json(data);
+                    Discussion.find({}, function(err, discs){
+                        User.find({}, function(err, users){
+                            var data = {discs : discs, users : users};
+                            res.json(data);
+                        });
                     });
                     break;
                 case "student":
@@ -66,15 +68,18 @@ module.exports = function(autoIncrement, io){
         discussion.title = req.body.title;
         discussion.description = req.body.description;
         discussion.restriction = req.body.restriction;
+        discussion.moderator_id = req.body.moderator_id;
+        discussion.moderator_fname = req.body.moderator_fname;
+        discussion.moderator_lname = req.body.moderator_lname;
+        discussion.permittedPoster_id = req.body.permittedPoster_id;
+        discussion.permittedPoster_fname = req.body.permittedPoster_fname;
+        discussion.permittedPoster_lname = req.body.permittedPoster_lname;
 
         discussion.save(function(err, data){
             if (err)
                 throw err;
             res.json(data);
         });
-
-        // console.log('OUT...');
-
     });
 
     //get a specific discussion
@@ -99,6 +104,7 @@ module.exports = function(autoIncrement, io){
     router.put('/discussions/:id', function(req, res, next){
         var id = req.params.id;
         var body = req.body;
+
         Discussion.findByIdAndUpdate(id, body, {new: true}, function(err, disc){
             if (err) return next(err);
             if (!disc){
@@ -239,7 +245,7 @@ module.exports = function(autoIncrement, io){
                 argument.depth = (newArgument.depth ? newArgument.depth : 0);
                 argument.sub_arguments = [];
 
-                // 27/07/16 - Looking up discussion restriction
+                // 27/07/16 - Looking up discussion restriction and (13/08/16) mod ID
                 var discRest = "";
                 Discussion.findOne({_id: argument.disc_id}, function(err, disc) {
                     if (err){
@@ -247,6 +253,9 @@ module.exports = function(autoIncrement, io){
                     }
                     else{
                         discRest = disc.restriction;
+                        if(argument.user_id.equals(disc.moderator_id)){
+                            argument.role = "moderator";
+                        }
                     }
                 });
                 //-- 27/07/16

@@ -56,7 +56,7 @@
                     method: 'GET',
                     url: '/api/discussions'
                 }).then(function(res){
-                    $scope.discussions = res.data.data;
+                    $scope.discussions = res.data.data.reverse();
                     // console.log($scope.discussions);
                     $scope.userRole = res.data.role;
                     // console.log($scope.userRole);

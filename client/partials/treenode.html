@@ -47,8 +47,11 @@
                 <span style="cursor: pointer; cursor: hand;" uib-popover-html="node.userInfo" popover-is-open="isOpen" ng-mouseleave="isOpen=false"
                       ng-click="isOpen = !isOpen;nodeCtrl.getPostUserInfo(node)" popover-popup-delay="100">
                     <small> {{::node.fname}} {{::node.lname}} </small>
-                <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}"></span>
-                <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}"></span></span>
+                <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}" title="סטודנט"></span>
+                <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}" title="אינסטקטור"></span>
+                <span ng-class="{'glyphicon glyphicon-king': node.role==='admin'}" title="מנהל המערכת"></span>
+                <span ng-class="{'glyphicon glyphicon-queen': node.role==='moderator'}" title="מודרטור"></span></span>
+                </span>
             </div>
 
             <div class="tblCell" style="width:12%; text-align:left">

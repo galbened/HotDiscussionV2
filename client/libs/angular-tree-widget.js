@@ -143,6 +143,12 @@
                             else
                                 styleRes = {'background-color': '#ffffcc'};
                             break;
+                        case 'moderator':
+                            if(node.depth==0)
+                                styleRes = {'background-color': '#ff8080' , 'border-radius': '5px 5px 0px 0px'};
+                            else
+                                styleRes = {'background-color': '#ff8080'};
+                            break;
                     }
                     return styleRes;
                 }

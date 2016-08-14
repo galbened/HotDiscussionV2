@@ -43,11 +43,22 @@
       };
 
       //initiate the fields of the table
+
+
+      $scope.lookupUser = {};
+      $scope.tempForMod = "";
+      $scope.tempForPermitted = "";
+
       $http({
         method: 'GET',
         url: '/api/discussions'
       }).then(function(res){
-        $scope.discussions = res.data.reverse();
+        $scope.discussions = res.data.discs.reverse();
+        $scope.users = res.data.users;
+
+        for (var i = 0, len = $scope.users.length; i < len; i++) {
+            $scope.lookupUser[$scope.users[i]._id] = $scope.users[i];
+        }
       }, function(err){
         console.log(err.statusText);
       });
@@ -61,12 +72,34 @@
           $scope.pressAdd = false;
       };
 
-      $scope.finishAdding = function(newDesc, newTitle){
-        var newDisc = {
-            title: newTitle,
-            description: newDesc,
-            restriction: "student"
-        };
+      $scope.finishAdding = function(newDesc, newTitle, newUser, newPermittedPoster){
+
+          var newDisc = {};
+
+          newDisc.title = newTitle;
+          newDisc.description = newDesc;
+          newDisc.restriction = "student";
+          if (newUser){
+              newDisc.moderator_id = newUser._id;
+              newDisc.moderator_fname = newUser.local.firstname;
+              newDisc.moderator_lname = newUser.local.lastname;
+          }
+          else{
+              newDisc.moderator_id = undefined;
+              newDisc.moderator_fname = undefined;
+              newDisc.moderator_lname = undefined;
+          }
+          if(newPermittedPoster){
+              newDisc.permittedPoster_id = newPermittedPoster._id;
+              newDisc.permittedPoster_fname = newPermittedPoster.local.firstname;
+              newDisc.permittedPoster_lname = newPermittedPoster.local.lastname;
+          }
+          else{
+              newDisc.permittedPoster_id = undefined;
+              newDisc.permittedPoster_fname = undefined;
+              newDisc.permittedPoster_lname = undefined;
+          }
+
 
         $http({
           method:'POST',
@@ -96,7 +129,7 @@
           discussion.edit = false;
       };
 
-      $scope.finishEdit = function(idx, edittedDesc, edittedTitle){
+      $scope.finishEdit = function(idx, edittedDesc, edittedTitle, edittedUser, edittedPermittedPoster){
         var oldDisc = $scope.discussions[idx];
         var edittedDisc = oldDisc;
 
@@ -104,6 +137,27 @@
             edittedDisc.title = edittedTitle;
         if (edittedDesc)
             edittedDisc.description = edittedDesc;
+        if (edittedUser){
+            edittedDisc.moderator_id = edittedUser._id;
+            edittedDisc.moderator_fname = edittedUser.local.firstname;
+            edittedDisc.moderator_lname = edittedUser.local.lastname;
+        }
+        else{
+            edittedDisc.moderator_id = undefined;
+            edittedDisc.moderator_fname = undefined;
+            edittedDisc.moderator_lname = undefined;
+        }
+        if(edittedPermittedPoster){
+            edittedDisc.permittedPoster_id = edittedPermittedPoster._id;
+            edittedDisc.permittedPoster_fname = edittedPermittedPoster.local.firstname;
+            edittedDisc.permittedPoster_lname = edittedPermittedPoster.local.lastname;
+        }
+        else{
+            edittedDisc.permittedPoster_id = undefined;
+            edittedDisc.permittedPoster_fname = undefined;
+            edittedDisc.permittedPoster_lname = undefined;
+        }
+
 
         $http({
           method: 'PUT',

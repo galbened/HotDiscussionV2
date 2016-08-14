@@ -24,7 +24,7 @@
                 <div class="row">
                     <div class="col-md-4" style="float:right">
 
-                        <div class="form-group" style="width: 100%;margin-bottom: 0px;">
+                        <div class="form-group" style="width: 100%;margin-bottom: 0px;" ng-show="isPermittedPoster">
                             <form class="form-inline" >
                                 <textarea class="form-control form-group text-right" rows="3" placeholder="כתיבת רעיון חדש..." style="resize: none;width:80%;" ng-model="newArgument"></textarea>
                                 <span style="vertical-align:bottom;" class="glyphicon glyphicon-share-alt btn btn-info icon-flipped" ng-click="submitNewArgument(newArgument)" title="פרסום רעיון חדש"></span>
@@ -70,7 +70,7 @@
         <p>maintained by BGU</p>
     </footer>
 
-    <div style="text-align:center;">
+    <div style="text-align:center;white-space: normal;width: 100px;">
         <button class="btn btn-xs btn-warning floatingBackBtn" ng-if="backButton" ng-click="clickBackButton()">« חזרה</button>
     </div>
     <!-- </div> -->

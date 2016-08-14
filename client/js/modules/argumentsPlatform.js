@@ -139,7 +139,15 @@
                     // console.log('*******************************');
                     $scope.discussionTitle = result.discussion.title;
                     $scope.discussionDescription = result.discussion.description;
+                    //if(result.user.id == result.discussion.moderator_id)
+                    //    $scope.role = "moderator";  ------ done on server side API
+                    //else
                     $scope.role = result.user.role;
+                    $scope.user_id = result.user.id;
+
+                    if((result.discussion.permittedPoster_id == null) || ($scope.user_id == result.discussion.permittedPoster_id) || ($scope.role == 'admin'))
+                        $scope.isPermittedPoster = true;
+
 
                     // UPDATE #1 - retrieving discussion restriction and current session username into scope
                     $scope.discussionRestriction = result.discussion.restriction;
@@ -244,6 +252,11 @@
                 if (edittedDiscussion.restriction === $scope.role || $scope.role === 'admin'){
                     $scope.discussionTitle = edittedDiscussion.title;
                     $scope.discussionDescription = edittedDiscussion.description;
+
+                    if((edittedDiscussion.permittedPoster_id == null) || ($scope.user_id == edittedDiscussion.permittedPoster_id) || ($scope.role == 'admin'))
+                        $scope.isPermittedPoster = true;
+                    else
+                        $scope.isPermittedPoster = false
                 }
                 else{
                     socket.emit('logout-user');
