@@ -130,8 +130,6 @@ module.exports = function(autoIncrement, io){
                 res.json(data);
             });
         });
-
-
     });
 
     discussionNsp.on('connection', function(socket){
@@ -171,6 +169,16 @@ module.exports = function(autoIncrement, io){
                         throw err;
                     }
                 })
+            });
+
+            socket.on('request-all-logged-users', function(){
+                var loggedUsers = [];
+
+                Object.keys(io.sockets.sockets).forEach(function(sid){
+                    var user = io.sockets.sockets[sid].request.session.passport.user;
+                    loggedUsers.push(user.fname + " " + user.lname);
+                });
+                socket.emit('send-all-logged-users',{loggedUsers:loggedUsers});
             });
         }
     });

@@ -12,6 +12,20 @@
 
       $scope.socket = socket;
 
+
+
+      socket.on('send-all-logged-users', function(data){
+          var usersForAlert = "";
+          data.loggedUsers.forEach(function(loggedUser){
+              usersForAlert = usersForAlert + '\n' + loggedUser;
+          })
+          alert(usersForAlert);
+      });
+
+        $scope.showLoggedUsers = function(){
+            socket.emit('request-all-logged-users');
+        }
+
       //$scope.$on('request socket', function(){
       //    $scope.$broadcast('discussion-socketIO', socket);
       //});

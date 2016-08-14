@@ -21,7 +21,7 @@
             </div>
 
 
-            <div class="tblCell" style="width:6%; text-align:center; min-height: 1px;">
+            <div class="tblCell" style="width:8%; text-align:center; min-height: 1px;">
                 <button class="btn btn-xs btn-warning" ng-if="(((node.depth + 1) % 10) == 0) && (!node.isFocused)" ng-click="nodeCtrl.focusOnNode(node)">
                     <!--span style="color:firebrick" title="הודעה חדשה בהמשך השרשור" ng-class="{'glyphicon glyphicon-fire': checkNodeChildrenNew}"></span-->
                     <!--span>המשך שרשור ({{ countNodeChildren(node.sub_arguments) }}) »</span-->
@@ -31,14 +31,14 @@
 
 
 
-            <div class="tblCell" style="width:3%; text-align:center; min-height: 1px;">
+            <div class="tblCell" style="width:2%; text-align:center; min-height: 1px;">
                 <div ng-if="nodeCtrl.role == 'admin'" class="btn btn-xs">
                     <span ng-class="{'glyphicon glyphicon-eye-open': node.hidden}" ng-click="nodeCtrl.flipArgumentHiddenStatus(node)"></span>
                     <span ng-class="{'glyphicon glyphicon-eye-close': !node.hidden}" ng-click="nodeCtrl.flipArgumentHiddenStatus(node)"></span>
                 </div>
             </div>
 
-            <div class="tblCell" style="width:3%; min-height: 1px; text-align:center">
+            <div class="tblCell" style="width:2%; min-height: 1px; text-align:center">
                 <span style="color:firebrick" title="הודעה חדשה" ng-class="{'glyphicon glyphicon-fire': node.lastPost}"></span>
             </div>
 

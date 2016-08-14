@@ -34,14 +34,17 @@
       <header class="text-center">
           <div class="row">
 
-              <div class="col-md-2 text-right"><a href="/admin/logout">Log Out</a></div>
+              <div class="col-md-2 text-right">
+                  <button class="btn btn-xs btn-primary" ng-click="showLoggedUsers()">מי מחובר?</button>
+                  <button class="btn btn-xs btn-primary" onclick="location.href='/admin/logout'">Log Out</button>
+              </div>
 
               <div class="col-md-8 text-center">
                   <h1>מנהל המערכת, שלום רב!</h1>
               </div>
 
               <div class="col-md-2" ng-controller="ModalCtrl">
-                  <button class="button" style="vertical-align:middle;marign:30px" ng-click="open()"><span>ביוגרפיה</span></button>
+                  <button class="button" style="vertical-align:middle;" ng-click="open()"><span>ביוגרפיה</span></button>
               </div>
 
           </div>
