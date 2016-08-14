@@ -174,8 +174,19 @@ module.exports = function(autoIncrement, io){
 
             socket.on('request-all-logged-users', function(){
                 var loggedUsers = [];
+                console.log("start-------------------------------------------------------------");
+                console.log(baseNsp);
+                console.log("0-------------------------------------------------------------");
+                console.log(baseNsp.sockets);
+                console.log("1-------------------------------------------------------------");
 
                 Object.keys(baseNsp.sockets).forEach(function(sid){
+                    console.log(baseNsp.sockets[sid]);
+                    console.log("2-------------------------------------------------------------");
+                    console.log(baseNsp.sockets[sid].request);
+                    console.log("3-------------------------------------------------------------");
+                    console.log(baseNsp.sockets[sid].request.session);
+                    console.log("end-------------------------------------------------------------");
                     var user = baseNsp.sockets[sid].request.session.passport.user;
                     loggedUsers.push(user.fname + " " + user.lname);
                 });
