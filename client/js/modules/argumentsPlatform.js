@@ -61,14 +61,69 @@
                         nestedJson.unshift(node);
                     }
 
+                    node.subtreeSize = 0
                     node.iconHovering = false;
                 });
 
                 //initiating last five comments array
                 initLastPostsArray(nodesCopy);
 
-                return nestedJson;
+                countTreeNodesSubtreeSizes(nestedJson);
+                initTreeNodesSubtreeNewestNodes(nestedJson);
 
+                return nestedJson;
+            }
+
+            function countTreeNodesSubtreeSizes(tree){
+                if(tree.length == 0){
+                    return 0;
+                }
+
+                var counter = 0;
+                for(var i = 0; i < tree.length; i++) {
+                    tree[i].subtreeSize = countTreeNodesSubtreeSizes(tree[i].sub_arguments) + tree[i].sub_arguments.length;
+                    counter = counter + tree[i].subtreeSize;
+                }
+                return counter;
+            };
+
+            function initTreeNodesSubtreeNewestNodes(tree){
+                var node = {createdAt:new Date(-8640000000000000)};
+                if(tree.length == 0){
+                    return node;
+                }
+                var iterNewestNode, newestNode = tree[0];
+                for(var i = 0; i < tree.length; i++) {
+                    tree[i].subtreeNewestNode = initTreeNodesSubtreeNewestNodes(tree[i].sub_arguments);
+                    if(tree[i].subtreeNewestNode < tree[i].createdAt){
+                        iterNewestNode = tree[i];
+                    }
+                    else{
+                        iterNewestNode = tree[i].subtreeNewestNode;
+                    }
+                    if(newestNode.createdAt < iterNewestNode.createdAt)
+                        newestNode = iterNewestNode;
+                }
+                return newestNode;
+            };
+
+            function newNodeUpdateSubtreeSizesAndNewest(node){
+                node.subtreeSize = 0;
+                node.subtreeNewestNode = node;
+                updateTreeNodesSubtreeSizesByNodeRec(node);
+            }
+
+            function updateTreeNodesSubtreeSizesByNodeRec(node){
+                //Give each node reference to its parent node is the better option than getNodeById
+                //However, js doesn't permit circular reference.
+                node.subtreeSize = node.subtreeSize + 1;
+                if(!getNodeById($scope.originalFocus, node.parent_id)){
+                    return;
+                }
+                else{
+                    getNodeById($scope.originalFocus, node.parent_id).subtreeNewestNode = node;
+                    updateTreeNodesSubtreeSizesByNodeRec(getNodeById($scope.originalFocus, node.parent_id));
+                }
             }
 
             function updateLastPostsArray(newNode){
@@ -221,6 +276,7 @@
                 var newArgument = data.data;
                 $scope.originalFocus.unshift(newArgument);
                 updateLastPostsArray(newArgument);
+                newNodeUpdateSubtreeSizesAndNewest(newArgument);
             });
 
             socket.on('submitted-new-reply', function(data){
@@ -246,6 +302,7 @@
                 parentNode.expanded = true;
 
                 updateLastPostsArray(newReply);
+                newNodeUpdateSubtreeSizesAndNewest(newReply);
             });
 
             socket.on('edit-discussion', function(edittedDiscussion){

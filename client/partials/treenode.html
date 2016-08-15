@@ -20,16 +20,16 @@
 
             </div>
 
-
-            <div class="tblCell" style="width:8%; text-align:center; min-height: 1px;">
+            <div class="tblCell" style="width:10%; text-align:right; padding-right:4px; min-height: 1px;">
                 <button class="btn btn-xs btn-warning" ng-if="(((node.depth + 1) % 10) == 0) && (!node.isFocused)" ng-click="nodeCtrl.focusOnNode(node)">
-                    <!--span style="color:firebrick" title="הודעה חדשה בהמשך השרשור" ng-class="{'glyphicon glyphicon-fire': checkNodeChildrenNew}"></span-->
-                    <!--span>המשך שרשור ({{ countNodeChildren(node.sub_arguments) }}) »</span-->
-                    <span>המשך שרשור »</span>
+                    <small>
+                    <span>המשך שרשור</span>
+                    <span>({{ node.subtreeSize }})</span>
+                    </small>
+                    <span style="color:firebrick" title="הודעה חדשה בהמשך השרשור" ng-class="{'glyphicon glyphicon-fire': node.subtreeNewestNode.lastPost}"></span>
+                    <span>»</span>
                 </button>
             </div>
-
-
 
             <div class="tblCell" style="width:2%; text-align:center; min-height: 1px;">
                 <div ng-if="nodeCtrl.role == 'admin'" class="btn btn-xs">
@@ -42,19 +42,20 @@
                 <span style="color:firebrick" title="הודעה חדשה" ng-class="{'glyphicon glyphicon-fire': node.lastPost}"></span>
             </div>
 
-            <div class="tblCell" style="width:13%; text-align:left">
+
+            <div class="tblCell" style="width:11%; text-align:left; direction: ltr;">
                 <!--span style="cursor: pointer;" uib-popover-html="node.userInfo ? node.userInfo : 'טוען...'" popover-is-open="popoverIsOpen"-->
-                <span style="cursor: pointer; cursor: hand;" uib-popover-html="node.userInfo" popover-is-open="isOpen" ng-mouseleave="isOpen=false"
+                <span style="cursor: pointer; cursor: hand;" class="col-non-expanded" uib-popover-html="node.userInfo" popover-is-open="isOpen" ng-mouseleave="isOpen=false"
                       ng-click="isOpen = !isOpen;nodeCtrl.getPostUserInfo(node)" popover-popup-delay="100">
-                    <small> {{::node.fname}} {{::node.lname}} </small>
-                <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}" title="סטודנט"></span>
-                <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}" title="אינסטקטור"></span>
-                <span ng-class="{'glyphicon glyphicon-king': node.role==='admin'}" title="מנהל המערכת"></span>
-                <span ng-class="{'glyphicon glyphicon-queen': node.role==='moderator'}" title="מודרטור"></span></span>
+                    <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}" title="סטודנט"></span>
+                    <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}" title="אינסטרקטור"></span>
+                    <span ng-class="{'glyphicon glyphicon-king': node.role==='admin'}" title="מנהל המערכת"></span>
+                    <span ng-class="{'glyphicon glyphicon-queen': node.role==='moderator'}" title="מודרטור"></span>
+                    <small>{{::node.fname}} {{::node.lname}}</small>
                 </span>
             </div>
 
-            <div class="tblCell" style="width:12%; text-align:left">
+            <div class="tblCell col-non-expanded" style="width:12%; text-align:left; direction: ltr;">
                 <i style="font-size: 10px">{{nodeCtrl.prettyDate(node.createdAt)}}</i>
             </div>
 

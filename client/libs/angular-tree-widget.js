@@ -127,9 +127,9 @@
                     switch (node.role) {
                         case 'student':
                             if(node.depth==0)
-                                styleRes = {'background-color': '#f2f2f2' , 'border-radius': '5px 5px 0px 0px'};
+                                styleRes = {'background-color': '#e6e6e6' , 'border-radius': '5px 5px 0px 0px'};
                             else
-                                styleRes = {'background-color': '#f2f2f2'};
+                                styleRes = {'background-color': '#e6e6e6'};
                             break;
                         case 'admin':
                             if(node.depth==0)

@@ -35,12 +35,14 @@
 
                     <div class="col-md-3 text-left body">
 
-                        <div style="cursor: default;width: 50%;height: 4.7em;line-height: 1.1;overflow: auto;display: inline-block; background-color:white; border-color:white; border-radius: 3px; border-style:solid; border-width:1px; padding:3px;">
-                            <h6 style="padding:0px; margin:0">:On-line</h6>
+                        <div style="cursor: default;width: 45%;height: 4.7em;line-height: 1.1;overflow: auto;display: inline-block; background-color:white; border-color:white; border-radius: 3px; border-style:solid; border-width:1px; padding:3px;">
+                            <h6 style="padding:0px; margin:0; text-align: right">כרגע בדיון:</h6>
                             <ul id="onlineUsers" ng-repeat="onlineUser in onlineUsers" >
-                                <li id="onlineUser">
-                                    <small>{{onlineUser.fname}} {{onlineUser.lname}}
-                                    <span style="color: {{onlineUser.color}}" class="glyphicon glyphicon-user"></span></small>
+                                <li id="onlineUser" class="col-non-expanded">
+                                    <small>
+                                        <span style="color: {{onlineUser.color}}" class="glyphicon glyphicon-user"></span>
+                                        {{onlineUser.fname}} {{onlineUser.lname}}
+                                    </small>
                                 </li>
                             </ul>
                         </div>

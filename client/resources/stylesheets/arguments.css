@@ -55,6 +55,12 @@ hr.newArgSection {
     display: block;
 }
 
+.col-non-expanded {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .expanded {
     word-wrap: break-word;
     white-space: pre-line;
@@ -67,6 +73,7 @@ hr.newArgSection {
 }
 
 #onlineUser{
+    direction: ltr;
     list-style-type:none;
     /*noinspection CssUnknownTarget*/
     /*background: url('/resources/imgs/user.gif');
@@ -95,6 +102,7 @@ hr.newArgSection {
 
 .popover {
     max-width: 450px;
+    direction: rtl;
 }
 
 .floatingBackBtn {
