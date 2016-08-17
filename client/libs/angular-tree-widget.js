@@ -7,7 +7,7 @@
 
 (function () {
     'use strict';
-    angular.module('TreeWidget', ['ngAnimate', 'RecursionHelper','ngSanitize'])
+    angular.module('TreeWidget', ['ngAnimate', 'RecursionHelper','ngSanitize','ui.tinymce'])
         .directive('overflowContent', function($timeout){
             function link($scope, $element, $attrs, $ctrl){
                 $scope.$watch('nodeChanged', function(){
@@ -34,6 +34,8 @@
             function overflowController($scope, $element, $filter, $sce){
                 var vm = this;
                 $scope.nodeChanged = vm.node;
+
+                vm.node.content = vm.node.content.replace(/<br[^>]*>/gi, "\n");
 
                 var res = "** תוכן הוסתר על ידי המנהל :( **";
                 res = "<span style='color:red;'>" + res + "</span>";
@@ -83,8 +85,9 @@
                         'ng-style="{color: ofCtrl.node.color}" class="glyphicon glyphicon-user" ng-class="ofCtrl.isChildHovered(ofCtrl.node.sub_arguments)"></span> ' +
                         '&nbsp;' +
                         '<span ng-if="ofCtrl.node.hidden" ng-bind-html="hiddenMessage"></span>' +
-                        '<span ng-if="expandContent && !ofCtrl.node.hidden" style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span>' +
-                        '<span ng-if="!expandContent && !ofCtrl.node.hidden" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span>' +
+                        '<span ng-if="expandContent && !ofCtrl.node.hidden" style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" ng-bind-html="ofCtrl.node.content | unsafe"> </span>' +
+                        '<!--span ng-if="!expandContent && !ofCtrl.node.hidden" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span-->' +
+                        '<span ng-if="!expandContent && !ofCtrl.node.hidden" ng-bind-html="ofCtrl.node.content | unsafe"> </span>' +
                     '</span>',
                 controller: overflowController,
                 controllerAs: 'ofCtrl',
@@ -92,7 +95,7 @@
                 link:link
             }
         })
-
+        .filter('unsafe', function($sce) { return $sce.trustAsHtml; })
 
 
         .directive('tree', function () {
@@ -122,14 +125,29 @@
             var nodeController = function($scope){
                 var vm = this;
 
+                $scope.tinymceOptions = {
+                    forced_root_block : "",
+                    selector: 'div.tinymce',
+                    theme: 'inlite',
+                    inline: true,
+                    plugins: "autolink textcolor",
+                    extended_valid_elements : "a[href|target=_blank]",
+                    selection_toolbar: 'bold italic underline forecolor | quicklink',
+                    invalid_elements : 'img[*]',
+                    valid_elements : 'a[href|target=_blank],strong/b,br,em,span[*]',
+                    valid_styles: {
+                        'span': 'text-decoration,color'
+                    }
+                };
+
                 $scope.nodeStyle = function(node){
                     var styleRes = {};
                     switch (node.role) {
                         case 'student':
                             if(node.depth==0)
-                                styleRes = {'background-color': '#e6e6e6' , 'border-radius': '5px 5px 0px 0px'};
+                                styleRes = {'background-color': '#EBEBEB' , 'border-radius': '5px 5px 0px 0px'};
                             else
-                                styleRes = {'background-color': '#e6e6e6'};
+                                styleRes = {'background-color': '#EBEBEB'};
                             break;
                         case 'admin':
                             if(node.depth==0)
@@ -152,30 +170,6 @@
                     }
                     return styleRes;
                 }
-
-                /* number of children nodes and if it contains a new post - functionality for continue button
-                $scope.checkNodeChildrenNew = false;
-
-                $scope.countNodeChildren = function(tree) {
-                    console.log("bla")
-                    return countNodeChildrenRec(tree);
-                }
-
-                function countNodeChildrenRec(tree){
-                    var counter = 0;
-                    if(!tree){
-                        return 0;
-                    }
-                    for(var i = 0; i < tree.length; i++) {
-                        if(tree[i].lastPost){
-                            $scope.checkNodeChildrenNew = true;
-                        }
-                        counter = counter + countNodeChildrenRec(tree[i].sub_arguments) + 1;
-                    }
-                    return counter;
-                };
-                */
-
 
                 vm.focusOnNode = function(node){
                     $scope.$emit('focus-on-node', {node : node});

@@ -12,6 +12,19 @@
     margin: 0 auto;
 }
 
+.intoTextarea {
+    -moz-appearance: textfield-multiline;
+    -webkit-appearance: textarea;
+    border: 1px solid gray;
+    font: medium -moz-fixed;
+    height: 28px;
+    overflow: auto;
+    padding: 2px;
+    resize: none;
+    width: 400px;
+    background-color: white;
+}
+
 #treeConversation{
     margin-right:30px;
     margin-left:30px;

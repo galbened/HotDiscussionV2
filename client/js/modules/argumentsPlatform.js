@@ -1,8 +1,8 @@
 (function(){
-    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize','ui.bootstrap'], function($locationProvider){
+    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize','ui.bootstrap','ui.tinymce'], function($locationProvider){
         $locationProvider.html5Mode(true);
     })
-        .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio', function (TreeService, $scope, $window, $location, socketio) {
+        .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio','$filter', function (TreeService, $scope, $window, $location, socketio, $filter) {
             $scope.onlineUsers = [];
 
             var path = $location.path();
@@ -13,6 +13,21 @@
             const lastPostsArraySIZE = 10;
 
             var focusedNodes = [];
+
+            $scope.tinymceOptions = {
+                forced_root_block : "",
+                selector: 'div.tinymce',
+                theme: 'inlite',
+                inline: true,
+                plugins: "autolink textcolor",
+                extended_valid_elements : "a[href|target=_blank]",
+                selection_toolbar: 'bold italic underline forecolor | quicklink',
+                invalid_elements : 'img[*]',
+                valid_elements : 'a[href|target=_blank],strong/b,br,em,span[*]',
+                valid_styles: {
+                    'span': 'text-decoration,color'
+                }
+            };
 
             setTreeConversationTop();
 
@@ -27,8 +42,10 @@
                 socket.emit('requesting-user-info', {_id:node.user_id})
             });
 
+            var refJsonMap = {};
+
             function fromReftoNestedJson(refJson){
-                var refJsonMap = refJson.reduce(function(map, node) {
+                refJsonMap = refJson.reduce(function(map, node) {
                     map[node._id] = node;
                     return map;
                 }, {});
@@ -109,20 +126,23 @@
 
             function newNodeUpdateSubtreeSizesAndNewest(node){
                 node.subtreeSize = 0;
-                node.subtreeNewestNode = node;
-                updateTreeNodesSubtreeSizesByNodeRec(node);
+                //node.subtreeNewestNode = {createdAt:new Date(-8640000000000000)};;
+                var parentNode = getNodeById($scope.originalFocus, node.parent_id);
+                if(parentNode){
+                    parentNode.subtreeNewestNode = node;
+                    updateTreeNodesSubtreeSizesByNodeRec(parentNode);
+                }
             }
 
             function updateTreeNodesSubtreeSizesByNodeRec(node){
                 //Give each node reference to its parent node is the better option than getNodeById
                 //However, js doesn't permit circular reference.
                 node.subtreeSize = node.subtreeSize + 1;
-                if(!getNodeById($scope.originalFocus, node.parent_id)){
-                    return;
-                }
-                else{
-                    getNodeById($scope.originalFocus, node.parent_id).subtreeNewestNode = node;
-                    updateTreeNodesSubtreeSizesByNodeRec(getNodeById($scope.originalFocus, node.parent_id));
+                var parentNode = getNodeById($scope.originalFocus, node.parent_id);
+                //console.log("hey")
+                if(parentNode) {
+                    parentNode.subtreeNewestNode = node.subtreeNewestNode;
+                    updateTreeNodesSubtreeSizesByNodeRec(parentNode);
                 }
             }
 
@@ -274,16 +294,22 @@
 
             socket.on('submitted-new-argument', function(data){
                 var newArgument = data.data;
+                //refJsonMap[newArgument._id] = newArgument;
                 $scope.originalFocus.unshift(newArgument);
                 updateLastPostsArray(newArgument);
-                newNodeUpdateSubtreeSizesAndNewest(newArgument);
+                //newNodeUpdateSubtreeSizesAndNewest(newArgument);
             });
 
             socket.on('submitted-new-reply', function(data){
 
                 var newReply = data.data;
+                //refJsonMap[newReply._id] = newReply;
+
                 var parentNode = getNodeById($scope.originalFocus, newReply.parent_id);
                 var mainThread = getNodeById($scope.originalFocus, newReply.main_thread_id);
+
+                //var parentNode = refJsonMap[newReply.parent_id];
+                //var mainThread = refJsonMap[newReply.main_thread_id];
 
                 var mainThreadInd = $scope.originalFocus.indexOf(mainThread);
 
@@ -356,6 +382,7 @@
 
             $scope.submitNewArgument = function(newArgumentText){
                 if (newArgumentText){
+                    //newArgumentText = $filter('linky')(newArgumentText,"_blank");
                     // console.log('submiting new argument!');
                     // console.log('by : ' + $scope.role);
                     TreeService.postNewArgument(socket, newArgumentText, 0, 0, 0, $scope.role);

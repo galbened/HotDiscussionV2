@@ -18,6 +18,7 @@
 <body ng-app="argumentsApp">
 
 <div class="container-fluid" ng-controller="ArgumentsTreeController"  ng-cloak>
+
         <div class="row">
             <div id="scroller">
                 <!-- new argument prompt -->
@@ -26,7 +27,8 @@
 
                         <div class="form-group" style="width: 100%;margin-bottom: 0px;" ng-show="isPermittedPoster">
                             <form class="form-inline" >
-                                <textarea class="form-control form-group text-right" rows="3" placeholder="כתיבת רעיון חדש..." style="resize: none;width:80%;" ng-model="newArgument"></textarea>
+                                <!--textarea class="form-control form-group text-right" rows="3" placeholder="כתיבת רעיון חדש..." style="resize: none;width:80%;" ng-model="newArgument"></textarea-->
+                                <div class="intoTextarea form-control form-group" ui-tinymce="tinymceOptions" style="height: 5.2em;line-height: 1.3;width:80%;" ng-model="newArgument"></div>
                                 <span style="vertical-align:bottom;" class="glyphicon glyphicon-share-alt btn btn-info icon-flipped" ng-click="submitNewArgument(newArgument)" title="פרסום רעיון חדש"></span>
                             </form>
                         </div>
@@ -84,7 +86,9 @@
 <!-- JQuery -->
 <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
 <!-- Angular js -->
+
 <script type="text/javascript" src="/libs/angular/angular.js"></script>
+
 <script type="text/javascript" src="/libs/angular-animate/angular-animate.js"></script>
 <script type="text/javascript" src="/libs/angular-sanitize/angular-sanitize.js"></script>
 <!-- local helper libs -->
@@ -100,6 +104,8 @@
 <script type="text/javascript" src="/js/configs/socketsFactory.js"></script>
 
 <script type="text/javascript" src="/libs/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script type="text/javascript" src="/libs/tinymce/tinymce.min.js"></script>
+<script type="text/javascript" src="/libs/angular-ui-tinymce/tinymce.min.js"></script>
 </body>
 </html>
 
