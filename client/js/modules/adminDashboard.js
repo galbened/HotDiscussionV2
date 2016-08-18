@@ -35,6 +35,7 @@
       });
 
       socket.on('new-discussion', function(newDiscussion){
+         newDiscussion.args_count = 0;
          $scope.discussions.unshift(newDiscussion);
       });
 
@@ -145,7 +146,12 @@
 
       $scope.finishEdit = function(idx, edittedDesc, edittedTitle, edittedUser, edittedPermittedPoster){
         var oldDisc = $scope.discussions[idx];
+
+        var tempDiscArgsCount = oldDisc.args_count;
+
         var edittedDisc = oldDisc;
+
+        delete edittedDisc.args_count;
 
         if (edittedTitle)
             edittedDisc.title = edittedTitle;
@@ -172,12 +178,15 @@
             edittedDisc.permittedPoster_lname = undefined;
         }
 
+        console.log(edittedDisc);
+
         $http({
           method: 'PUT',
           url: '/api/discussions/' + $scope.discussions[idx]._id,
           data: edittedDisc
         }).then(function(res){
           $scope.discussions[idx] = res.data;
+          $scope.discussions[idx].args_count = tempDiscArgsCount;
           socket.emit('edit-discussion', res.data);
         },function error(res){
           console.log(res.statusText);

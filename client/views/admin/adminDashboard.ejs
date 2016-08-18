@@ -55,10 +55,11 @@
 
           <thead>
             <tr id="headRow">
-              <th style="width:15%">Permitted Poster</th>
-              <th style="width:15%">Moderator</th>
+              <th style="width:9%">מספר הודעות</th>
+              <th style="width:13%">Permitted Poster</th>
+              <th style="width:13%">Moderator</th>
               <th style="width:20%">תיאור</th>
-              <th style="width:20%">כותרת</th>
+              <th style="width:15%">כותרת</th>
               <th style="width:20%">סטטוס</th>
             </tr>
           </thead>
@@ -66,10 +67,11 @@
           <tbody ng-repeat="discussion in discussions">
             
             <tr ng-show="!discussion.edit" ng-style="(discussion.restriction === 'student' && {'background-color' : '#B9F1E4'}) || (discussion.restriction === 'instructor' && {'background-color' : '#F8EBAE'}) || (discussion.restriction === 'none' && {'background-color' : '#F39696'})">
-                  <td dir="rtl" style="width:15%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.permittedPoster_fname + " " + discussion.permittedPoster_lname}} </td>
-                  <td dir="rtl" style="width:15%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.moderator_fname + " " + discussion.moderator_lname}} </td>
+                  <td dir="rtl" style="width:9%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.args_count}}</td>
+                  <td dir="rtl" style="width:13%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.permittedPoster_fname + " " + discussion.permittedPoster_lname}} </td>
+                  <td dir="rtl" style="width:13%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.moderator_fname + " " + discussion.moderator_lname}} </td>
                   <td dir="rtl" style="width:20%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.description}}</td>
-                  <td dir="rtl" style="width:20%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.title}}</td>
+                  <td dir="rtl" style="width:15%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.title}}</td>
               <td style="width:20%; white-space:nowrap;">
                 <!-- <a href="" ng-click="showEdit(discussion)">ערוך</a> | <a href="" ng-click="delete($index)">מחק</a> -->
                 <fieldset>
@@ -82,7 +84,8 @@
             </tr>
             
             <tr ng-show="discussion.edit">
-              <td style="width:15%">
+              <td style="width:9%" class="warning"><span class="text-warning text-center"></span></td>
+              <td style="width:13%">
                 <select class="form-control" ng-init="tempForPermitted = lookupUser[discussion.permittedPoster_id]" ng-model="tempForPermitted" id="permittedPosterEdit" dir="ltr"
                         ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
                     <option value="">
@@ -90,7 +93,7 @@
                     </option>
                 </select>
               </td>
-              <td style="width:15%">
+              <td style="width:13%">
                   <select class="form-control" ng-init="tempForMod = lookupUser[discussion.moderator_id]" ng-model="tempForMod" id="userEdit" dir="ltr"
                           ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
                       <option value="">
@@ -99,7 +102,7 @@
                   </select>
               </td>
               <td style="width:20%"><input class="form-control" id="descEdit" type="text" ng-model="descEdit" ng-value="discussion.description" style="text-align: right;"></td>
-              <td style="width:20%"><input class="form-control" id="titleEdit" type="text" ng-model="titleEdit" ng-value="discussion.title" style="text-align: right;"></td>
+              <td style="width:15%"><input class="form-control" id="titleEdit" type="text" ng-model="titleEdit" ng-value="discussion.title" style="text-align: right;"></td>
               <td style="width:20%" class="warning"><span class="text-warning text-center">עריכה</span></td>
             </tr>
 
@@ -128,9 +131,9 @@
           <tbody ng-show="pressAdd">
             <tr>
               <td style="width:20%;" class="warning"></td>
-              <td style="width:20%;"><input class="form-control" id="newTitle" type="text" ng-model="newTitle" ng-value="" style="text-align: right;" placeholder="כותרת חדשה" required=""></td>
+              <td style="width:15%;"><input class="form-control" id="newTitle" type="text" ng-model="newTitle" ng-value="" style="text-align: right;" placeholder="כותרת חדשה" required=""></td>
               <td style="width:20%;"><input class="form-control" id="newDesc" type="text" ng-model="newDesc" ng-value="" style="text-align: right;" placeholder="תיאור חדש" required=""></td>
-              <td style="width:15%;">
+              <td style="width:13%;">
                 <select class="form-control" ng-model="newUser" id="newUser" dir="ltr"
                         ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
                     <option value=''>
@@ -138,7 +141,7 @@
                     </option>
                 </select>
               </td>
-              <td style="width:15%;">
+              <td style="width:13%;">
                 <select class="form-control" ng-model="newPermittedPoster" id="newPermittedPoster" dir="ltr"
                         ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
                     <option value=''>
@@ -146,10 +149,11 @@
                     </option>
                 </select>
               </td>
+              <td style="width:9%;" class="warning"></td>
             </tr>
 
             <tr>
-              <td colspan="5">
+              <td colspan="6">
                 <div style="width:100%;">
                   <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 30px" ng-click="finishAdding(newDesc, newTitle, newUser, newPermittedPoster)">Finish</button>
                   <button type="button" class="btn btn-default btn-sm" ng-click="cancelAdding()">Cancel</button>

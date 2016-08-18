@@ -2,7 +2,7 @@
     angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize','ui.bootstrap','ui.tinymce'], function($locationProvider){
         $locationProvider.html5Mode(true);
     })
-        .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio','$filter', function (TreeService, $scope, $window, $location, socketio, $filter) {
+        .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio', function (TreeService, $scope, $window, $location, socketio) {
             $scope.onlineUsers = [];
 
             var path = $location.path();
@@ -15,6 +15,30 @@
             var focusedNodes = [];
 
             $scope.tinymceOptions = {
+
+                //just for placeholder
+                setup: function(editor) {
+
+                    editor.on('init', function () {
+                        // Default classes of tinyMCE are a bit weird
+                        // I add my own class on init
+                        // this also sets the empty class on the editor on init
+                        tinymce.DOM.addClass( editor.bodyElement, 'content-editor empty');
+                    });
+
+                    // You CAN do it on 'change' event, but tinyMCE sets debouncing on that event
+                    // so for a tiny moment you would see the placeholder text and the text you you typed in the editor
+                    // the selectionchange event happens a lot more and with no debouncing, so in some situations
+                    // you might have to go back to the change event instead.
+                    editor.on('selectionchange', function () {
+                        if ( editor.getContent() === "" ) {
+                            tinymce.DOM.addClass( editor.bodyElement, 'empty' );
+                        } else {
+                            tinymce.DOM.removeClass( editor.bodyElement, 'empty' );
+                        }
+                    });
+                },//
+
                 forced_root_block : "",
                 selector: 'div.tinymce',
                 theme: 'inlite',
@@ -27,7 +51,7 @@
                 valid_styles: {
                     'span': 'text-decoration,color'
                 }
-            };
+        };
 
             setTreeConversationTop();
 

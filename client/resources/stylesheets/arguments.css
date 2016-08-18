@@ -127,3 +127,13 @@ hr.newArgSection {
     z-index:9999;
     text-align: center;
 }
+
+.content-editorr:before {
+    display: none;
+}
+.content-editor.empty:before {
+    display: block;
+    position: absolute;
+    content: attr(data-placeholder);
+    color:lightgrey;
+}

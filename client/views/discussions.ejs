@@ -65,6 +65,7 @@
               <tr id="headRow">
                 <th>כותרת</th>
                 <th>תיאור</th>
+                <th style="width:9%">מספר הודעות</th>
               </tr>
             </thead>
 
@@ -73,6 +74,7 @@
               <!-- TODO: 1-way binding for performance stuff..-->
                 <td>{{discussion.title}}</td>
                 <td>{{discussion.description}}</td>
+                <td style="width:9%">{{discussion.args_count}}</td>
               </tr>
             </tbody>
         </table>

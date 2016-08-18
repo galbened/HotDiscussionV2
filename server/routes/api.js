@@ -31,31 +31,82 @@ module.exports = function(autoIncrement, io){
             var role = user.role;
             switch (role) {
                 case "admin":
-                    Discussion.find({}, function(err, discs){
-                        User.find({}, function(err, users){
-                            var data = {discs : discs, users : users};
-                            res.json(data);
-                        });
+                    Discussion.find().lean().exec( function(err, discs){
+                        //for sync foreach
+                        var discProcessed = 0;
+
+                        if(discs.length == 0){
+                            User.find({}, function(err, users){
+                                var data = {discs : discs, users : users};
+                                res.json(data);
+                            });
+                        }
+                        else{
+                            discs.forEach(function(disc){
+                                Argument.count({disc_id:disc._id}, function(err, count){
+                                    disc.args_count = count;
+                                    discProcessed++;
+                                    if(discProcessed == discs.length){
+                                        User.find({}, function(err, users){
+                                            var data = {discs : discs, users : users};
+                                            res.json(data);
+                                        });
+                                    }
+                                });
+                            });
+                        }
                     });
                     break;
                 case "student":
-                    Discussion.find({restriction: "student"}, function(err, data){
+                    Discussion.find({restriction: "student"}).lean().exec( function(err, discs){
                         // console.log(data);
-                        resObj = {
-                            data : data,
-                            role : role
-                        };
-                        res.json(resObj);
+
+                        //for sync foreach
+                        var discProcessed = 0;
+
+                        if(discs.length == 0){
+                            resObj = {data : discs,role : role};
+                            res.json(resObj);
+                        }
+                        else{
+                            discs.forEach(function(disc){
+                                Argument.count({disc_id:disc._id}, function(err, count){
+                                    disc.args_count = count;
+                                    discProcessed++;
+                                    if(discProcessed == discs.length){
+                                        resObj = {data : discs,role : role};
+                                        res.json(resObj);
+                                    }
+                                });
+                            });
+                        }
                     });
                     break;
                 case "instructor":
-                    Discussion.find({restriction: "instructor"}, function(err, data){
-                        resObj = {
-                            data : data,
-                            role : role
-                        };
-                        res.json(resObj);
+                    Discussion.find({restriction: "instructor"}).lean().exec( function(err, discs){
+                        // console.log(data);
+
+                        //for sync foreach
+                        var discProcessed = 0;
+
+                        if(discs.length == 0){
+                            resObj = {data : discs,role : role};
+                            res.json(resObj);
+                        }
+                        else{
+                            discs.forEach(function(disc){
+                                Argument.count({disc_id:disc._id}, function(err, count){
+                                    disc.args_count = count;
+                                    discProcessed++;
+                                    if(discProcessed == discs.length){
+                                        resObj = {data : discs,role : role};
+                                        res.json(resObj);
+                                    }
+                                });
+                            });
+                        }
                     });
+                    break;
             }
 
         }
@@ -173,9 +224,6 @@ module.exports = function(autoIncrement, io){
 
             socket.on('request-all-logged-users', function(){
                 var srvSockets = io.sockets.sockets;
-                console.log("-------------------")
-                console.log(Object.keys(srvSockets).length)
-                console.log("-------------------")
 
                 var loggedUsers = [];
 
