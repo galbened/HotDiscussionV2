@@ -150,10 +150,17 @@
                                 styleRes = {'background-color': '#EBEBEB'};
                             break;
                         case 'admin':
+                        case 'adminFromStudent':
                             if(node.depth==0)
                                 styleRes = {'background-color': '#37fb99' , 'border-radius': '5px 5px 0px 0px'};
                             else
                                 styleRes = {'background-color': '#37fb99'};
+                            break;
+                        case 'adminFromInstructor':
+                            if(node.depth==0)
+                                styleRes = {'background-color': '#78e5ed' , 'border-radius': '5px 5px 0px 0px'};
+                            else
+                                styleRes = {'background-color': '#78e5ed'};
                             break;
                         case 'instructor':
                             if(node.depth==0)

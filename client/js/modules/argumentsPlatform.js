@@ -250,6 +250,8 @@
 
                     // UPDATE #1 - retrieving discussion restriction and current session username into scope
                     $scope.discussionRestriction = result.discussion.restriction;
+
+
                     $scope.username = result.user.username;
 
                     $scope.originalFocus = $scope.treeNested;

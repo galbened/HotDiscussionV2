@@ -336,37 +336,53 @@ module.exports = function(autoIncrement, io){
                     }
                     else{
                         discRest = disc.restriction;
-                        if(argument.user_id.equals(disc.moderator_id)){
-                            argument.role = "moderator";
-                        }
-                    }
-                });
-                //-- 27/07/16
-
-                argument.save(function(err, data){
-                    if (err)
-                        throw err;
-                    //TODO: add here to save the new argument's id into its parent children array...Now not used anyway..
-                    Argument.findOne({_id: argument.main_thread_id}, function(err, mainArg) {
-                        // console.log('updating the timestamp of the mainThread..');
-                        if (mainArg){
-                            // 27/07/16 - New instructor discussion comments should not update the main thread update date - initiating a new field
-                            // Not using role because of admin - should be discussion restriction based.
-                            if(discRest == "student")
-                                mainArg.treeStructureUpdatedAt = Date.now();
-                            //-- 27/07/16
-                            //mainArg.updatedAt = Date.now();
-                            mainArg.save(function (err) {
-                                if (err) throw err;
-                                if (argument.depth === 0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
-                                else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
-                            })
+                        // 19/08/16 - indicator whether admin posted from student or insturctor discussion
+                        if(argument.role == "admin"){
+                            if(discRest == "student"){
+                                argument.role = "adminFromStudent"
+                            }
+                            else{ //instructor
+                                argument.role = "adminFromInstructor"
+                            }
                         }
                         else{
-                            if (argument.depth === 0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
-                            else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
+                            if(argument.user_id.equals(disc.moderator_id)){
+                                argument.role = "moderator";
+                            }
                         }
-                    })
+                    }
+
+                    //-- 27/07/16
+                    if(discRest == "none")
+                        return; // Inactive discussion doesn't accept new arguments.
+
+                    argument.save(function(err, data){
+                        if (err)
+                            throw err;
+                        //TODO: add here to save the new argument's id into its parent children array...Now not used anyway..
+                        Argument.findOne({_id: argument.main_thread_id}, function(err, mainArg) {
+                            // console.log('updating the timestamp of the mainThread..');
+                            if (mainArg){
+                                // 27/07/16 - New instructor discussion comments should not update the main thread update date - initiating a new field
+                                // Not using role because of admin - should be discussion restriction based.
+                                if(discRest == "student")
+                                    mainArg.treeStructureUpdatedAt = Date.now();
+                                //-- 27/07/16
+                                //mainArg.updatedAt = Date.now();
+                                mainArg.save(function (err) {
+                                    if (err) throw err;
+                                    if (argument.depth === 0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
+                                    else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
+                                })
+                            }
+                            else{
+                                if (argument.depth === 0) argumentsNsp.to(discussionId).emit('submitted-new-argument', {data: data});
+                                else argumentsNsp.to(discussionId).emit('submitted-new-reply', {data: data});
+                            }
+                        })
+
+                    });
+
 
                 });
             });

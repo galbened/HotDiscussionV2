@@ -10,7 +10,7 @@
                      <overflow-content class=non-expanded node="node" role="node.color"></overflow-content>
                </span>
 
-                <div ng-show="node.replyPressed" ng-style="{'padding-right':(((node.depth + ((((node.depth + 1) % 10) == 0) && nodeCtrl.focusing) + (node.isFocused || nodeCtrl.focusing)) % (10 + (node.isFocused && nodeCtrl.focusing))) + 1) * 4 + 'px'}">
+                <div ng-if="node.replyPressed" ng-style="{'padding-right':(((node.depth + ((((node.depth + 1) % 10) == 0) && nodeCtrl.focusing) + (node.isFocused || nodeCtrl.focusing)) % (10 + (node.isFocused && nodeCtrl.focusing))) + 1) * 4 + 'px'}">
                     <div style="width:75%" >
                         <div class="intoTextarea form-control form-group" ui-tinymce="tinymceOptions" style="height: 5.2em;line-height: 1.3;width:80%;" ng-model="nodeCtrl.replyText"></div>
                         <!--textarea class="form-control text-right" rows="4" placeholder="תגובתך.." ng-model="nodeCtrl.replyText" style="resize: none;width:900px; margin: 5px; background-color: #DADAE5"></textarea-->
@@ -50,7 +50,8 @@
                       ng-click="isOpen = !isOpen;nodeCtrl.getPostUserInfo(node)" popover-popup-delay="100">
                     <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}" title="סטודנט"></span>
                     <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}" title="אינסטרקטור"></span>
-                    <span ng-class="{'glyphicon glyphicon-king': node.role==='admin'}" title="מנהל המערכת"></span>
+                    <span ng-class="{'glyphicon glyphicon-king': (node.role==='admin' || node.role==='adminFromStudent')}" title="הודעת מנהל המערכת מדיון ביקורת"></span>
+                    <span ng-class="{'glyphicon glyphicon-king': node.role==='adminFromInstructor'}" title="הודעת מנהל המערכת מדיון פעיל"></span>
                     <span ng-class="{'glyphicon glyphicon-queen': node.role==='moderator'}" title="מודרטור"></span>
                     <small>{{::node.fname}} {{::node.lname}}</small>
                 </span>
