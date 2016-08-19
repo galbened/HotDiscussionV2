@@ -1,4 +1,5 @@
 var LocalStrategy = require('passport-local').Strategy;
+var bcrypt = require('bcrypt-nodejs');
 
 var User = require('../models/user');
 
@@ -41,7 +42,7 @@ module.exports = function(passport){
 
 						var newUser = new User();
 						newUser.local.username = username;
-						newUser.local.password = password;
+						newUser.local.password = bcrypt.hashSync(password);
 						newUser.local.firstname = req.body.fname;
 						newUser.local.lastname = req.body.lname;
 						newUser.local.color = getRandomColor();
@@ -71,7 +72,7 @@ module.exports = function(passport){
 					if (!user){
                         console.log('NO USER. to done callback2');
 						return done(null, false, {message: 'Invalid Username!'})
-					}if(user.local.password !== password){
+					}if((user.local.password !== password)&&(!bcrypt.compareSync(password, user.local.password))){
                         console.log('BAD PASSWORD in done callback3');
 						return done(null, false, {message: 'Invalid Password!'});
 					}
