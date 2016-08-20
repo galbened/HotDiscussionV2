@@ -1,6 +1,6 @@
 <div id="tblWrapper" dir="rtl" ng-repeat="node in nodeCtrl.nodes" ng-style="node.depth===0 && {'padding-bottom': '0', 'margin-bottom': '20px'}" >
 
-    <div id="rowWrapper" style="border-bottom-width: 1px; border-bottom-style:groove;" ng-style="nodeStyle(node)">
+    <div id="rowWrapper" node-style role="node.role" style="border-bottom-width: 1px; border-bottom-style:groove;" ng-style="node.depth===0 && {'border-radius': '5px 5px 0px 0px'}">
 
         <div class="tblRow">
 
@@ -12,7 +12,7 @@
 
                 <div ng-if="node.replyPressed" ng-style="{'padding-right':(((node.depth + ((((node.depth + 1) % 10) == 0) && nodeCtrl.focusing) + (node.isFocused || nodeCtrl.focusing)) % (10 + (node.isFocused && nodeCtrl.focusing))) + 1) * 4 + 'px'}">
                     <div style="width:75%" >
-                        <div class="intoTextarea form-control form-group" ui-tinymce="tinymceOptions" style="height: 5.2em;line-height: 1.3;width:100%;" ng-model="nodeCtrl.replyText"></div>
+                        <div class="intoTextarea form-control form-group" ui-tinymce="tinymceOptions" style="height: 5.5em;line-height: 1.3;width:100%;" ng-model="nodeCtrl.replyText"></div>
                         <!--textarea class="form-control text-right" rows="4" placeholder="תגובתך.." ng-model="nodeCtrl.replyText" style="resize: none;width:900px; margin: 5px; background-color: #DADAE5"></textarea-->
                         <button type="submit" class="btn btn-primary btn-xs" ng-click="nodeCtrl.submitNewReply(node)">שליחה</button>
                         <button type="submit" class="btn btn-default btn-xs" ng-click="nodeCtrl.cancelReply(node)">ביטול</button>

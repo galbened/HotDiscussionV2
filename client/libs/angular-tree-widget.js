@@ -9,10 +9,10 @@
     'use strict';
     angular.module('TreeWidget', ['ngAnimate', 'RecursionHelper','ngSanitize','ui.tinymce'])
         .directive('overflowContent', function($timeout){
-            function link($scope, $element, $attrs, $ctrl){
-                $scope.$watch('nodeChanged', function(){
-                    $timeout(function() {
 
+            /*
+            function link($scope, $element, $attrs, $ctrl){
+                    $timeout(function() {
                         //check for content length
                         var elm2 = $element.clone();
                         elm2.css({display: 'inline', width: 'auto', visibility: 'hidden'});
@@ -28,12 +28,11 @@
 
                         elm2.remove();
                     },300)
-                },true);
             }
+             */
 
             function overflowController($scope, $element, $filter, $sce){
                 var vm = this;
-                $scope.nodeChanged = vm.node;
 
                 vm.node.content = vm.node.content.replace(/<br[^>]*>/gi, "\n");
 
@@ -62,18 +61,16 @@
                     }
                 };
 
-                vm.iconFlashFlip = function(node){
-                    node.iconHovering = !node.iconHovering;
-                };
+                vm.calcElementExpansion = function(node){
+                    if (($element[0].scrollWidth > $element[0].offsetWidth)  || (node.content.indexOf("\n") != -1)){
+                        $scope.expandContent = true;
+                    }
+                }
 
-                vm.isChildHovered = function(children){
-                    var res = "";
-                    if(children != null)
-                        for (var i = 0; i < children.length; i++)
-                            if(children[i].iconHovering)
-                                res = "iconFlash";
-                    return res;
-                };
+                vm.emitParentBlinker = function(parentID){
+                    if(parentID)
+                        $scope.$emit('parentBlinker',{parentID:parentID});
+                }
             }
 
             return {
@@ -81,21 +78,70 @@
                 scope:{node:'=',role:'='},
                 template:
                     '<span>' +
-                        '<span ng-mouseover="ofCtrl.iconFlashFlip(ofCtrl.node)" ng-mouseleave="ofCtrl.iconFlashFlip(ofCtrl.node)" title = " הודעה מאת: {{::ofCtrl.node.fname}} {{::ofCtrl.node.lname}}"' +
-                        'ng-style="{color: ofCtrl.node.color}" class="glyphicon glyphicon-user" ng-class="ofCtrl.isChildHovered(ofCtrl.node.sub_arguments)"></span> ' +
+                        '<span ng-mouseover="ofCtrl.emitParentBlinker(ofCtrl.node.parent_id)" ng-mouseleave="ofCtrl.emitParentBlinker(ofCtrl.node.parent_id)" title = " הודעה מאת: {{::ofCtrl.node.fname}} {{::ofCtrl.node.lname}}"' +
+                        'ng-style="{color: ofCtrl.node.color}" class="glyphicon glyphicon-user" ng-class="{\'iconFlash\' : ofCtrl.node.isBlinking}"></span> ' +
                         '&nbsp;' +
-                        '<span ng-if="ofCtrl.node.hidden" ng-bind-html="hiddenMessage"></span>' +
-                        '<span ng-if="expandContent && !ofCtrl.node.hidden" style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" ng-bind-html="ofCtrl.node.content | unsafe"> </span>' +
-                        '<!--span ng-if="!expandContent && !ofCtrl.node.hidden" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span-->' +
-                        '<span ng-if="!expandContent && !ofCtrl.node.hidden" ng-bind-html="ofCtrl.node.content | unsafe"> </span>' +
+                        '<span ng-mouseover="ofCtrl.calcElementExpansion(ofCtrl.node)">' +
+                            //when admin hides the node
+                            '<span ng-if="ofCtrl.node.hidden"  ng-bind-html="hiddenMessage"></span>' +
+                            //when node is expandable and not hidden
+                            '<span ng-if="expandContent && !ofCtrl.node.hidden" style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" ng-bind-html="ofCtrl.node.content | unsafe"> </span>' +
+                            '<!--span ng-if="!expandContent && !ofCtrl.node.hidden" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span-->' +
+                            //when node is not expandable and not hidden
+                            '<span ng-if="!expandContent && !ofCtrl.node.hidden" ng-bind-html="ofCtrl.node.content | unsafe"> </span>' +
+                        '</span>' +
                     '</span>',
                 controller: overflowController,
                 controllerAs: 'ofCtrl',
                 bindToController: true,
-                link:link
+                //link:link
             }
         })
         .filter('unsafe', function($sce) { return $sce.trustAsHtml; })
+
+        .directive('nodeStyle', function () {
+            return {
+                restrict: 'A',   // 'A' is the default, so you could remove this line
+                scope: {role: '='},
+                link: function (scope, element, attrs) {
+
+                    var bgcolor, hoverbgcolor;
+                    switch (scope.role) {
+                        case 'student':
+                            bgcolor = "rgba(235, 235, 235, 1)";
+                            hoverbgcolor = "rgba(235, 235, 235, 0.6)";
+                            break;
+                        case 'admin':
+                        case 'adminFromStudent':
+                            bgcolor = "rgba(55, 251, 153, 1)";
+                            hoverbgcolor = "rgba(55, 251, 153, 0.6)";
+                            break;
+                        case 'adminFromInstructor':
+                            bgcolor = "rgba(120, 229, 237, 1)";
+                            hoverbgcolor = "rgba(120, 229, 237, 0.6)";
+                            break;
+                        case 'instructor':
+                            bgcolor = "rgba(255, 255, 204, 1)";
+                            hoverbgcolor = "rgba(255, 255, 204, 0.6)";
+                            break;
+                        case 'moderator':
+                            bgcolor = "rgba(255, 128, 128, 1)";
+                            hoverbgcolor = "rgba(255, 128, 128, 0.6)";
+                            break;
+                    }
+
+                    element.css("background-color",bgcolor);
+
+                    element
+                        .on('mouseenter',function() {
+                            element.css('background-color', hoverbgcolor);
+                        })
+                        .on('mouseleave',function() {
+                            element.css('background-color', bgcolor);
+                        });
+                }
+            }
+        })
 
 
         .directive('tree', function () {
@@ -139,44 +185,6 @@
                         'span': 'text-decoration,color'
                     }
                 };
-
-                $scope.nodeStyle = function(node){
-                    var styleRes = {};
-                    switch (node.role) {
-                        case 'student':
-                            if(node.depth==0)
-                                styleRes = {'background-color': '#EBEBEB' , 'border-radius': '5px 5px 0px 0px'};
-                            else
-                                styleRes = {'background-color': '#EBEBEB'};
-                            break;
-                        case 'admin':
-                        case 'adminFromStudent':
-                            if(node.depth==0)
-                                styleRes = {'background-color': '#37fb99' , 'border-radius': '5px 5px 0px 0px'};
-                            else
-                                styleRes = {'background-color': '#37fb99'};
-                            break;
-                        case 'adminFromInstructor':
-                            if(node.depth==0)
-                                styleRes = {'background-color': '#78e5ed' , 'border-radius': '5px 5px 0px 0px'};
-                            else
-                                styleRes = {'background-color': '#78e5ed'};
-                            break;
-                        case 'instructor':
-                            if(node.depth==0)
-                                styleRes = {'background-color': '#ffffcc' , 'border-radius': '5px 5px 0px 0px'};
-                            else
-                                styleRes = {'background-color': '#ffffcc'};
-                            break;
-                        case 'moderator':
-                            if(node.depth==0)
-                                styleRes = {'background-color': '#ff8080' , 'border-radius': '5px 5px 0px 0px'};
-                            else
-                                styleRes = {'background-color': '#ff8080'};
-                            break;
-                    }
-                    return styleRes;
-                }
 
                 vm.focusOnNode = function(node){
                     $scope.$emit('focus-on-node', {node : node});

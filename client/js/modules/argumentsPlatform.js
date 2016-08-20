@@ -103,7 +103,7 @@
                     }
 
                     node.subtreeSize = 0
-                    node.iconHovering = false;
+                    node.isBlinking = false;
                 });
 
                 //initiating last five comments array
@@ -216,6 +216,10 @@
                         return 0;
                     }
                 })
+            }
+
+            $scope.refreshDiscussion = function() {
+                init();
             }
 
             //on page load...
@@ -448,6 +452,11 @@
             $scope.$on('flip-argument-hidden-status', function (e,data) {
                 var argumentID = data._id;
                 socket.emit('flip-argument-hidden-status',{_id: argumentID});
+            });
+
+            $scope.$on('parentBlinker', function (e,data) {
+                var parentNode = getNodeById($scope.originalFocus, data.parentID);
+                parentNode.isBlinking = !parentNode.isBlinking;
             });
 
 
