@@ -151,7 +151,8 @@
             function newNodeUpdateSubtreeSizesAndNewest(node){
                 node.subtreeSize = 0;
                 //node.subtreeNewestNode = {createdAt:new Date(-8640000000000000)};;
-                var parentNode = getNodeById($scope.originalFocus, node.parent_id);
+                refJsonMap[node.parent_id];
+                var parentNode = refJsonMap[node.parent_id];
                 if(parentNode){
                     parentNode.subtreeNewestNode = node;
                     updateTreeNodesSubtreeSizesByNodeRec(parentNode);
@@ -162,7 +163,8 @@
                 //Give each node reference to its parent node is the better option than getNodeById
                 //However, js doesn't permit circular reference.
                 node.subtreeSize = node.subtreeSize + 1;
-                var parentNode = getNodeById($scope.originalFocus, node.parent_id);
+                refJsonMap[node.parent_id];
+                var parentNode = refJsonMap[node.parent_id];
                 //console.log("hey")
                 if(parentNode) {
                     parentNode.subtreeNewestNode = node.subtreeNewestNode;
@@ -257,6 +259,7 @@
                 });
             }
 
+            /*
             function getNodeById(tree, nodeId) {
                 if (!tree) { return null; }
                 for (var i = 0; i < tree.length; i++) {
@@ -271,6 +274,7 @@
                 }
                 return null;
             }
+            */
 
             function contains(myArray, searchTerm, property) {
                 for(var i = 0, len = myArray.length; i < len; i++) {
@@ -328,13 +332,13 @@
             socket.on('submitted-new-reply', function(data){
 
                 var newReply = data.data;
-                //refJsonMap[newReply._id] = newReply;
+                refJsonMap[newReply._id] = newReply;
 
-                var parentNode = getNodeById($scope.originalFocus, newReply.parent_id);
-                var mainThread = getNodeById($scope.originalFocus, newReply.main_thread_id);
+                //var parentNode = getNodeById($scope.originalFocus, newReply.parent_id);
+                //var mainThread = getNodeById($scope.originalFocus, newReply.main_thread_id);
 
-                //var parentNode = refJsonMap[newReply.parent_id];
-                //var mainThread = refJsonMap[newReply.main_thread_id];
+                var parentNode = refJsonMap[newReply.parent_id];
+                var mainThread = refJsonMap[newReply.main_thread_id];
 
                 var mainThreadInd = $scope.originalFocus.indexOf(mainThread);
 
@@ -390,7 +394,7 @@
 
             socket.on('flip-argument-hidden-status', function(data){
                 var argumentID = data._id;
-                var node = getNodeById($scope.originalFocus, argumentID);
+                var node = refJsonMap[argumentID];
                 node.hidden = !node.hidden;
             });
 
@@ -455,7 +459,7 @@
             });
 
             $scope.$on('parentBlinker', function (e,data) {
-                var parentNode = getNodeById($scope.originalFocus, data.parentID);
+                var parentNode = refJsonMap[data.parentID];
                 parentNode.isBlinking = !parentNode.isBlinking;
             });
 

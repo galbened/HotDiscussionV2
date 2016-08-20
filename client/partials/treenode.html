@@ -47,7 +47,7 @@
             <div class="tblCell" style="width:11%; text-align:left; direction: ltr;">
                 <!--span style="cursor: pointer;" uib-popover-html="node.userInfo ? node.userInfo : 'טוען...'" popover-is-open="popoverIsOpen"-->
                 <span style="cursor: pointer; cursor: hand;" class="col-non-expanded" uib-popover-html="node.userInfo" popover-is-open="isOpen" ng-mouseleave="isOpen=false"
-                      ng-click="isOpen = !isOpen;nodeCtrl.getPostUserInfo(node)" popover-popup-delay="100">
+                      ng-click="isOpen = !isOpen;nodeCtrl.getPostUserInfo(node)" popover-popup-delay="200">
                     <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}" title="סטודנט"></span>
                     <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}" title="אינסטרקטור"></span>
                     <span ng-class="{'glyphicon glyphicon-king': (node.role==='admin' || node.role==='adminFromStudent')}" title="הודעת מנהל המערכת מדיון ביקורת"></span>
