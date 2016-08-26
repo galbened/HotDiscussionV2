@@ -5,48 +5,56 @@ angular.module('bootstrapModalApp').controller('ModalCtrl', function ($scope, $u
 
     var socket = $scope.socket;
 
-    //$scope.$on('discussion-socketIO', function (e,discussionSocket) {
-    //    socket = discussionSocket;
-    //});
-
-    //$scope.$emit('request socket');
-
-    setTimeout(function(){$scope.open = function () {
-
+    $scope.open = function () {
         $uibModal.open({
             animation: $scope.animationsEnabled,
             templateUrl: '../partials/userInfoInput.html',
             controller: 'ModalInstanceCtrl',
             resolve: {
-                items: function () {
-                    return $scope.items;
-                },
                 socket: function () {
                     return socket;
                 }
             }
         })
     };
-    },300);
-/* could be useful
-        modalInstance.result.then(function (selectedItem) {
-            $scope.selected = selectedItem;
-        }, function () {
-            $log.info('Modal dismissed at: ' + new Date());
-        });
 
-
-    $scope.toggleAnimation = function () {
-        $scope.animationsEnabled = !$scope.animationsEnabled;
+    $scope.openPM = function (index) {
+        $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: '../partials/pmInput.html',
+            controller: 'pmModalCtrl',
+            size: 'sm',
+            resolve: {
+                socket: function () {
+                    return socket;
+                },
+                group_id: function (){
+                    return $scope.users_groups[index]._id;
+                }
+            }
+        })
     };
-*/
 
+    socket.on('sending-pm',function(data){
+
+        $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: '../partials/pmShow.html',
+            controller: 'pmShowModalCtrl',
+            size: 'sm',
+            resolve: {
+                socket: function () {
+                    return socket;
+                },
+                body: function (){
+                    return data.body;
+                }
+            }
+        })
+    });
 });
 
-// Please note that $uibModalInstance represents a modal window (instance) dependency.
-// It is not the same as the $uibModal service used above.
-
-angular.module('bootstrapModalApp').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items ,socket) {
+angular.module('bootstrapModalApp').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance ,socket) {
 
     $scope.userInfo = "";
 
@@ -64,4 +72,31 @@ angular.module('bootstrapModalApp').controller('ModalInstanceCtrl', function ($s
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     };
+});
+
+angular.module('bootstrapModalApp').controller('pmModalCtrl', function ($scope, $uibModalInstance ,socket, group_id) {
+
+    $scope.ok = function () {
+        socket.emit('new-pm', {group_id:group_id,body:$scope.pmText});
+        $uibModalInstance.close();
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+});
+
+angular.module('bootstrapModalApp').controller('pmShowModalCtrl', function ($scope, $uibModalInstance ,socket, body) {
+
+    $scope.body = body;
+
+    $scope.ok = function () {
+        //socket.emit('new-pm', {group_id:group_id,body:$scope.pmText});
+        $uibModalInstance.close();
+    };
+    /*
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+    */
 });

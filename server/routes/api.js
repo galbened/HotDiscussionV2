@@ -2,6 +2,8 @@ module.exports = function(autoIncrement, io){
 
     var Discussion = require('../models/discussion');
     var User = require('../models/user');
+    var Pm = require('../models/pm');
+    var usersGroup = require('../models/users_group');
     var Argument = require('../models/argument')(autoIncrement);
     var express = require('express');
     var router = express.Router();
@@ -9,6 +11,8 @@ module.exports = function(autoIncrement, io){
     var discussionNsp = io.of('/discussions');
     var argumentsNsp = io.of('/arguments');
 
+
+    var allScokets = {};
 
     /***
      *          _ _                        _
@@ -126,6 +130,8 @@ module.exports = function(autoIncrement, io){
         discussion.permittedPoster_fname = req.body.permittedPoster_fname;
         discussion.permittedPoster_lname = req.body.permittedPoster_lname;
 
+        console.log(discussion)
+
         discussion.save(function(err, data){
             if (err)
                 throw err;
@@ -186,7 +192,14 @@ module.exports = function(autoIncrement, io){
     discussionNsp.on('connection', function(socket){
 
         if (socket.request.session.passport) {
+
             var user = socket.request.session.passport.user;
+
+            allScokets[user.id] = socket;
+
+            socket.on('disconnect', function () {
+                delete allScokets[user.id];
+            });
 
             socket.on('new-discussion', function (newDiscussion) {
                 discussionNsp.emit('new-discussion', newDiscussion);
@@ -223,19 +236,142 @@ module.exports = function(autoIncrement, io){
             });
 
             socket.on('request-all-logged-users', function(){
-                var srvSockets = io.sockets.sockets;
-
                 var loggedUsers = [];
 
-                Object.keys(srvSockets).forEach(function(sid){
-                    if(srvSockets[sid].request.session.passport)
+                Object.keys(allScokets).forEach(function(sid){
+                    if(allScokets[sid].request.session.passport)
                     {
-                        var user = srvSockets[sid].request.session.passport.user;
+                        var user = allScokets[sid].request.session.passport.user;
                         loggedUsers.push(user.fname + " " + user.lname);
                     }
                 });
 
                 socket.emit('send-all-logged-users',{loggedUsers:loggedUsers});
+            });
+
+            /*
+            Users groups in dashboard
+             */
+
+            socket.on('request-users-groups', function () {
+                usersGroup.find({}, function(err,groups){
+                    if(err) throw err;
+                    else
+                        socket.emit('sending-users-groups',{users_groups : groups});
+                });
+            });
+
+            socket.on('create-users-group', function (data) {
+                var newGroup = new usersGroup();
+
+                newGroup.name = data.users_group.name;
+                newGroup.body_prefix = data.users_group.body_prefix;
+                newGroup.users = [];
+
+                data.users_group.users.forEach(function(user){
+                    console.log("user is : " + user)
+                    newGroup.users.push(user._id);
+                })
+
+                newGroup.save(function(err, data){
+                    if (err)
+                        throw err;
+                });
+            });
+
+            socket.on('update-users-group', function (data) {
+
+                var id = data.users_group._id;
+
+                var updatedGroup = {};
+
+                updatedGroup.name = data.users_group.name;
+                updatedGroup.body_prefix = data.users_group.body_prefix;
+                updatedGroup.users = [];
+
+                data.users_group.users.forEach(function(user){
+                    updatedGroup.users.push(user._id);
+                });
+
+                usersGroup.findByIdAndUpdate(id, updatedGroup, {new: true}, function(err, group){
+                    if (err) return next(err);
+                });
+            });
+
+            socket.on('new-pm', function (data) {
+
+                var senderID = socket.request.session.passport.user.id;
+
+                usersGroup.findById(data.group_id, function(err, group){
+                    if(err) throw err;
+                    else{
+                        group.users.forEach(function(receiverID){
+                            var newPM = new Pm();
+                            newPM.sender_id = senderID;
+                            newPM.receiver_id = receiverID;
+
+                            newPM.body = data.body;
+                            newPM.isRead = false;
+
+                            newPM.save(function(err, data){
+                                if (err)
+                                    throw err;
+                            });
+
+                            sendPM(newPM);
+                        });
+                    }
+                });
+            });
+
+            var sendPM = function(msg){
+                var allSocketCounter = 0,
+                    msgSent = false;
+                Object.keys(allScokets).forEach(function(sid){
+                    allSocketCounter++;
+                    if(allScokets[sid].request.session.passport.user.id == msg.receiver_id)
+                    {
+                        console.log(allScokets[sid].request.session.passport.user.username);
+                        console.log("bla")
+                        allScokets[sid].emit('sending-pm',{body:msg.body});
+                        msgSent = true;
+                    }
+
+                    //if user is offline, save unread message for when user comes online.
+                    if((allSocketCounter==Object.keys(allScokets).length)&&(!msgSent)){
+                        User.findByIdAndUpdate(msg.receiver_id, {$push: {"local.unreadMessages":msg}}, {new: true}, function(err, user){
+                            if(err) throw err;
+                        });
+                    }
+                });
+            };
+
+            socket.on('check-unread-messages',function(){
+                var userID = socket.request.session.passport.user.id;
+                User.findById(userID, function(err, user){
+                    var unreadMsgs = user.local.unreadMessages;
+                    var unreadMessagesCount = 0;
+                    if(unreadMsgs){
+                        unreadMsgs = unreadMsgs.reverse();
+                        unreadMsgs.forEach(function(msgID){
+                            unreadMessagesCount++;
+                            Pm.findById(msgID,function(err,msg){
+                                sendPM(msg);
+                                if(unreadMsgs.length == unreadMessagesCount){
+                                    User.findByIdAndUpdate(userID, {$set: {"local.unreadMessages":[]}}, {new: true}, function(err,user){
+                                        if(err) throw err;
+                                    });
+                                }
+                            })
+                        });
+                    };
+                });
+                /*
+                User.findById(socket.request.session.passport.user.id, function(err, user){
+                    var msg = user.unreadMessages.pop();
+                    sendPM(msg._id,msg.body,msg.receiver_id);
+                });
+                */
             });
         }
     });
@@ -266,6 +402,9 @@ module.exports = function(autoIncrement, io){
 
             var discussionId = socket.handshake.query.discussion;
             var user = socket.request.session.passport.user;
+
+            allScokets[user.id] = socket;
+
             // console.log(socket.request.session.passport);
             socket.join(discussionId);
             
@@ -410,6 +549,7 @@ module.exports = function(autoIncrement, io){
             socket.on('disconnect', function () {
                 console.log('DISCONNECT EVENT! by: ' + user.username);
                 socket.leave(discussionId);
+                delete allScokets[user.id];
                 if (argumentsNsp.adapter.rooms[discussionId]) {
                     argumentsNsp.to(discussionId).emit('user-left');
                 }
@@ -456,7 +596,10 @@ module.exports = function(autoIncrement, io){
                         throw err;
                     }
                     else{
-                        argumentsNsp.to(discussionId).emit('sending-user-info', {userInfo:user.local.info});
+                        var userInfo = "";
+                        if(user)
+                            userInfo = user.local.info;
+                        argumentsNsp.to(discussionId).emit('sending-user-info', {userInfo:userInfo});
                     }
                 });
             });

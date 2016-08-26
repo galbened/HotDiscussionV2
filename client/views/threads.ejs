@@ -11,6 +11,7 @@
     <!-- custom CSS -->
     <link href="/resources/stylesheets/main.css" rel="stylesheet">
     <link href="/resources/stylesheets/arguments.css" rel="stylesheet">
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
 
     <base href="/discussions/">
 </head>
@@ -19,7 +20,7 @@
 
 <div class="container-fluid" ng-controller="ArgumentsTreeController"  ng-cloak>
 
-        <div class="row">
+        <div class="row" ng-controller="ModalCtrl">
             <div id="scroller">
                 <!-- new argument prompt -->
                 <div class="row">
@@ -70,13 +71,14 @@
         <tree nodes='treeNested' role='role'></tree>
     </div>
 
+    <div class="row" style="text-align: left;margin-left: 30px">
+        <button class="btn btn-xs btn-warning floatingBackBtn" ng-if="backButton" ng-click="clickBackButton()">« חזרה</button>
+    </div>
+
     <footer class="text-left" style="margin-top:30px">
         <p>maintained by BGU</p>
     </footer>
 
-    <div style="text-align:center;white-space: normal;width: 100px;">
-        <button class="btn btn-xs btn-warning floatingBackBtn" ng-if="backButton" ng-click="clickBackButton()">« חזרה</button>
-    </div>
     <!-- </div> -->
 
 </div>
@@ -106,6 +108,8 @@
 <script type="text/javascript" src="/libs/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 <script type="text/javascript" src="/libs/tinymce/tinymce.min.js"></script>
 <script type="text/javascript" src="/libs/angular-ui-tinymce/tinymce.js"></script>
+
+<script type="text/javascript" src="/js/modules/uiBootstrapModal.js"></script>
 </body>
 </html>
 

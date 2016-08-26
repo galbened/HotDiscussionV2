@@ -4,7 +4,7 @@
 
         <div class="tblRow">
 
-            <div class="tblCell" style="width:55%; " ng-style="{'padding-right':((node.depth + ((((node.depth + 1) % 10) == 0) && nodeCtrl.focusing) + (node.isFocused || nodeCtrl.focusing)) % (10 + ((((node.depth + 1) % 10) == 0) && nodeCtrl.focusing))) * 20 + 'px'}">
+            <div class="tblCell" style="width:53%; " ng-style="{'padding-right':((node.depth + ((((node.depth + 1) % 10) == 0) && nodeCtrl.focusing) + (node.isFocused || nodeCtrl.focusing)) % (10 + ((((node.depth + 1) % 10) == 0) && nodeCtrl.focusing))) * 20 + 'px'}">
 
                <span style="width:70%" ng-style="node.depth===0 && {'font-weight':'bold'}">
                      <overflow-content class=non-expanded node="node" role="node.color"></overflow-content>
@@ -44,15 +44,15 @@
             </div>
 
 
-            <div class="tblCell" style="width:11%; text-align:left; direction: ltr;">
+            <div class="tblCell col-non-expanded" style="width:13%; text-align:left; direction: ltr;">
                 <!--span style="cursor: pointer;" uib-popover-html="node.userInfo ? node.userInfo : 'טוען...'" popover-is-open="popoverIsOpen"-->
-                <span style="cursor: pointer; cursor: hand;" class="col-non-expanded" uib-popover-html="node.userInfo" popover-is-open="isOpen" ng-mouseleave="isOpen=false"
+                    <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}" title="משתתף פעיל"></span>
+                    <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}" title="משתתף רפלקטיבי"></span>
+                    <span ng-class="{'fa fa-star': (node.role==='admin' || node.role==='adminFromStudent')}" title="הודעת מנהל המערכת מדיון ביקורת"></span>
+                    <span ng-class="{'fa fa-star': node.role==='adminFromInstructor'}" title="הודעת מנהל המערכת מדיון פעיל"></span>
+                    <span ng-class="{'fa fa-star-half-empty': node.role==='moderator'}" title="מודרטור"></span>
+                <span style="cursor: pointer; cursor: hand;" uib-popover-html="node.userInfo" popover-is-open="isOpen" ng-mouseleave="isOpen=false"
                       ng-click="isOpen = !isOpen;nodeCtrl.getPostUserInfo(node)" popover-popup-delay="200">
-                    <span ng-class="{'glyphicon glyphicon-education': node.role==='student'}" title="סטודנט"></span>
-                    <span ng-class="{'glyphicon glyphicon-user': node.role==='instructor'}" title="אינסטרקטור"></span>
-                    <span ng-class="{'glyphicon glyphicon-king': (node.role==='admin' || node.role==='adminFromStudent')}" title="הודעת מנהל המערכת מדיון ביקורת"></span>
-                    <span ng-class="{'glyphicon glyphicon-king': node.role==='adminFromInstructor'}" title="הודעת מנהל המערכת מדיון פעיל"></span>
-                    <span ng-class="{'glyphicon glyphicon-queen': node.role==='moderator'}" title="מודרטור"></span>
                     <small>{{::node.fname}} {{::node.lname}}</small>
                 </span>
             </div>

@@ -72,6 +72,7 @@ hr.newArgSection {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    display: block;
 }
 
 .expanded {
@@ -117,7 +118,7 @@ hr.newArgSection {
     max-width: 450px;
     direction: rtl;
 }
-
+/*
 .floatingBackBtn {
     width: 100px;
     height: 40px;
@@ -125,6 +126,13 @@ hr.newArgSection {
     bottom: 0px;
     right: 0px;
     z-index:9999;
+    text-align: center;
+}
+*/
+
+.floatingBackBtn {
+    width: 100px;
+    height: 40px;
     text-align: center;
 }
 

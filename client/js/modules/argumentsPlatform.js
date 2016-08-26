@@ -1,5 +1,5 @@
 (function(){
-    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize','ui.bootstrap','ui.tinymce'], function($locationProvider){
+    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize','ui.bootstrap','ui.tinymce','bootstrapModalApp'], function($locationProvider){
         $locationProvider.html5Mode(true);
     })
         .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio', function (TreeService, $scope, $window, $location, socketio) {
@@ -7,7 +7,9 @@
 
             var path = $location.path();
             var discId = path.split('/')[1];
-            var socket = socketio.arguments({discussion: discId});
+            var socket = socketio.arguments({discussion: discId})
+
+            $scope.socket = socket;
 
             var lastPostsArray = [];
             const lastPostsArraySIZE = 10;

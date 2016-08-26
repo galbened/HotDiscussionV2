@@ -14,12 +14,14 @@
     <script type="text/javascript" src="/libs/angular-socket-io/socket.js"></script>
     <script type="text/javascript" src="/libs/angular-animate/angular-animate.js"></script>
     <script type="text/javascript" src="/libs/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script type="text/javascript" src="/libs/lodash/dist/lodash.min.js"></script>
+    <script type="text/javascript" src="/libs/angularjs-dropdown-multiselect/dist/angularjs-dropdown-multiselect.min.js"></script>
     <!-- LOCALs -->
     <script type="text/javascript" src="/js/configs/socketsFactory.js"></script>
     <script type="text/javascript" src="/js/modules/adminDashboard.js"></script>
     <script type="text/javascript" src="/js/modules/uiBootstrapModal.js"></script>
     <!-- \\\\\\\\\\\\\\\\\\  JavaScript  \\\\\\\\\\\\\\\\\\ -->
-    
+
     <!-- //////////////////  CSS  ///////////////////// -->
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.css" crossorigin="anonymous">
@@ -30,7 +32,7 @@
 </head>
 
 <body ng-app="adminDashboardApp" ng-controller="adminDashboardCtrl">
-    <div class="container">
+    <div class="container" ng-controller="ModalCtrl">
       <header class="text-center">
           <div class="row">
 
@@ -43,7 +45,7 @@
                   <h1>מנהל המערכת, שלום רב!</h1>
               </div>
 
-              <div class="col-md-2" ng-controller="ModalCtrl">
+              <div class="col-md-2">
                   <button class="button" style="vertical-align:middle;" ng-click="open()"><span>ביוגרפיה</span></button>
               </div>
 
@@ -51,119 +53,200 @@
       </header>
 
       <div>
-        <table class="table table-hover table-condensed" dir="ltr">
+            <table class="table table-hover table-condensed" dir="ltr">
 
-          <thead>
-            <tr id="headRow">
-              <th style="width:9%">מספר הודעות</th>
-              <th style="width:13%">Permitted Poster</th>
-              <th style="width:13%">Moderator</th>
-              <th style="width:20%">תיאור</th>
-              <th style="width:15%">כותרת</th>
-              <th style="width:20%">סטטוס</th>
-            </tr>
-          </thead>
+                <thead>
+                <tr id="headRow">
+                    <th style="width:9%">מספר הודעות</th>
+                    <th style="width:13%">Permitted Poster</th>
+                    <th style="width:13%">Moderator</th>
+                    <th style="width:20%">תיאור</th>
+                    <th style="width:15%">כותרת</th>
+                    <th style="width:20%">סטטוס</th>
+                </tr>
+                </thead>
 
-          <tbody ng-repeat="discussion in discussions">
-            
-            <tr ng-show="!discussion.edit" ng-style="(discussion.restriction === 'student' && {'background-color' : '#B9F1E4'}) || (discussion.restriction === 'instructor' && {'background-color' : '#F8EBAE'}) || (discussion.restriction === 'none' && {'background-color' : '#F39696'})">
-                  <td dir="rtl" style="width:9%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.args_count}}</td>
-                  <td dir="rtl" style="width:13%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.permittedPoster_fname + " " + discussion.permittedPoster_lname}} </td>
-                  <td dir="rtl" style="width:13%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.moderator_fname + " " + discussion.moderator_lname}} </td>
-                  <td dir="rtl" style="width:20%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.description}}</td>
-                  <td dir="rtl" style="width:15%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.title}}</td>
-              <td style="width:20%; white-space:nowrap;">
-                <!-- <a href="" ng-click="showEdit(discussion)">ערוך</a> | <a href="" ng-click="delete($index)">מחק</a> -->
-                <fieldset>
-                  <a href="" ng-click="showEdit(discussion)">ערוך</a> |
-                  <label>לא פעיל</label> <input type="radio" ng-model="discussion.restriction" name="{{'disc_status' + $index}}" value="none" ng-change="updateDiscStatus($index, discussion.status)"/>
-                  <label>ביקורת</label> <input type="radio" ng-model="discussion.restriction" name="{{'disc_status' + $index}}" value="instructor" ng-change="updateDiscStatus($index, discussion.status)"/>
-                  <label>פעיל</label> <input type="radio" ng-model="discussion.restriction" name="{{'disc_status' + $index}}" value="student" ng-change="updateDiscStatus($index, discussion.status)"/>
-                </fieldset>
-              </td>
-            </tr>
-            
-            <tr ng-show="discussion.edit">
-              <td style="width:9%" class="warning"><span class="text-warning text-center"></span></td>
-              <td style="width:13%">
-                <select class="form-control" ng-init="tempForPermitted = lookupUser[discussion.permittedPoster_id]" ng-model="tempForPermitted" id="permittedPosterEdit" dir="ltr"
-                        ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
-                    <option value="">
-                        -- Everybody --
-                    </option>
-                </select>
-              </td>
-              <td style="width:13%">
-                  <select class="form-control" ng-init="tempForMod = lookupUser[discussion.moderator_id]" ng-model="tempForMod" id="userEdit" dir="ltr"
-                          ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
-                      <option value="">
-                          -- No moderator --
-                      </option>
-                  </select>
-              </td>
-              <td style="width:20%"><input class="form-control" id="descEdit" type="text" ng-model="descEdit" ng-value="discussion.description" style="text-align: right;"></td>
-              <td style="width:15%"><input class="form-control" id="titleEdit" type="text" ng-model="titleEdit" ng-value="discussion.title" style="text-align: right;"></td>
-              <td style="width:20%" class="warning"><span class="text-warning text-center">עריכה</span></td>
-            </tr>
+                <tbody ng-repeat="discussion in discussions">
 
-            <tr ng-show="discussion.edit">
-              <td colspan="5">
-                <div style="width:100%;">
-                  <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 30px" ng-click="finishEdit($index, descEdit, titleEdit, tempForMod, tempForPermitted)">Finish</button>
-                  <button type="button" class="btn btn-default btn-sm" ng-click="cancelEdit(discussion)">Cancel</button>
-                </div>
-              </td>
-            </tr>
+                <tr ng-show="!discussion.edit" ng-style="(discussion.restriction === 'student' && {'background-color' : '#B9F1E4'}) || (discussion.restriction === 'instructor' && {'background-color' : '#F8EBAE'}) || (discussion.restriction === 'none' && {'background-color' : '#F39696'})">
+                    <td dir="rtl" style="width:9%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.args_count}}</td>
+                    <td dir="rtl" style="width:13%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.permittedPoster_fname + " " + discussion.permittedPoster_lname}} </td>
+                    <td dir="rtl" style="width:13%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.moderator_fname + " " + discussion.moderator_lname}} </td>
+                    <td dir="rtl" style="width:20%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.description}}</td>
+                    <td dir="rtl" style="width:15%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.title}}</td>
+                    <td style="width:20%; white-space:nowrap;">
+                        <!-- <a href="" ng-click="showEdit(discussion)">ערוך</a> | <a href="" ng-click="delete($index)">מחק</a> -->
+                        <fieldset>
+                            <a href="" ng-click="showEdit(discussion)">ערוך</a> |
+                            <label>לא פעיל</label> <input type="radio" ng-model="discussion.restriction" name="{{'disc_status' + $index}}" value="none" ng-change="updateDiscStatus($index, discussion.status)"/>
+                            <label>ביקורת</label> <input type="radio" ng-model="discussion.restriction" name="{{'disc_status' + $index}}" value="instructor" ng-change="updateDiscStatus($index, discussion.status)"/>
+                            <label>פעיל</label> <input type="radio" ng-model="discussion.restriction" name="{{'disc_status' + $index}}" value="student" ng-change="updateDiscStatus($index, discussion.status)"/>
+                        </fieldset>
+                    </td>
+                </tr>
 
-          </tbody>
-        </table>
+                <tr ng-show="discussion.edit">
+                    <td style="width:9%" class="warning"><span class="text-warning text-center"></span></td>
+                    <td style="width:13%">
+                        <select class="form-control" ng-init="tempForPermitted = lookupUser[discussion.permittedPoster_id]" ng-model="tempForPermitted" id="permittedPosterEdit" dir="ltr"
+                                ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
+                            <option value="">
+                                -- Everybody --
+                            </option>
+                        </select>
+                    </td>
+                    <td style="width:13%">
+                        <select class="form-control" ng-init="tempForMod = lookupUser[discussion.moderator_id]" ng-model="tempForMod" id="userEdit" dir="ltr"
+                                ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
+                            <option value="">
+                                -- No moderator --
+                            </option>
+                        </select>
+                    </td>
+                    <td style="width:20%"><input class="form-control" id="descEdit" type="text" ng-model="descEdit" ng-value="discussion.description" style="text-align: right;"></td>
+                    <td style="width:15%"><input class="form-control" id="titleEdit" type="text" ng-model="titleEdit" ng-value="discussion.title" style="text-align: right;"></td>
+                    <td style="width:20%" class="warning"><span class="text-warning text-center">עריכה</span></td>
+                </tr>
 
-        <table class="table table-hover table-condensed">
-          <tbody ng-show="!pressAdd">
-            <tr>
-              <td style="width:10px"><a href="" ng-click="addDisc()">הוסף</a></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
+                <tr ng-show="discussion.edit">
+                    <td colspan="5">
+                        <div style="width:100%;">
+                            <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 30px" ng-click="finishEdit($index, descEdit, titleEdit, tempForMod, tempForPermitted)">Finish</button>
+                            <button type="button" class="btn btn-default btn-sm" ng-click="cancelEdit(discussion)">Cancel</button>
+                        </div>
+                    </td>
+                </tr>
 
-          <tbody ng-show="pressAdd">
-            <tr>
-              <td style="width:20%;" class="warning"></td>
-              <td style="width:15%;"><input class="form-control" id="newTitle" type="text" ng-model="newTitle" ng-value="" style="text-align: right;" placeholder="כותרת חדשה" required=""></td>
-              <td style="width:20%;"><input class="form-control" id="newDesc" type="text" ng-model="newDesc" ng-value="" style="text-align: right;" placeholder="תיאור חדש" required=""></td>
-              <td style="width:13%;">
-                <select class="form-control" ng-model="newUser" id="newUser" dir="ltr"
-                        ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
-                    <option value=''>
-                        - No mod -
-                    </option>
-                </select>
-              </td>
-              <td style="width:13%;">
-                <select class="form-control" ng-model="newPermittedPoster" id="newPermittedPoster" dir="ltr"
-                        ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
-                    <option value=''>
-                        - Everybody -
-                    </option>
-                </select>
-              </td>
-              <td style="width:9%;" class="warning"></td>
-            </tr>
+                </tbody>
+            </table>
 
-            <tr>
-              <td colspan="6">
-                <div style="width:100%;">
-                  <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 30px" ng-click="finishAdding(newDesc, newTitle, newUser, newPermittedPoster)">Finish</button>
-                  <button type="button" class="btn btn-default btn-sm" ng-click="cancelAdding()">Cancel</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            <table class="table table-hover table-condensed">
+                <tbody ng-show="!pressAdd">
+                <tr>
+                    <td style="width:10px"><a href="" ng-click="addDisc()">הוסף</a></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
 
-      </div>
+                <tbody ng-show="pressAdd">
+                <tr>
+                    <td style="width:20%;" class="warning"></td>
+                    <td style="width:15%;"><input class="form-control" id="newTitle" type="text" ng-model="newTitle" ng-value="" style="text-align: right;" placeholder="כותרת חדשה" required=""></td>
+                    <td style="width:20%;"><input class="form-control" id="newDesc" type="text" ng-model="newDesc" ng-value="" style="text-align: right;" placeholder="תיאור חדש" required=""></td>
+                    <td style="width:13%;">
+                        <select class="form-control" ng-model="newUser" id="newUser" dir="ltr"
+                                ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
+                            <option value=''>
+                                - No mod -
+                            </option>
+                        </select>
+                    </td>
+                    <td style="width:13%;">
+                        <select class="form-control" ng-model="newPermittedPoster" id="newPermittedPoster" dir="ltr"
+                                ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
+                            <option value=''>
+                                - Everybody -
+                            </option>
+                        </select>
+                    </td>
+                    <td style="width:9%;" class="warning"></td>
+                </tr>
+
+                <tr>
+                    <td colspan="6">
+                        <div style="width:100%;">
+                            <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 30px" ng-click="finishAdding(newDesc, newTitle, newUser, newPermittedPoster)">Finish</button>
+                            <button type="button" class="btn btn-default btn-sm" ng-click="cancelAdding()">Cancel</button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
+        <div>
+            <table class="table table-hover table-condensed table-striped" dir="rtl">
+
+                <thead>
+                <tr id="headRow">
+                    <th></th>
+                    <th>שם קבוצה</th>
+                    <th>חברי קבוצה</th>
+                    <th></th>
+                </tr>
+                </thead>
+
+                <tbody ng-repeat="group in users_groups">
+
+                <tr ng-show="!group.edit">
+                    <td> <a href="" ng-click="flipGroupEdit($index)">ערוך</a> </td>
+                    <td>{{group.name}}</td>
+                    <td>
+                        <select style="width: 50%" dir="ltr" ng-model="group.users" ng-options="user as lookupUser[user].fullname disable when true for user in group.users"></select>
+                    </td>
+                    <td>
+                        <div>
+                            <span class="glyphicon glyphicon-envelope btn btn-primary btn-xs" aria-hidden="true" ng-click="openPM($index)"></span>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr ng-show="group.edit">
+                    <td></td>
+                    <td><input class="form-control" ng-model="group.name"></td>
+                    <td>
+                        <div ng-init="initEditGroup($index)" dir="ltr" ng-dropdown-multiselect="" options="users" selected-model="group.curUsers" extra-settings="dropdownMultiselectSettings">
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <tr ng-show="group.edit">
+                    <td colspan="4">
+                        <div style="width:100%;">
+                            <button type="submit" class="btn btn-primary btn-sm" ng-click="doneEditGroup($index, group.name, group.curUsers)">Finish</button>
+                            <button type="button" class="btn btn-default btn-sm" ng-click="flipGroupEdit($index)">Cancel</button>
+                        </div>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+
+            <table class="table table-hover table-condensed">
+                <tbody ng-show="!pressAddGroups">
+                <tr>
+                    <td style="width:10px"><a href="" ng-click="addGroup()">הוסף</a></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+
+                <tbody ng-show="pressAddGroups">
+                <tr>
+                    <td><input class="form-control" type="text" ng-model="newGroupName" ng-value="" placeholder="שם קבוצה" required=""></td>
+                    <td><div dir="ltr" ng-dropdown-multiselect="" options="users" selected-model="newGroupUsers" extra-settings="dropdownMultiselectSettings"></div></td>
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        <div style="width:100%;">
+                            <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 30px" ng-click="doneAddingGroup(newGroupName, newGroupUsers)">Finish</button>
+                            <button type="button" class="btn btn-default btn-sm" ng-click="flipAddingGroup()">Cancel</button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+
 
       <footer>
           <p>maintained by BGU</p>

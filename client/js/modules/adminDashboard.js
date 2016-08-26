@@ -1,7 +1,7 @@
 (function() {
   'use strict';
   angular
-    .module('adminDashboardApp', ['btford.socket-io', 'socketio.factory','bootstrapModalApp'])
+    .module('adminDashboardApp', ['btford.socket-io', 'socketio.factory','bootstrapModalApp','angularjs-dropdown-multiselect'])
     .controller('adminDashboardCtrl', ['$scope','$http', '$window', 'socketio', function($scope, $http, $window, socketio){
 
       $scope.pressAdd = false;
@@ -18,13 +18,15 @@
           var usersForAlert = "";
           data.loggedUsers.forEach(function(loggedUser){
               usersForAlert = usersForAlert + '\n' + loggedUser;
-          })
+          });
           alert(usersForAlert);
       });
 
+        socket.emit('check-unread-messages');
+
         $scope.showLoggedUsers = function(){
             socket.emit('request-all-logged-users');
-        }
+        };
 
       //$scope.$on('request socket', function(){
       //    $scope.$broadcast('discussion-socketIO', socket);
@@ -38,6 +40,12 @@
          newDiscussion.args_count = 0;
          $scope.discussions.unshift(newDiscussion);
       });
+
+        socket.on('sending-users-groups', function(data){
+            $scope.users_groups = data.users_groups;
+        });
+
+
 
 /***
  *                      _             _                            _              
@@ -70,8 +78,8 @@
       }).then(function(res){
         $scope.discussions = res.data.discs.reverse();
         $scope.users = res.data.users;
-
         for (var i = 0, len = $scope.users.length; i < len; i++) {
+            $scope.users[i].fullname = $scope.users[i].local.firstname + " " + $scope.users[i].local.lastname;
             $scope.lookupUser[$scope.users[i]._id] = $scope.users[i];
         }
       }, function(err){
@@ -128,11 +136,11 @@
         .error(function(err, status){
           console.log(err.statusText);
         });
-        
+
         $scope.pressAdd = false;
         $scope.newDesc = "";
         $scope.newTitle = "";
-        
+
       };
 
       //EDITING
@@ -212,5 +220,55 @@
         });
       };
 
+
+      // ------------------------------------ Groups ----------------------------------------
+
+        socket.on('sending-users-groups', function(data){
+            $scope.users_groups = data.users_groups;
+        });
+
+        socket.emit('request-users-groups');
+
+        $scope.addGroup = function(){
+            $scope.pressAddGroups = true;
+        };
+
+        $scope.flipAddingGroup = function(){
+            $scope.pressAddGroups = !$scope.pressAddGroups;
+        };
+
+        $scope.initEditGroup = function(index){
+            $scope.users_groups[index].curUsers = [];
+            $scope.users_groups[index].users.forEach(function(curUser){
+                $scope.users.forEach(function(user){
+                    if(curUser == user._id){
+                        $scope.users_groups[index].curUsers.push(user);
+                    }
+                })
+            });
+        };
+
+        $scope.flipGroupEdit = function(index){
+            $scope.users_groups[index].edit = !$scope.users_groups[index].edit;
+        }
+
+        $scope.newGroupUsers = [];
+
+        $scope.dropdownMultiselectSettings = {displayProp: 'fullname', idProp: '_id', externalIdProp: '_id'};
+
+        $scope.doneAddingGroup = function(name,usersIDs){
+            var users_group = {users_group: {name:name,users:usersIDs}};
+            socket.emit('create-users-group',users_group);
+            $scope.flipAddingGroup();
+            socket.emit('request-users-groups');
+        };
+
+        $scope.doneEditGroup = function(index,name,usersIDs){
+            var group_id = $scope.users_groups[index]._id;
+            var users_group = {users_group: {_id:group_id,name:name,users:usersIDs}};
+            socket.emit('update-users-group',users_group);
+            $scope.flipGroupEdit(index);
+            socket.emit('request-users-groups');
+        };
     }]);
 })();

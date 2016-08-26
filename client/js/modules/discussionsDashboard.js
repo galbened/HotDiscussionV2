@@ -42,6 +42,8 @@
                 $scope.discussions.unshift(newDiscussion);
             });
 
+            socket.emit('check-unread-messages');
+
             // socket.on('delete-discussion', function(disc){
             //   var idx = findDiscIdx(disc);
             //   if (idx > 0)

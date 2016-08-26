@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 var userScheme = mongoose.Schema({
 	local: {
@@ -8,6 +9,7 @@ var userScheme = mongoose.Schema({
 		lastname: String,
 		color: String,
 		info: String,
+		unreadMessages: [{type:Schema.Types.ObjectId, ref: 'Pm'}],
 		role: String
 	}
 });
