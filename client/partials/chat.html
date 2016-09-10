@@ -1,0 +1,27 @@
+<div dir="rtl">
+    <link href="/resources/stylesheets/chat.css" rel="stylesheet">
+
+    <div id="chatTab" ng-click="chatExpansionFlip()" ng-class="tabClass"></div>
+
+    <div id="chatBoxContainer" class="animate-if" ng-if="expandedChat">
+        <div id="chatBox">
+            <div ng-repeat="message in chatMessages" class="container-fluid">
+                <div class="row">
+                    <small>
+                        <span style="float: right" ng-style="(message.role == 'admin' || message.role == 'moderator') && {'color':'orange'}">
+                            <b>
+                                {{message.name}}:&nbsp&nbsp
+                            </b>
+                        </span>
+                        <span style="float: right">
+                            {{message.body}}
+                        </span>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div style="text-align:center;width: 100%">
+            <input id="chatInput" placeholder="רישום הודעה בצ'ט, Enter לשליחה." ng-model="chatData.messageBody" ng-keypress="sendChatMessage($event)">
+        </div>
+    </div>
+</div>

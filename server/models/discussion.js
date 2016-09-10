@@ -10,7 +10,8 @@ var discussionScheme = mongoose.Schema({
 	moderator_lname: String,
 	permittedPoster_id: {type:Schema.Types.ObjectId, ref: 'User'},
 	permittedPoster_fname: String,
-	permittedPoster_lname: String
+	permittedPoster_lname: String,
+	chat_id: {type:Schema.Types.ObjectId, ref: 'Chat'}
 });
 
 module.exports = mongoose.model('Discussion', discussionScheme);

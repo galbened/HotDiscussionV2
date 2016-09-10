@@ -3,6 +3,7 @@ module.exports = function(autoIncrement, io){
     var Discussion = require('../models/discussion');
     var User = require('../models/user');
     var Pm = require('../models/pm');
+    var Chat = require('../models/chat');
     var usersGroup = require('../models/users_group');
     var Argument = require('../models/argument')(autoIncrement);
     var express = require('express');
@@ -130,12 +131,18 @@ module.exports = function(autoIncrement, io){
         discussion.permittedPoster_fname = req.body.permittedPoster_fname;
         discussion.permittedPoster_lname = req.body.permittedPoster_lname;
 
-        console.log(discussion)
+        //Adding chat to discussion 09/09
+        var chat = new Chat();
+        discussion.chat_id = chat._id;
 
-        discussion.save(function(err, data){
+        chat.save(function(err, data){
             if (err)
                 throw err;
-            res.json(data);
+            discussion.save(function(err, data){
+                if (err)
+                    throw err;
+                res.json(data);
+            });
         });
     });
 
@@ -366,12 +373,6 @@ module.exports = function(autoIncrement, io){
                         });
                     };
                 });
-                /*
-                User.findById(socket.request.session.passport.user.id, function(err, user){
-                    var msg = user.unreadMessages.pop();
-                    sendPM(msg._id,msg.body,msg.receiver_id);
-                });
-                */
             });
         }
     });
@@ -421,27 +422,48 @@ module.exports = function(autoIncrement, io){
                         throw err;
                     }
                     else{
-                        Argument.find({disc_id: discussionId}, function(err, discArguments){
-                            if (err){
-                                throw err;
-                            }
-                            if(!discArguments){
-                                console.log('ERROR retrieving the arguments..')
-                            }
-                            else {
-                                var onlineUsers = [];
-                                // console.log('==================================>');
-                                Object.keys(argumentsNsp.adapter.rooms[discussionId].sockets).forEach(function(sid){
-                                    var aUser = argumentsNsp.sockets[sid].request.session.passport.user;
-                                    // console.log(aUser);
-                                    var idx = contains(onlineUsers, aUser.username, 'username');
-                                    if (idx < 0) onlineUsers.push(argumentsNsp.sockets[sid].request.session.passport.user);
+
+                        //Adding chat to discussion 09/09 -- TEMPORARY - redundant after new DB is created
+                        if(discussion.chat_id == null){
+                            var chat = new Chat();
+                            discussion.chat_id = chat._id;
+
+                            chat.save(function(err, data){
+                                if (err)
+                                    throw err;
+                                Discussion.findByIdAndUpdate(discussion._id, {$set: {chat_id:chat._id}}, {new: true}, function(err, chat){
+                                    if(err) throw err;
                                 });
-                                // console.log('<==================================');
-                                // console.log(onlineUsers);
-                                socket.emit('init-discussion', {discArguments: discArguments, user:user, discussion: discussion, onlineUsers:onlineUsers});
-                            }
-                        });
+                            });
+                        }
+
+
+                        Chat.findById(discussion.chat_id,function(err,chat){
+                            if(err) throw err;
+                            if(chat == null) chat = {messages: []};
+                            Argument.find({disc_id: discussionId}, function(err, discArguments){
+                                if (err){
+                                    throw err;
+                                }
+                                if(!discArguments){
+                                    console.log('ERROR retrieving the arguments..')
+                                }
+                                else {
+                                    var onlineUsers = [];
+                                    // console.log('==================================>');
+                                    Object.keys(argumentsNsp.adapter.rooms[discussionId].sockets).forEach(function(sid){
+                                        var aUser = argumentsNsp.sockets[sid].request.session.passport.user;
+                                        // console.log(aUser);
+                                        var idx = contains(onlineUsers, aUser.username, 'username');
+                                        if (idx < 0) onlineUsers.push(argumentsNsp.sockets[sid].request.session.passport.user);
+                                    });
+                                    // console.log('<==================================');
+                                    // console.log(onlineUsers);
+
+                                    socket.emit('init-discussion', {discArguments: discArguments, user:user, discussion: discussion, onlineUsers:onlineUsers, chatMessages:chat.messages});
+                                }
+                            });
+                        })
                     }
                 });
             });
@@ -604,7 +626,22 @@ module.exports = function(autoIncrement, io){
                 });
             });
 
+            socket.on('new-chat-message',function(chatMsg){
 
+                Discussion.findById(discussionId, function(err, disc) {
+                    if (err) throw err;
+                    else {
+
+                        if(user.id == disc.moderator_id)
+                            chatMsg.role = 'moderator';
+
+                        Chat.findByIdAndUpdate(disc.chat_id, {$push: {"messages":chatMsg}}, {new: true}, function(err, chat){
+                            if(err) throw err;
+                            argumentsNsp.to(discussionId).emit('sending-chat-message', chatMsg);
+                        });
+                    }
+                });
+            });
         }
     });
 

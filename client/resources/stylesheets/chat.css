@@ -1,0 +1,63 @@
+.rediconcolor {
+    color:red;
+}
+
+#chatBox::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+}
+
+#chatBox::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: white;
+}
+
+#chatTab{
+    border-radius: 30px 30px 0 0 !important;
+    font-size: 1.5em;
+}
+
+#chatBox{
+    padding:5px;
+    height: 160px;
+    line-height: 1.5;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+
+#chatInput{
+    width: 100%;
+    color:black
+}
+
+#chatBoxContainer{
+    background-color: #3D7AB6;
+    color:white;
+    border-radius: 10px 0 0 0;
+}
+
+/* Chat open/close animation */
+
+.animate-if.ng-enter, .animate-if.ng-leave {
+    -webkit-transition: 1s linear all;
+    -moz-transition: 1s linear all;
+    -ms-transition: 1s linear all;
+    -o-transition: 1s linear all;
+    transition: 1s linear all;
+}
+
+.animate-if.ng-enter {
+    max-height: 0;
+}
+
+.animate-if.ng-enter.ng-enter-active {
+    max-height: 999px;
+}
+
+.animate-if.ng-leave {
+    max-height: 999px;
+}
+
+.animate-if.ng-leave.ng-leave-active {
+    max-height: 0;
+}

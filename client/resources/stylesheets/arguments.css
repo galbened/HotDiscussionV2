@@ -118,17 +118,15 @@ hr.newArgSection {
     max-width: 450px;
     direction: rtl;
 }
-/*
-.floatingBackBtn {
-    width: 100px;
-    height: 40px;
+
+.floatingChat {
+    width: 400px;
     position: fixed;
     bottom: 0px;
     right: 0px;
     z-index:9999;
-    text-align: center;
 }
-*/
+
 
 .floatingBackBtn {
     width: 100px;

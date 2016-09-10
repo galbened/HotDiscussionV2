@@ -101,7 +101,7 @@
 
         .directive('nodeStyle', function () {
             return {
-                restrict: 'A',   // 'A' is the default, so you could remove this line
+                restrict: 'A',
                 scope: {role: '='},
                 link: function (scope, element, attrs) {
 

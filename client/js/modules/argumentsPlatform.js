@@ -1,5 +1,5 @@
 (function(){
-    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize','ui.bootstrap','ui.tinymce','bootstrapModalApp'], function($locationProvider){
+    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize','ui.bootstrap','ui.tinymce','bootstrapModalApp','discussionChat'], function($locationProvider){
         $locationProvider.html5Mode(true);
     })
         .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio', function (TreeService, $scope, $window, $location, socketio) {
@@ -257,7 +257,11 @@
 
                     $scope.username = result.user.username;
 
+                    $scope.fullname = result.user.fname + " " + result.user.lname;
+
                     $scope.originalFocus = $scope.treeNested;
+
+                    $scope.chatMessages = result.chatMessages;
                 });
             }
 
@@ -325,7 +329,7 @@
 
             socket.on('submitted-new-argument', function(data){
                 var newArgument = data.data;
-                //refJsonMap[newArgument._id] = newArgument;
+                refJsonMap[newArgument._id] = newArgument;
                 $scope.originalFocus.unshift(newArgument);
                 updateLastPostsArray(newArgument);
                 //newNodeUpdateSubtreeSizesAndNewest(newArgument);
@@ -355,6 +359,7 @@
                 else TODO notifications for instructor discussion
                  */
 
+                console.log()
                 parentNode.sub_arguments.push(newReply);
                 parentNode.expanded = true;
 
