@@ -34,9 +34,7 @@ angular.module('discussionChat', ['ngAnimate'])
             };
 
             $scope.sendChatMessage = function(keyEvent) {
-                if (keyEvent.which === 13){
-
-                    //if($scope.role.substring(0,5) == 'admin')
+                if (keyEvent.which === 13 && $scope.chatData.messageBody != null){
 
                     var message = {name:$scope.fullname,
                                    role:$scope.role,
