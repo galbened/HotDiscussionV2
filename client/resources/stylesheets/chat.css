@@ -18,8 +18,8 @@
 }
 
 #chatBox{
-    padding:5px;
-    height: 160px;
+    padding:8px;
+    height: 165px;
     line-height: 1.5;
     overflow-y:auto;
     overflow-x:hidden;
