@@ -4,8 +4,8 @@
 }
 
 #collaborationPad{
-    width : 650px;
-    max-width:50vw;
+    /*width : 650px;*/
+    width:42vw;
     padding:20px;
     line-height: 1.5;
     /*
