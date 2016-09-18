@@ -8,7 +8,7 @@
 (function () {
     'use strict';
     angular.module('TreeWidget', ['ngAnimate', 'RecursionHelper','ngSanitize','ui.tinymce'])
-        .directive('overflowContent', function($timeout){
+        .directive('overflowContent', function($compile){
 
             /*
             function link($scope, $element, $attrs, $ctrl){
@@ -45,7 +45,8 @@
                 vm.expand = function(event){
 
                     //When called by a link press - should NOT expand or collapse
-                    if(event.target.tagName == "A")
+                    console.log(event);
+                    if((event.target.tagName == "A")||(event.target.tagName == "BUTTON"))
                         return;
                     //--
 
@@ -71,6 +72,13 @@
                     if(parentID)
                         $scope.$emit('parentBlinker',{parentID:parentID});
                 }
+
+
+                vm.markPad = function(start,end) {
+                    var data = {start:start,end:end};
+                    $scope.$emit('mark-text-in-pad', data);
+                    //console.log("start:" + start + " end: " + end + "yooooo");
+                }
             }
 
             return {
@@ -85,10 +93,10 @@
                             //when admin hides the node
                             '<span ng-if="ofCtrl.node.hidden"  ng-bind-html="hiddenMessage"></span>' +
                             //when node is expandable and not hidden
-                            '<span ng-if="expandContent && !ofCtrl.node.hidden" style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" ng-bind-html="ofCtrl.node.content | unsafe"> </span>' +
+                            '<span ng-if="expandContent && !ofCtrl.node.hidden" style="cursor: pointer; cursor: hand;" ng-click="ofCtrl.expand($event)" dynamic="ofCtrl.node.content"> </span>' +
                             '<!--span ng-if="!expandContent && !ofCtrl.node.hidden" ng-bind-html="ofCtrl.node.content | linky:\'_blank\'"> </span-->' +
                             //when node is not expandable and not hidden
-                            '<span ng-if="!expandContent && !ofCtrl.node.hidden" ng-bind-html="ofCtrl.node.content | unsafe"> </span>' +
+                            '<span ng-if="!expandContent && !ofCtrl.node.hidden" dynamic="ofCtrl.node.content"> </span>' +
                         '</span>' +
                     '</span>',
                 controller: overflowController,
@@ -98,6 +106,19 @@
             }
         })
         .filter('unsafe', function($sce) { return $sce.trustAsHtml; })
+
+        .directive('dynamic', function ($compile) {
+            return {
+                restrict: 'A',
+                replace: true,
+                link: function (scope, element, attrs) {
+                    scope.$watch(attrs.dynamic, function(html) {
+                        element.html(html);
+                        $compile(element.contents())(scope);
+                    });
+                }
+            };
+        })
 
         .directive('nodeStyle', function () {
             return {
@@ -167,22 +188,43 @@
                 }
             };
         })
-        .directive('treenode', ['RecursionHelper', function (RecursionHelper) {
+        .directive('treenode', ['RecursionHelper','$rootScope', function (RecursionHelper,$rootScope) {
             var nodeController = function($scope){
                 var vm = this;
 
                 $scope.tinymceOptions = {
+
+                    //just for placeholder
+                    setup: function(editor) {
+                        editor.addButton('mybutton', {
+                            text: 'PAD',
+                            icon: false,
+                            onclick: function () {
+                                var highlightLen = $rootScope.highlightedPadText.end - $rootScope.highlightedPadText.start;
+                                if(highlightLen == 0){
+                                    alert("לא נבחר טקסט מתוך המאמר.");
+                                }
+                                else{
+                                    var selectedContent = tinymce.activeEditor.selection.getContent();
+                                    editor.insertContent('&nbsp;<button class="btn btn-xs btn-info" ng-click="ofCtrl.markPad(' +
+                                        $rootScope.highlightedPadText.start + ',' + $rootScope.highlightedPadText.end +
+                                        ')">' + selectedContent +'</button>&nbsp;');
+                                }
+                            }
+                        });
+                    },
+
                     forced_root_block : "",
                     selector: 'div.tinymce',
                     theme: 'inlite',
                     inline: true,
                     plugins: "autolink textcolor",
                     extended_valid_elements : "a[href|target=_blank]",
-                    selection_toolbar: 'bold italic underline forecolor | quicklink',
+                    selection_toolbar: 'bold italic underline forecolor | quicklink mybutton',
                     invalid_elements : 'img[*]',
-                    valid_elements : 'a[href|target=_blank],strong/b,br,em,span[*]',
+                    valid_elements : 'a[href|target=_blank],strong/b,br,em,span[*],button[*]',
                     valid_styles: {
-                        'span': 'text-decoration,color'
+                        'span': 'text-decoration,color',
                     }
                 };
 

@@ -11,6 +11,7 @@ var discussionScheme = mongoose.Schema({
 	permittedPoster_id: {type:Schema.Types.ObjectId, ref: 'User'},
 	permittedPoster_fname: String,
 	permittedPoster_lname: String,
+	content: String,
 	chat_id: {type:Schema.Types.ObjectId, ref: 'Chat'}
 });
 

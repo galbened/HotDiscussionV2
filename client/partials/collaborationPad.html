@@ -1,0 +1,14 @@
+<div dir="rtl">
+    <link href="/resources/stylesheets/collaborationPad.css" rel="stylesheet">
+
+    <div ng-if="content != null" style="float:right" id="collaborationPadTab" ng-click="collaborationPadExpansionFlip()" ng-class="collabTabClass"></div>
+
+    <div style="float:left" id="collaborationPadContainer" class="animateCol-if" ng-if="expandedcollaborationPad">
+        <div id="collaborationPad">
+            <div id="collaborationPadContent" ng-mouseup="onPadTextSelection()" class="container-fluid" style="max-height:75vh;overflow:auto;white-space: pre-line;width: 100%;background-color:white;border-radius: 3px 3px 3px 3px;" ng-bind-html="showContent">
+            </div>
+        </div>
+    </div>
+</div>
+
+

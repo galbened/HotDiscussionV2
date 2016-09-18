@@ -1,7 +1,7 @@
 #scroller{
   background-color: #3D7AB6;
   width: 100%;
-  top:0px;
+  top:0;
   position:fixed;
   z-index:999;
   padding:5px 40px 5px 40px;
@@ -127,6 +127,12 @@ hr.newArgSection {
     z-index:9999;
 }
 
+.floatingCollaborationPad{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index:998;
+}
 
 .floatingBackBtn {
     width: 100px;

@@ -1,0 +1,47 @@
+#collaborationPadTab{
+    border-radius: 0 30px 30px 0 !important;
+    font-size: 1.5em;
+}
+
+#collaborationPad{
+    width : 650px;
+    max-width:40vw;
+    padding:20px;
+    line-height: 1.5;
+    /*
+    height: 165px;
+    overflow-y:auto;
+    overflow-x:hidden;
+    */
+}
+
+#collaborationPadContainer{
+    background-color: #3D7AB6;
+    border-radius: 0 0 10px 0;
+}
+
+/* Chat open/close animation */
+
+.animateCol-if.ng-enter, .animateCol-if.ng-leave {
+    -webkit-transition: 1s linear all;
+    -moz-transition: 1s linear all;
+    -ms-transition: 1s linear all;
+    -o-transition: 1s linear all;
+    transition: 1s linear all;
+}
+
+.animateCol-if.ng-enter {
+    max-width: 0;
+}
+
+.animateCol-if.ng-enter.ng-enter-active {
+    max-width: 999px;
+}
+
+.animateCol-if.ng-leave {
+    max-width: 999px;
+}
+
+.animateCol-if.ng-leave.ng-leave-active {
+    max-width: 0;
+}

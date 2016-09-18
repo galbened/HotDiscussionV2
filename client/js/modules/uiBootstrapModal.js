@@ -35,6 +35,23 @@ angular.module('bootstrapModalApp').controller('ModalCtrl', function ($scope, $u
         })
     };
 
+    $scope.enterContent = function (index) {
+        $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: '../partials/enterDiscContent.html',
+            controller: 'enterContentCtrl',
+            size: 'lg',
+            resolve: {
+                socket: function () {
+                    return socket;
+                },
+                discID: function (){
+                    return $scope.discussions[index]._id;
+                }
+            }
+        })
+    };
+
     socket.on('sending-pm',function(data){
 
         $uibModal.open({
@@ -94,9 +111,24 @@ angular.module('bootstrapModalApp').controller('pmShowModalCtrl', function ($sco
         //socket.emit('new-pm', {group_id:group_id,body:$scope.pmText});
         $uibModalInstance.close();
     };
-    /*
+});
+
+angular.module('bootstrapModalApp').controller('enterContentCtrl', function ($scope, $uibModalInstance ,socket, discID) {
+
+    socket.on('sending-discussion-content',function(data){
+        $scope.content = data.content;
+        if(data.content != null)
+            $("#saveContentButton").attr('disabled',true);
+    });
+
+    socket.emit('requesting-discussion-content', {disc_id:discID});
+
+    $scope.ok = function () {
+        socket.emit('update-discussion-content', {content:$scope.content, disc_id:discID});
+        $uibModalInstance.close();
+    };
+
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     };
-    */
 });

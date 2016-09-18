@@ -1,8 +1,8 @@
 (function(){
-    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize','ui.bootstrap','ui.tinymce','bootstrapModalApp','discussionChat'], function($locationProvider){
+    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize','ui.bootstrap','ui.tinymce','bootstrapModalApp','discussionChat','discussionCollaborationPad'], function($locationProvider){
         $locationProvider.html5Mode(true);
     })
-        .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio', function (TreeService, $scope, $window, $location, socketio) {
+        .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio','$rootScope', function (TreeService, $scope, $window, $location, socketio, $rootScope) {
             $scope.onlineUsers = [];
 
             var path = $location.path();
@@ -10,6 +10,7 @@
             var socket = socketio.arguments({discussion: discId})
 
             $scope.socket = socket;
+            $rootScope.highlightedPadText = {start:0,end:0};
 
             var lastPostsArray = [];
             const lastPostsArraySIZE = 10;
@@ -39,7 +40,24 @@
                             tinymce.DOM.removeClass( editor.bodyElement, 'empty' );
                         }
                     });
-                },//
+
+                    editor.addButton('mybutton', {
+                        text: 'PAD',
+                        icon: false,
+                        onclick: function () {
+                            var highlightLen = $rootScope.highlightedPadText.end - $rootScope.highlightedPadText.start;
+                            if(highlightLen == 0){
+                                alert("לא נבחר טקסט מתוך המאמר.");
+                            }
+                            else{
+                                var selectedContent = tinymce.activeEditor.selection.getContent();
+                                editor.insertContent('&nbsp;<button class="btn btn-xs btn-info" ng-click="ofCtrl.markPad(' +
+                                    $rootScope.highlightedPadText.start + ',' + $rootScope.highlightedPadText.end +
+                                    ')">' + selectedContent +'</button>&nbsp;');
+                            }
+                        }
+                    });
+                },
 
                 forced_root_block : "",
                 selector: 'div.tinymce',
@@ -47,15 +65,19 @@
                 inline: true,
                 plugins: "autolink textcolor",
                 extended_valid_elements : "a[href|target=_blank]",
-                selection_toolbar: 'bold italic underline forecolor | quicklink',
+                selection_toolbar: 'bold italic underline forecolor | quicklink mybutton',
                 invalid_elements : 'img[*]',
-                valid_elements : 'a[href|target=_blank],strong/b,br,em,span[*]',
+                valid_elements : 'a[href|target=_blank],strong/b,br,em,span[*],button[*]',
                 valid_styles: {
-                    'span': 'text-decoration,color'
+                    'span': 'text-decoration,color',
                 }
-        };
+            };
 
             setTreeConversationTop();
+
+            $scope.$on('mark-text-in-pad',function(e,data){
+                $scope.$broadcast('mark-text-in-pad-ctrl',{start: data.start,end: data.end});
+            });
 
             $scope.$on('request-user-info-update', function(e,node){
                 socket.on('sending-user-info', function(data){
@@ -262,6 +284,9 @@
                     $scope.originalFocus = $scope.treeNested;
 
                     $scope.chatMessages = result.chatMessages;
+
+                    $scope.content = result.discussion.content;
+                    $scope.showContent = result.discussion.content;
                 });
             }
 
@@ -320,7 +345,9 @@
             function setTreeConversationTop(){
                 var scrollerHeight = $('#scroller').height();
                 var treeConversation = $("#treeConversation");
+                var CollaborationPad = $("#CollaborationPad");
                 treeConversation.css({"margin-top":scrollerHeight});
+                CollaborationPad.css({"margin-top":scrollerHeight+15});
             }
 
             $(window).on('beforeunload', function(){

@@ -374,6 +374,19 @@ module.exports = function(autoIncrement, io){
                     };
                 });
             });
+
+            socket.on('update-discussion-content',function(data){
+                Discussion.findByIdAndUpdate(data.disc_id, {$set: {"content":data.content}}, {new: true}, function(err, disc){
+                    if(err) throw err;
+                })
+            });
+
+            socket.on('requesting-discussion-content',function(data){
+                Discussion.findById(data.disc_id, function(err, disc) {
+                    if (err) throw err;
+                    socket.emit('sending-discussion-content', {content:disc.content});
+                });
+            });
         }
     });
 
