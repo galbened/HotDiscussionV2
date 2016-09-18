@@ -32,8 +32,9 @@ angular.module('discussionCollaborationPad', ['ngSanitize'])
             $scope.onPadTextSelection = function(){
                 var mainDiv = document.getElementById("collaborationPadContent");
                 var sel = getSelectionCharOffsetsWithin(mainDiv);
-                if(sel.end != sel.start)
-                    $rootScope.highlightedPadText = sel;
+                //if(sel.end != sel.start)
+                //    $rootScope.highlightedPadText = sel;
+                $rootScope.highlightedPadText = sel;
                 $scope.markTextByRange(sel.start,sel.end);
                 //$scope.emit('new-pad-highlighted-text', sel);
                 //alert(sel.start + ": " + sel.end);
