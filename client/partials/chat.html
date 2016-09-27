@@ -1,7 +1,9 @@
 <div dir="rtl">
     <link href="/resources/stylesheets/chat.css" rel="stylesheet">
 
-    <div id="chatTab" ng-click="chatExpansionFlip()" ng-class="tabClass"></div>
+    <div id="chatTab" ng-click="chatExpansionFlip()" class="btn-lg btn-primary" style="width: 58px;text-align:center">
+        <div ng-class="tabClass"></div>
+    </div>
 
     <div id="chatBoxContainer" class="animate-if" ng-if="expandedChat">
         <div id="chatBox">

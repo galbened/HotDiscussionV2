@@ -8,7 +8,7 @@ angular.module('discussionChat', ['ngAnimate'])
             $scope.chatData = {};
             $scope.chatData.messageBody = null;
 
-            $scope.tabClass = "fa fa-comments btn-lg btn-primary";
+            $scope.tabClass = "fa fa-comments";
 
             function scrollChatToButtom(){
                 setTimeout(function(){
@@ -19,9 +19,9 @@ angular.module('discussionChat', ['ngAnimate'])
 
             $scope.socket.on('sending-chat-message',function(chatMsg){
                 $scope.chatMessages.push(chatMsg);
-                scrollChatToButtom();
 
-                if(!$scope.expandedChat) $scope.tabClass = "fa fa-comments rediconcolor btn-lg btn-primary";
+                if(!$scope.expandedChat) $scope.tabClass = "fa fa-comments redFlashingIcon";
+                else scrollChatToButtom();
             });
 
             $scope.chatExpansionFlip = function(){
@@ -29,7 +29,7 @@ angular.module('discussionChat', ['ngAnimate'])
 
                 if($scope.expandedChat){
                     scrollChatToButtom();
-                    $scope.tabClass = "fa fa-comments btn-lg btn-primary";
+                    $scope.tabClass = "fa fa-comments";
                 }
             };
 

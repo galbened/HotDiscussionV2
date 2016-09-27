@@ -1,10 +1,10 @@
-<div id="tblWrapper" dir="rtl" ng-repeat="node in nodeCtrl.nodes" ng-style="node.depth===0 && {'padding-bottom': '0', 'margin-bottom': '20px'}" >
+<div id="tblWrapper" ng-if = "(!node.trimmed || nodeCtrl.role == 'admin')" dir="rtl" ng-repeat="node in nodeCtrl.nodes" ng-style="node.depth===0 && {'padding-bottom': '0', 'margin-bottom': '20px'}" >
 
     <div id="rowWrapper" node-style role="node.role" style="border-bottom-width: 1px; border-bottom-style:groove;" ng-style="node.depth===0 && {'border-radius': '5px 5px 0px 0px'}">
 
         <div class="tblRow">
 
-            <div class="tblCell" style="width:53%; " ng-style="{'padding-right':((node.depth + ((((node.depth + 1) % 10) == 0) && nodeCtrl.focusing) + (node.isFocused || nodeCtrl.focusing)) % (10 + ((((node.depth + 1) % 10) == 0) && nodeCtrl.focusing))) * 20 + 'px'}">
+            <div class="tblCell" style="width:51%; " ng-style="{'padding-right':((node.depth + ((((node.depth + 1) % 10) == 0) && nodeCtrl.focusing) + (node.isFocused || nodeCtrl.focusing)) % (10 + ((((node.depth + 1) % 10) == 0) && nodeCtrl.focusing))) * 20 + 'px'}">
 
                <span style="width:70%" ng-style="node.depth===0 && {'font-weight':'bold'}">
                      <overflow-content class=non-expanded node="node" role="node.color"></overflow-content>
@@ -40,9 +40,15 @@
             </div>
 
             <div class="tblCell" style="width:2%; min-height: 1px; text-align:center">
-                <span style="color:firebrick" title="הודעה חדשה" ng-class="{'glyphicon glyphicon-fire': node.lastPost}"></span>
+                <div ng-if="nodeCtrl.role == 'admin'" class="btn btn-xs">
+                    <span title="trim" ng-class="{'glyphicon glyphicon-scissors': !node.trimmed}" ng-click="nodeCtrl.flipArgumentTrimmedStatus(node)"></span>
+                    <span title="un-trim" ng-class="{'glyphicon glyphicon-link': node.trimmed}" ng-click="nodeCtrl.flipArgumentTrimmedStatus(node)"></span>
+                </div>
             </div>
 
+            <div class="tblCell" style="width:2%; min-height: 1px; text-align:center">
+                <span style="color:firebrick" title="הודעה חדשה" ng-class="{'glyphicon glyphicon-fire': node.lastPost}"></span>
+            </div>
 
             <div class="tblCell col-non-expanded" style="width:13%; text-align:left; direction: ltr;">
                 <!--span style="cursor: pointer;" uib-popover-html="node.userInfo ? node.userInfo : 'טוען...'" popover-is-open="popoverIsOpen"-->
@@ -81,5 +87,6 @@
     </div>
 
 
-    <treenode ng-if="(node.isFocused || (((node.depth + 1) % 10) != 0)) && (node.sub_arguments)" focusing="node.isFocused || nodeCtrl.focusing" role="nodeCtrl.role" nodes='node.sub_arguments' tree="tree" options="options" ng-show="node.expanded" id="{{node._id}}"></treenode>
+    <treenode ng-if="((node.isFocused || (((node.depth + 1) % 10) != 0)) && (node.sub_arguments))"
+              focusing="node.isFocused || nodeCtrl.focusing" role="nodeCtrl.role" nodes='node.sub_arguments' tree="tree" options="options" ng-show="node.expanded" id="{{node._id}}"></treenode>
 </div>

@@ -15,6 +15,7 @@ var argumentScheme = mongoose.Schema({
 	content: String,
 	depth: Number,
 	hidden: Boolean,
+	trimmed: Boolean,
 	sub_arguments: [{type:Number, ref: 'Argument'}]
 
 },{

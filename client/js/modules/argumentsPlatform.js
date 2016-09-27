@@ -75,21 +75,6 @@
 
             setTreeConversationTop();
 
-            $scope.$on('mark-text-in-pad',function(e,data){
-                $scope.$broadcast('mark-text-in-pad-ctrl',{start: data.start,end: data.end});
-            });
-
-            $scope.$on('request-user-info-update', function(e,node){
-                socket.on('sending-user-info', function(data){
-                    if(data.userInfo == null)
-                        node.userInfo = "משתמש זה לא כתב ביוגרפיה."
-                    else
-                        node.userInfo = data.userInfo
-                });
-
-                socket.emit('requesting-user-info', {_id:node.user_id})
-            });
-
             var refJsonMap = {};
 
             function fromReftoNestedJson(refJson){
@@ -432,6 +417,12 @@
                 node.hidden = !node.hidden;
             });
 
+            socket.on('flip-argument-trimmed-status', function(data){
+                var argumentID = data._id;
+                var node = refJsonMap[argumentID];
+                node.trimmed = !node.trimmed;
+            });
+
             /************************
              ************************************************/
 
@@ -486,15 +477,40 @@
                 socket.emit('logout-user');
             };
 
-
             $scope.$on('flip-argument-hidden-status', function (e,data) {
                 var argumentID = data._id;
                 socket.emit('flip-argument-hidden-status',{_id: argumentID});
             });
 
+            $scope.$on('flip-argument-trimmed-status', function (e,data) {
+                var argumentID = data._id;
+                //refJsonMap[argumentID].trimmed = !refJsonMap[argumentID].trimmed;
+                socket.emit('flip-argument-trimmed-status',{_id: argumentID});
+            });
+
             $scope.$on('parentBlinker', function (e,data) {
                 var parentNode = refJsonMap[data.parentID];
                 parentNode.isBlinking = !parentNode.isBlinking;
+            });
+
+            $scope.$on('mark-text-in-pad',function(e,data){
+                if(JSON.stringify($scope.lastMarked) === JSON.stringify(data)){
+                    $scope.$broadcast('shut-pad-ctrl');
+                    return;
+                }
+                $scope.lastMarked = data;
+                $scope.$broadcast('mark-text-in-pad-ctrl',{start: data.start,end: data.end});
+            });
+
+            $scope.$on('request-user-info-update', function(e,node){
+                socket.on('sending-user-info', function(data){
+                    if(data.userInfo == null)
+                        node.userInfo = "משתמש זה לא כתב ביוגרפיה."
+                    else
+                        node.userInfo = data.userInfo
+                });
+
+                socket.emit('requesting-user-info', {_id:node.user_id})
             });
 
 

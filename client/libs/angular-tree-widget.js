@@ -75,7 +75,7 @@
 
 
                 vm.markPad = function(start,end) {
-                    var data = {start:start,end:end};
+                    var data = {arg_id:vm.node._id,start:start,end:end};
                     $scope.$emit('mark-text-in-pad', data);
                     //console.log("start:" + start + " end: " + end + "yooooo");
                 }
@@ -253,6 +253,11 @@
                 vm.flipArgumentHiddenStatus = function(node){
                     var argumentID = node._id;
                     $scope.$emit('flip-argument-hidden-status', {_id : argumentID});
+                };
+
+                vm.flipArgumentTrimmedStatus = function(node){
+                    var argumentID = node._id;
+                    $scope.$emit('flip-argument-trimmed-status', {_id : argumentID});
                 };
 
                 vm.cancelReply = function(node){

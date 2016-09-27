@@ -25,6 +25,10 @@ angular.module('discussionCollaborationPad', ['ngSanitize'])
                 $scope.markTextByRange(data.start,data.end);
             });
 
+            $scope.$on('shut-pad-ctrl',function(e){
+                $scope.collaborationPadExpansionFlip();
+            });
+
             $scope.collaborationPadExpansionFlip = function(){
                 $scope.expandedcollaborationPad = !$scope.expandedcollaborationPad;
             };

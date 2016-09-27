@@ -625,6 +625,26 @@ module.exports = function(autoIncrement, io){
                 });
             });
 
+            socket.on('flip-argument-trimmed-status', function (data) {
+                var argumentID = data._id;
+                Argument.findOne({_id: argumentID}, function(err, argument) {
+                    if (err){
+                        throw err;
+                    }
+                    else{
+                        argument.trimmed = !argument.trimmed;
+                        argument.save(function (err) {
+                            if (err){
+                                throw err;
+                            }
+                            else{
+                                argumentsNsp.to(argument.disc_id).emit('flip-argument-trimmed-status', {_id: argumentID});
+                            }
+                        })
+                    }
+                });
+            });
+
             socket.on('requesting-user-info', function (data) {
                 User.findOne({_id: data._id}, function(err, user) {
                     if (err){
