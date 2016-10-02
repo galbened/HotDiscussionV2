@@ -45,7 +45,6 @@
                 vm.expand = function(event){
 
                     //When called by a link press - should NOT expand or collapse
-                    console.log(event);
                     if((event.target.tagName == "A")||(event.target.tagName == "BUTTON"))
                         return;
                     //--

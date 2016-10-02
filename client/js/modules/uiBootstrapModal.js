@@ -52,6 +52,23 @@ angular.module('bootstrapModalApp').controller('ModalCtrl', function ($scope, $u
         })
     };
 
+    $scope.copyConfirmationModal = function (index) {
+        $uibModal.open({
+            animation: false,
+            templateUrl: '../partials/copyConfirmationModal.html',
+            controller: 'copyConfirmationModalCtrl',
+            size: 'sm',
+            resolve: {
+                discID: function (){
+                    return $scope.discussions[index]._id;
+                },
+                copyDiscussionFunc: function (){
+                    return $scope.copyDiscussion;
+                }
+            }
+        })
+    };
+
     socket.on('sending-pm',function(data){
 
         $uibModal.open({
@@ -110,6 +127,19 @@ angular.module('bootstrapModalApp').controller('pmShowModalCtrl', function ($sco
     $scope.ok = function () {
         //socket.emit('new-pm', {group_id:group_id,body:$scope.pmText});
         $uibModalInstance.close();
+    };
+});
+
+angular.module('bootstrapModalApp').controller('copyConfirmationModalCtrl', function ($scope, $uibModalInstance, discID, copyDiscussionFunc) {
+
+    $scope.ok = function () {
+        console.log("hello1")
+        copyDiscussionFunc(discID);
+        $uibModalInstance.close();
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
     };
 });
 

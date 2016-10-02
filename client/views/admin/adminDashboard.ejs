@@ -59,26 +59,27 @@
                 <thead>
                 <tr id="headRow">
                     <th style="width:3%">תוכן</th>
-                    <th style="width:6%">הודעות#</th>
-                    <th style="width:13%">Permitted Poster</th>
-                    <th style="width:13%">Moderator</th>
+                    <th style="width:5%">הודעות#</th>
+                    <th style="width:12%">Permitted Poster</th>
+                    <th style="width:12%">Moderator</th>
                     <th style="width:20%">תיאור</th>
                     <th style="width:15%">כותרת</th>
                     <th style="width:20%">סטטוס</th>
+                    <th style="width:3%">העתק</th>
                 </tr>
                 </thead>
 
                 <tbody ng-repeat="discussion in discussions">
 
-                <tr ng-show="!discussion.edit" ng-style="(discussion.restriction === 'student' && {'background-color' : '#B9F1E4'}) || (discussion.restriction === 'instructor' && {'background-color' : '#F8EBAE'}) || (discussion.restriction === 'none' && {'background-color' : '#F39696'})">
+                <tr style="font-size: small;" ng-show="!discussion.edit" ng-style="(discussion.restriction === 'student' && {'background-color' : '#B9F1E4'}) || (discussion.restriction === 'instructor' && {'background-color' : '#F8EBAE'}) || (discussion.restriction === 'none' && {'background-color' : '#F39696'})">
                     <td dir="rtl" style="width:3%">
                         <div>
                             <span class="fa fa-newspaper-o btn btn-primary btn-xs" aria-hidden="true" ng-click="enterContent($index)"></span>
                         </div>
                     </td>
-                    <td dir="rtl" style="width:6%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.args_count}}</td>
-                    <td dir="rtl" style="width:13%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.permittedPoster_fname + " " + discussion.permittedPoster_lname}} </td>
-                    <td dir="rtl" style="width:13%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.moderator_fname + " " + discussion.moderator_lname}} </td>
+                    <td dir="rtl" style="width:5%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.args_count}}</td>
+                    <td dir="rtl" style="width:12%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.permittedPoster_fname + " " + discussion.permittedPoster_lname}} </td>
+                    <td dir="rtl" style="width:12%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.moderator_fname + " " + discussion.moderator_lname}} </td>
                     <td dir="rtl" style="width:20%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.description}}</td>
                     <td dir="rtl" style="width:15%; cursor: pointer; cursor: hand;" ng-click="goToDisc($index)">{{discussion.title}}</td>
                     <td style="width:20%; white-space:nowrap;">
@@ -90,12 +91,18 @@
                             <label>פעיל</label> <input type="radio" ng-model="discussion.restriction" name="{{'disc_status' + $index}}" value="student" ng-change="updateDiscStatus($index, discussion.status)"/>
                         </fieldset>
                     </td>
+
+                    <td dir="rtl" style="width:3%">
+                        <div>
+                            <span class="fa fa-files-o btn btn-default" aria-hidden="true" ng-click="copyConfirmationModal($index)" title="העתקת דיון"></span>
+                        </div>
+                    </td>
                 </tr>
 
                 <tr ng-show="discussion.edit">
                     <td style="width:3%" class="warning"></td>
-                    <td style="width:6%" class="warning"></td>
-                    <td style="width:13%">
+                    <td style="width:5%" class="warning"></td>
+                    <td style="width:12%">
                         <select class="form-control" ng-init="tempForPermitted = lookupUser[discussion.permittedPoster_id]" ng-model="tempForPermitted" id="permittedPosterEdit" dir="ltr"
                                 ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
                             <option value="">
@@ -103,7 +110,7 @@
                             </option>
                         </select>
                     </td>
-                    <td style="width:13%">
+                    <td style="width:12%">
                         <select class="form-control" ng-init="tempForMod = lookupUser[discussion.moderator_id]" ng-model="tempForMod" id="userEdit" dir="ltr"
                                 ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
                             <option value="">
@@ -114,10 +121,11 @@
                     <td style="width:20%"><input class="form-control" id="descEdit" type="text" ng-model="descEdit" ng-value="discussion.description" style="text-align: right;"></td>
                     <td style="width:15%"><input class="form-control" id="titleEdit" type="text" ng-model="titleEdit" ng-value="discussion.title" style="text-align: right;"></td>
                     <td style="width:20%" class="warning"><span class="text-warning text-center">עריכה</span></td>
+                    <td style="width:3%" class="warning"></td>
                 </tr>
 
                 <tr ng-show="discussion.edit">
-                    <td colspan="6">
+                    <td colspan="7">
                         <div style="width:100%;">
                             <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 30px" ng-click="finishEdit($index, descEdit, titleEdit, tempForMod, tempForPermitted)">Finish</button>
                             <button type="button" class="btn btn-default btn-sm" ng-click="cancelEdit(discussion)">Cancel</button>

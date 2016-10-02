@@ -9,9 +9,10 @@ module.exports = function(autoIncrement, io){
     var express = require('express');
     var router = express.Router();
 
+    var discussionDuplicator = require('../tools/discussionDuplicator')(autoIncrement);
+
     var discussionNsp = io.of('/discussions');
     var argumentsNsp = io.of('/arguments');
-
 
     var allScokets = {};
 
@@ -336,10 +337,7 @@ module.exports = function(autoIncrement, io){
                     msgSent = false;
                 Object.keys(allScokets).forEach(function(sid){
                     allSocketCounter++;
-                    if(allScokets[sid].request.session.passport.user.id == msg.receiver_id)
-                    {
-                        console.log(allScokets[sid].request.session.passport.user.username);
-                        console.log("bla")
+                    if(allScokets[sid].request.session.passport.user.id == msg.receiver_id){
                         allScokets[sid].emit('sending-pm',{body:msg.body});
                         msgSent = true;
                     }
@@ -385,6 +383,12 @@ module.exports = function(autoIncrement, io){
                 Discussion.findById(data.disc_id, function(err, disc) {
                     if (err) throw err;
                     socket.emit('sending-discussion-content', {content:disc.content});
+                });
+            });
+
+            socket.on('copy-discussion',function(data){
+                discussionDuplicator(data.disc_id, function(res){
+                    discussionNsp.emit('copied-discussion', {newDisc:res.newDisc,args_count:res.args_count});
                 });
             });
         }
@@ -529,7 +533,6 @@ module.exports = function(autoIncrement, io){
                     //-- 27/07/16
                     if(discRest == "none")
                         return; // Inactive discussion doesn't accept new arguments.
-
                     argument.save(function(err, data){
                         if (err)
                             throw err;

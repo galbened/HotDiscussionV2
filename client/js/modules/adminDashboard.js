@@ -45,6 +45,12 @@
             $scope.users_groups = data.users_groups;
         });
 
+        socket.on('copied-discussion', function(data){
+            var newDiscussion = data.newDisc;
+            newDiscussion.args_count = data.args_count;
+            $scope.discussions.unshift(newDiscussion);
+        });
+
 
 
 /***
@@ -64,6 +70,11 @@
 
         $window.location.href = '/discussions/' + id + '/' + title + '/' +description;
       };
+
+        $scope.copyDiscussion = function(id){
+            //var id = $scope.discussions[idx]._id;
+            socket.emit('copy-discussion',{disc_id:id});
+        };
 
       //initiate the fields of the table
 

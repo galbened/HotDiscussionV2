@@ -16,7 +16,9 @@ var argumentScheme = mongoose.Schema({
 	depth: Number,
 	hidden: Boolean,
 	trimmed: Boolean,
-	sub_arguments: [{type:Number, ref: 'Argument'}]
+	sub_arguments: [{type:Number, ref: 'Argument'}],
+
+	cloned: Boolean
 
 },{
 	timestamps:true

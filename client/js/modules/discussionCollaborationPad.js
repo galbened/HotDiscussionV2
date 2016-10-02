@@ -17,7 +17,18 @@ angular.module('discussionCollaborationPad', ['ngSanitize'])
                     newContent;
                 newContent = prefix + "<span style='background-color: #ffbf80'>" + marked + "</span>" + suffix;
                 $scope.showContent = $sce.trustAsHtml(newContent);
+                scrollPadToMarked(start);
             };
+
+            function scrollPadToMarked(start){
+                setTimeout(function(){
+                    var content = document.getElementById("collaborationPadContent"),
+                        len = $('#collaborationPadContent').text().length,
+                        ratio = start/len;
+
+                    content.scrollTop = content.scrollHeight * ratio * 0.9;
+                },0)
+            }
 
             $scope.$on('mark-text-in-pad-ctrl',function(e,data){
                 if(!$scope.expandedcollaborationPad)

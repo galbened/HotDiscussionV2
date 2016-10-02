@@ -12,7 +12,9 @@ var discussionScheme = mongoose.Schema({
 	permittedPoster_fname: String,
 	permittedPoster_lname: String,
 	content: String,
-	chat_id: {type:Schema.Types.ObjectId, ref: 'Chat'}
+	chat_id: {type:Schema.Types.ObjectId, ref: 'Chat'},
+
+	cloned: Boolean
 });
 
 module.exports = mongoose.model('Discussion', discussionScheme);
