@@ -133,7 +133,6 @@ angular.module('bootstrapModalApp').controller('pmShowModalCtrl', function ($sco
 angular.module('bootstrapModalApp').controller('copyConfirmationModalCtrl', function ($scope, $uibModalInstance, discID, copyDiscussionFunc) {
 
     $scope.ok = function () {
-        console.log("hello1")
         copyDiscussionFunc(discID);
         $uibModalInstance.close();
     };

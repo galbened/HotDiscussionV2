@@ -31,91 +31,99 @@ module.exports = function(autoIncrement, io){
     //TODO: show the discussions that the requesting user is registred to only.
     //    this may be unnecassary for the future, and just get the arguments of the relevant discussion for
     //    non-admin user.
+
+    var getAllGroupsConsistsOfUser = function(user_id){
+        usersGroup.find({users: { $in : [user_id]}},function(err, groups){
+            return groups;
+        });
+    };
+
     router.get('/discussions', function(req, res, next) {
         var user = req.session.passport.user;
-        if (user){
-            var role = user.role;
-            switch (role) {
-                case "admin":
-                    Discussion.find().lean().exec( function(err, discs){
-                        //for sync foreach
-                        var discProcessed = 0;
+        var groupsOfUser = usersGroup.find({users: { $in : [user.id]}});
+        usersGroup.find({users: { $in : [user.id]}}, {_id:1},function(err, groupsOfUser){
+            if (user){
+                var role = user.role;
+                switch (role) {
+                    case "admin":
+                        Discussion.find().lean().exec( function(err, discs){
+                            //for sync foreach
+                            var discProcessed = 0;
 
-                        if(discs.length == 0){
-                            User.find({}, function(err, users){
-                                var data = {discs : discs, users : users};
-                                res.json(data);
-                            });
-                        }
-                        else{
-                            discs.forEach(function(disc){
-                                Argument.count({disc_id:disc._id}, function(err, count){
-                                    disc.args_count = count;
-                                    discProcessed++;
-                                    if(discProcessed == discs.length){
-                                        User.find({}, function(err, users){
-                                            var data = {discs : discs, users : users};
-                                            res.json(data);
-                                        });
-                                    }
+                            if(discs.length == 0){
+                                User.find({}, function(err, users){
+                                    var data = {discs : discs, users : users};
+                                    res.json(data);
                                 });
-                            });
-                        }
-                    });
-                    break;
-                case "student":
-                    Discussion.find({restriction: "student"}).lean().exec( function(err, discs){
-                        // console.log(data);
-
-                        //for sync foreach
-                        var discProcessed = 0;
-
-                        if(discs.length == 0){
-                            resObj = {data : discs,role : role};
-                            res.json(resObj);
-                        }
-                        else{
-                            discs.forEach(function(disc){
-                                Argument.count({disc_id:disc._id}, function(err, count){
-                                    disc.args_count = count;
-                                    discProcessed++;
-                                    if(discProcessed == discs.length){
-                                        resObj = {data : discs,role : role};
-                                        res.json(resObj);
-                                    }
+                            }
+                            else{
+                                discs.forEach(function(disc){
+                                    Argument.count({disc_id:disc._id}, function(err, count){
+                                        disc.args_count = count;
+                                        discProcessed++;
+                                        if(discProcessed == discs.length){
+                                            User.find({}, function(err, users){
+                                                usersGroup.find({}, function(err, groups){
+                                                    var data = {discs : discs, users : users, groups:groups};
+                                                    res.json(data);
+                                                });
+                                            });
+                                        }
+                                    });
                                 });
-                            });
-                        }
-                    });
-                    break;
-                case "instructor":
-                    Discussion.find({restriction: "instructor"}).lean().exec( function(err, discs){
-                        // console.log(data);
+                            }
+                        });
+                        break;
 
-                        //for sync foreach
-                        var discProcessed = 0;
+                    case "student":
+                        Discussion.find({restriction: "student", $or: [{users_group_id: {$in: groupsOfUser}},{users_group_id:null}]}).lean().exec( function(err, discs){
+                            //for sync foreach
+                            var discProcessed = 0;
 
-                        if(discs.length == 0){
-                            resObj = {data : discs,role : role};
-                            res.json(resObj);
-                        }
-                        else{
-                            discs.forEach(function(disc){
-                                Argument.count({disc_id:disc._id}, function(err, count){
-                                    disc.args_count = count;
-                                    discProcessed++;
-                                    if(discProcessed == discs.length){
-                                        resObj = {data : discs,role : role};
-                                        res.json(resObj);
-                                    }
+                            if(discs.length == 0){
+                                resObj = {data : discs,role : role};
+                                res.json(resObj);
+                            }
+                            else{
+                                discs.forEach(function(disc){
+                                    Argument.count({disc_id:disc._id}, function(err, count){
+                                        disc.args_count = count;
+                                        discProcessed++;
+                                        if(discProcessed == discs.length){
+                                            resObj = {data : discs,role : role};
+                                            res.json(resObj);
+                                        }
+                                    });
                                 });
-                            });
-                        }
-                    });
-                    break;
+                            }
+                        });
+                        break;
+                    case "instructor":
+                        Discussion.find({restriction: "instructor", $or: [{users_group_id: {$in: groupsOfUser}},{users_group_id:null}]}).lean().exec( function(err, discs){
+                            //for sync foreach
+                            var discProcessed = 0;
+
+                            if(discs.length == 0){
+                                resObj = {data : discs,role : role};
+                                res.json(resObj);
+                            }
+                            else{
+                                discs.forEach(function(disc){
+                                    Argument.count({disc_id:disc._id}, function(err, count){
+                                        disc.args_count = count;
+                                        discProcessed++;
+                                        if(discProcessed == discs.length){
+                                            resObj = {data : discs,role : role};
+                                            res.json(resObj);
+                                        }
+                                    });
+                                });
+                            }
+                        });
+                        break;
+                }
             }
-
-        }
+        });
     });
 
     //post a new discussion
@@ -131,6 +139,7 @@ module.exports = function(autoIncrement, io){
         discussion.permittedPoster_id = req.body.permittedPoster_id;
         discussion.permittedPoster_fname = req.body.permittedPoster_fname;
         discussion.permittedPoster_lname = req.body.permittedPoster_lname;
+        discussion.users_group_id = req.body.users_group_id;
 
         //Adding chat to discussion 09/09
         var chat = new Chat();
@@ -187,6 +196,9 @@ module.exports = function(autoIncrement, io){
                 disc.permittedPoster_id = undefined;
                 disc.permittedPoster_fname = undefined;
                 disc.permittedPoster_lname = undefined;
+            }
+            if(!body.users_group_id){
+                disc.users_group_id = undefined;
             }
 
             disc.save(function(err, data){

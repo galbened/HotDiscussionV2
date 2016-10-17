@@ -11,7 +11,21 @@ module.exports = function(io){
    */ 
   var mongoose = require('mongoose');
   var configDB = require('./config/database.js');
-  mongoose.connect(configDB.users_url);
+
+  // Run appropriate instance - test / benzi / baruch / tsafrir
+  var curDB;
+  if(process.env.INSTANCE == 'benzi')
+    curDB = configDB.benzi_url;
+  else
+    if(process.env.INSTANCE == 'baruch')
+      curDB = configDB.baruch_url;
+      else
+        if(process.env.INSTANCE == 'tsafrir')
+          curDB = configDB.tsafrir_url;
+          else //test
+            curDB = configDB.test_url;
+
+  mongoose.connect(curDB);
   var db = mongoose.connection;
   db.on('error', console.error.bind(console, 'db connection error'));
   db.once('open', function(){console.log('succefully connected to mongodb');});

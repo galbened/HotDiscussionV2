@@ -13,6 +13,7 @@ var discussionScheme = mongoose.Schema({
 	permittedPoster_lname: String,
 	content: String,
 	chat_id: {type:Schema.Types.ObjectId, ref: 'Chat'},
+	users_group_id: {type:Schema.Types.ObjectId, ref: 'Users_Group'},
 
 	cloned: Boolean
 });

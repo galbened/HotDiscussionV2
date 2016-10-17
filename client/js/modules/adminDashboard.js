@@ -13,7 +13,6 @@
       $scope.socket = socket;
 
 
-
       socket.on('send-all-logged-users', function(data){
           var usersForAlert = "";
           data.loggedUsers.forEach(function(loggedUser){
@@ -78,21 +77,28 @@
 
       //initiate the fields of the table
 
-
       $scope.lookupUser = {};
       $scope.tempForMod = "";
       $scope.tempForPermitted = "";
+      $scope.lookupUsers_group = {};
 
       $http({
         method: 'GET',
         url: '/api/discussions'
       }).then(function(res){
         $scope.discussions = res.data.discs.reverse();
+
+        // gettings for discussion initialization
         $scope.users = res.data.users;
         for (var i = 0, len = $scope.users.length; i < len; i++) {
             $scope.users[i].fullname = $scope.users[i].local.firstname + " " + $scope.users[i].local.lastname;
             $scope.lookupUser[$scope.users[i]._id] = $scope.users[i];
         }
+        // getting user groups for discussion initialization
+          $scope.users_groups = res.data.groups;
+          for (var i = 0, len = $scope.users_groups.length; i < len; i++) {
+              $scope.lookupUsers_group[$scope.users_groups[i]._id] = $scope.users_groups[i];
+          }
       }, function(err){
         console.log(err.statusText);
       });
@@ -106,7 +112,7 @@
           $scope.pressAdd = false;
       };
 
-      $scope.finishAdding = function(newDesc, newTitle, newUser, newPermittedPoster){
+      $scope.finishAdding = function(newDesc, newTitle, newUser, newPermittedPoster, newUserGroup){
 
           var newDisc = {};
 
@@ -133,7 +139,12 @@
               newDisc.permittedPoster_fname = undefined;
               newDisc.permittedPoster_lname = undefined;
           }
-
+          if(newUserGroup){
+              newDisc.users_group_id = newUserGroup._id;
+          }
+          else{
+              newDisc.users_group_id = undefined;
+          }
 
         $http({
           method:'POST',
@@ -163,7 +174,7 @@
           discussion.edit = false;
       };
 
-      $scope.finishEdit = function(idx, edittedDesc, edittedTitle, edittedUser, edittedPermittedPoster){
+      $scope.finishEdit = function(idx, edittedDesc, edittedTitle, edittedUser, edittedPermittedPoster,edittedUsersGroup){
         var oldDisc = $scope.discussions[idx];
 
         var tempDiscArgsCount = oldDisc.args_count;
@@ -197,7 +208,12 @@
             edittedDisc.permittedPoster_lname = undefined;
         }
 
-        console.log(edittedDisc);
+          if(edittedUsersGroup){
+              edittedDisc.users_group_id = edittedUsersGroup._id;
+          }
+          else{
+              edittedDisc.users_group_id = undefined;
+          }
 
         $http({
           method: 'PUT',
@@ -232,13 +248,13 @@
       };
 
 
+
+
       // ------------------------------------ Groups ----------------------------------------
 
-        socket.on('sending-users-groups', function(data){
-            $scope.users_groups = data.users_groups;
-        });
+        $scope.tempForGroup = "";
 
-        socket.emit('request-users-groups');
+        //socket.emit('request-users-groups');
 
         $scope.addGroup = function(){
             $scope.pressAddGroups = true;
@@ -271,7 +287,7 @@
             var users_group = {users_group: {name:name,users:usersIDs}};
             socket.emit('create-users-group',users_group);
             $scope.flipAddingGroup();
-            socket.emit('request-users-groups');
+            setTimeout(function(){socket.emit('request-users-groups');},0);
         };
 
         $scope.doneEditGroup = function(index,name,usersIDs){
@@ -279,7 +295,7 @@
             var users_group = {users_group: {_id:group_id,name:name,users:usersIDs}};
             socket.emit('update-users-group',users_group);
             $scope.flipGroupEdit(index);
-            socket.emit('request-users-groups');
+            setTimeout(function(){socket.emit('request-users-groups');},0);
         };
     }]);
 })();
