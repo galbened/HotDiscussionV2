@@ -25,6 +25,8 @@ module.exports = function(io){
           else //test
             curDB = configDB.test_url;
 
+
+  console.log("Running on HDP instance of: " + process.env.INSTANCE + " on DB: " + curDB);
   mongoose.connect(curDB);
   var db = mongoose.connection;
   db.on('error', console.error.bind(console, 'db connection error'));
