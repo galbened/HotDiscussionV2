@@ -18,7 +18,7 @@
 
 <body ng-app="argumentsApp">
 
-<div class="container-fluid" ng-controller="ArgumentsTreeController"  ng-cloak>
+<div class="container-fluid" ng-controller="ArgumentsTreeController" ng-cloak>
 
     <div class="row" ng-controller="ModalCtrl">
         <div id="scroller">
@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="col-md-4" style="float:right">
 
-                    <div class="form-group" style="width: 100%;margin-bottom: 0px;" ng-show="isPermittedPoster">
+                    <div class="form-group" style="width: 100%;margin-bottom: 0px;" ng-show="isPermittedPoster && !locked">
                         <form class="form-inline" >
                             <!--textarea class="form-control form-group text-right" rows="3" placeholder="כתיבת רעיון חדש..." style="resize: none;width:80%;" ng-model="newArgument"></textarea-->
                             <div data-placeholder="כתיבת רעיון חדש..." class="intoTextarea form-control form-group" ui-tinymce="tinymceOptions" style="height: 5.2em;line-height: 1.3;width:80%;" ng-model="newArgument"></div>
@@ -75,8 +75,15 @@
         <button class="btn btn-xs btn-warning floatingBackBtn" ng-if="backButton" ng-click="clickBackButton()">« חזרה</button>
     </div>
 
-    <footer class="text-left" style="margin-top:30px">
-        <p>maintained by BGU</p>
+    <footer style="margin-top:30px">
+        <p style="float: right">maintained by BGU</p>
+        <div ng-if="role == 'admin' || role == 'moderator'" class="btn-lg btn-primary" style="float:left" ng-click="flipDiscussionLock()">
+            <span ng-class="{'fa fa-unlock': locked}" title="פתח דיון לכתיבה"></span>
+            <span ng-class="{'fa fa-lock': !locked}" title="נעל דיון לכתיבה"></span>
+        </div>
+        <div ng-controller="ModalCtrl" ng-if="role == 'admin' || role == 'moderator'" class="btn-lg btn-primary" style="float:left;margin-left: 2px" ng-click="presentDiscussionNetworkGraph()">
+            <span class="fa fa-pie-chart" aria-hidden="true"></span>
+        </div>
     </footer>
 
     <chat class="floatingChat"></chat>
@@ -112,6 +119,9 @@
 <script type="text/javascript" src="/libs/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 <script type="text/javascript" src="/libs/tinymce/tinymce.min.js"></script>
 <script type="text/javascript" src="/libs/angular-ui-tinymce/tinymce.js"></script>
+
+<script type="text/javascript" src="/libs/vis/dist/vis.min.js"></script>
+<script type="text/javascript" src="/libs/angular-visjs/angular-vis.js"></script>
 
 <script type="text/javascript" src="/js/modules/uiBootstrapModal.js"></script>
 <script type="text/javascript" src="/js/modules/discussionChat.js"></script>

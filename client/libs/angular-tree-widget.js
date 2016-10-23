@@ -122,7 +122,7 @@
         .directive('nodeStyle', function () {
             return {
                 restrict: 'A',
-                scope: {role: '='},
+                scope: {role: '=', trimmed: '='},
                 link: function (scope, element, attrs) {
 
                     var bgcolor, hoverbgcolor;
@@ -150,14 +150,28 @@
                             break;
                     }
 
-                    element.css("background-color",bgcolor);
+                    var defaultBackground;
+                    if(scope.trimmed)
+                        defaultBackground = "repeating-linear-gradient(90deg," + bgcolor + "," + bgcolor + " 10px," + hoverbgcolor + " 10px," + hoverbgcolor + " 20px)";
+                    else
+                        defaultBackground = bgcolor;
+
+                    element.css("background",defaultBackground);
+
+                    scope.$watch('trimmed', function(){
+                        if(scope.trimmed)
+                            defaultBackground = "repeating-linear-gradient(90deg," + bgcolor + "," + bgcolor + " 10px," + hoverbgcolor + " 10px," + hoverbgcolor + " 20px)";
+                        else
+                            defaultBackground = bgcolor;
+                        element.css("background",defaultBackground);
+                    });
 
                     element
                         .on('mouseenter',function() {
                             element.css('background-color', hoverbgcolor);
                         })
                         .on('mouseleave',function() {
-                            element.css('background-color', bgcolor);
+                            element.css('background', defaultBackground);
                         });
                 }
             }
@@ -167,8 +181,8 @@
         .directive('tree', function () {
             return {
                 restrict: "E",
-                scope: { nodes: '=', role:'=', options: '=?'},
-                template: "<treenode nodes='nodes' tree='nodelist' role='role' options='options'></treenode>",
+                scope: { nodes: '=', role:'=', locked:'=', options: '=?'},
+                template: "<treenode locked='locked' nodes='nodes' tree='nodelist' role='role' options='options'></treenode>",
                 //pre function compiles before the template, that's where we get the nodelist from
                 compile: function compile(tElement, tAttrs, transclude) {
                     return {
@@ -223,7 +237,7 @@
                     invalid_elements : 'img[*]',
                     valid_elements : 'a[href|target=_blank],strong/b,br,em,span[*],button[*]',
                     valid_styles: {
-                        'span': 'text-decoration,color',
+                        'span': 'text-decoration,color'
                     }
                 };
 
@@ -271,7 +285,7 @@
 
             return {
                 restrict: "E",
-                scope: { nodes: '=', tree: '=', options: '=?' , role:'=', focusing:'='},
+                scope: { nodes: '=', tree: '=', options: '=?' , role:'=', focusing:'=', locked:"="},
                 controller: nodeController,
                 controllerAs: 'nodeCtrl',
                 bindToController: true,

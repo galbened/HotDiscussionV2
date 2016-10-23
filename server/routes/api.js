@@ -466,7 +466,6 @@ module.exports = function(autoIncrement, io){
                             });
                         }
 
-
                         Chat.findById(discussion.chat_id,function(err,chat){
                             if(err) throw err;
                             if(chat == null) chat = {messages: []};
@@ -634,6 +633,25 @@ module.exports = function(autoIncrement, io){
                             }
                             else{
                                 argumentsNsp.to(argument.disc_id).emit('flip-argument-hidden-status', {_id: argumentID});
+                            }
+                        })
+                    }
+                });
+            });
+
+            socket.on('flip-discussion-locked-status', function () {
+                Discussion.findById(discussionId, function(err, disc) {
+                    if (err){
+                        throw err;
+                    }
+                    else{
+                        disc.locked = !disc.locked;
+                        disc.save(function (err) {
+                            if (err){
+                                throw err;
+                            }
+                            else{
+                                argumentsNsp.to(discussionId).emit('flip-discussion-locked-status');
                             }
                         })
                     }

@@ -1,5 +1,6 @@
 (function(){
-    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize','ui.bootstrap','ui.tinymce','bootstrapModalApp','discussionChat','discussionCollaborationPad'], function($locationProvider){
+    angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize','ui.bootstrap',
+                                    'ui.tinymce','bootstrapModalApp','discussionChat','discussionCollaborationPad','ngVis'], function($locationProvider){
         $locationProvider.html5Mode(true);
     })
         .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio','$rootScope', function (TreeService, $scope, $window, $location, socketio, $rootScope) {
@@ -249,10 +250,12 @@
                     // console.log('*******************************');
                     $scope.discussionTitle = result.discussion.title;
                     $scope.discussionDescription = result.discussion.description;
-                    //if(result.user.id == result.discussion.moderator_id)
-                    //    $scope.role = "moderator";  ------ done on server side API
-                    //else
+
                     $scope.role = result.user.role;
+
+                    if(result.user.id == result.discussion.moderator_id)
+                        $scope.role = "moderator";  // done also on server side API when new args is sent
+
                     $scope.user_id = result.user.id;
 
                     if((result.discussion.permittedPoster_id == null) || ($scope.user_id == result.discussion.permittedPoster_id) || ($scope.role == 'admin'))
@@ -347,6 +350,10 @@
                 //newNodeUpdateSubtreeSizesAndNewest(newArgument);
             });
 
+            $scope.getArgsMap = function(){
+                return refJsonMap;
+            };
+
             socket.on('submitted-new-reply', function(data){
 
                 var newReply = data.data;
@@ -423,6 +430,10 @@
                 node.trimmed = !node.trimmed;
             });
 
+            socket.on('flip-discussion-locked-status', function(){
+                $scope.locked = !$scope.locked;
+            });
+
             /************************
              ************************************************/
 
@@ -475,6 +486,10 @@
             
             $scope.logoutUser = function(){
                 socket.emit('logout-user');
+            };
+
+            $scope.flipDiscussionLock = function(){
+                socket.emit('flip-discussion-locked-status');
             };
 
             $scope.$on('flip-argument-hidden-status', function (e,data) {

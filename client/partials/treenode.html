@@ -1,12 +1,13 @@
-<div id="tblWrapper" ng-if = "(!node.trimmed || nodeCtrl.role == 'admin')" dir="rtl" ng-repeat="node in nodeCtrl.nodes" ng-style="node.depth===0 && {'padding-bottom': '0', 'margin-bottom': '20px'}" >
-
-    <div id="rowWrapper" node-style role="node.role" style="border-bottom-width: 1px; border-bottom-style:groove;" ng-style="node.depth===0 && {'border-radius': '5px 5px 0px 0px'}">
+<div id="tblWrapper" dir="rtl" ng-repeat="node in nodeCtrl.nodes" ng-style="node.depth===0 && {'padding-bottom': '0', 'margin-bottom': '20px'}" >
+<!-- ng-if = "(!node.trimmed || nodeCtrl.role == 'admin')" -->
+    <div id="rowWrapper" node-style role="node.role" trimmed="node.trimmed" style="border-bottom-width: 1px; border-bottom-style:groove;" ng-style="node.depth===0 && {'border-radius': '5px 5px 0px 0px'}">
 
         <div class="tblRow">
 
             <div class="tblCell" style="width:51%; " ng-style="{'padding-right':((node.depth + ((((node.depth + 1) % 10) == 0) && nodeCtrl.focusing) + (node.isFocused || nodeCtrl.focusing)) % (10 + ((((node.depth + 1) % 10) == 0) && nodeCtrl.focusing))) * 20 + 'px'}">
 
-               <span style="width:70%" ng-style="node.depth===0 && {'font-weight':'bold'}">
+               <!--span style="width:70%" ng-style="node.depth===0 && {'font-weight':'bold'}"-->
+               <span style="width:70%">
                      <overflow-content class=non-expanded node="node" role="node.color"></overflow-content>
                </span>
 
@@ -22,7 +23,7 @@
             </div>
 
             <div class="tblCell" style="width:10%; text-align:right; padding-right:4px; min-height: 1px;">
-                <button class="btn btn-xs btn-warning" ng-if="(((node.depth + 1) % 10) == 0) && (!node.isFocused)" ng-click="nodeCtrl.focusOnNode(node)">
+                <button class="btn btn-xs btn-warning" ng-if="(((node.depth + 1) % 10) == 0) && (!node.isFocused) && (node.subtreeSize > 0)" ng-click="nodeCtrl.focusOnNode(node)">
                     <small>
                     <span>המשך שרשור</span>
                     <span>({{ node.subtreeSize }})</span>
@@ -33,14 +34,14 @@
             </div>
 
             <div class="tblCell" style="width:2%; text-align:center; min-height: 1px;">
-                <div ng-if="nodeCtrl.role == 'admin'" class="btn btn-xs">
+                <div ng-if="nodeCtrl.role == 'admin' || nodeCtrl.role == 'moderator'" class="btn btn-xs">
                     <span ng-class="{'glyphicon glyphicon-eye-open': node.hidden}" ng-click="nodeCtrl.flipArgumentHiddenStatus(node)"></span>
                     <span ng-class="{'glyphicon glyphicon-eye-close': !node.hidden}" ng-click="nodeCtrl.flipArgumentHiddenStatus(node)"></span>
                 </div>
             </div>
 
             <div class="tblCell" style="width:2%; min-height: 1px; text-align:center">
-                <div ng-if="nodeCtrl.role == 'admin'" class="btn btn-xs">
+                <div ng-if="nodeCtrl.role == 'admin' || nodeCtrl.role == 'moderator'" class="btn btn-xs">
                     <span title="trim" ng-class="{'glyphicon glyphicon-scissors': !node.trimmed}" ng-click="nodeCtrl.flipArgumentTrimmedStatus(node)"></span>
                     <span title="un-trim" ng-class="{'glyphicon glyphicon-link': node.trimmed}" ng-click="nodeCtrl.flipArgumentTrimmedStatus(node)"></span>
                 </div>
@@ -73,7 +74,7 @@
                 </i>
             </div>
 
-            <div class="tblCell rowButtomMgr" style="width:3%; text-align:left; padding-left:2px">
+            <div class="tblCell rowButtomMgr" style="width:3%; text-align:left; padding-left:2px" ng-if="!locked">
                 <span title="תגובה" class="glyphicon glyphicon-comment btn btn-primary btn-xs" aria-hidden="true" ng-click="nodeCtrl.newReplyPressed(node)"></span>
             </div>
             <!--div class="tblCell" style="width:5%; text-align:center" align="left">

@@ -34,6 +34,7 @@ function cloneDisc(discSource,discTarget){
     discTarget.permittedPoster_lname = discSource.permittedPoster_lname;
     discTarget.content = discSource.content;
     discTarget.users_group_id = discSource.users_group_id;
+    discTarget.locked = discSource.locked;
 
     discTarget.cloned = true;
 }

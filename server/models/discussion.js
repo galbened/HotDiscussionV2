@@ -15,6 +15,7 @@ var discussionScheme = mongoose.Schema({
 	chat_id: {type:Schema.Types.ObjectId, ref: 'Chat'},
 	users_group_id: {type:Schema.Types.ObjectId, ref: 'Users_Group'},
 
+	locked: Boolean,
 	cloned: Boolean
 });
 
