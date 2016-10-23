@@ -216,26 +216,29 @@ angular.module('bootstrapModalApp').controller('discussionNetworkGraphCtrl', fun
         }
     }
 
-    for(var key in argsMap){
-        if (argsMap.hasOwnProperty(key)) {
-            if(argsMap[key].parent_id){
-                var userFrom = argsMap[key].user_id;
-                var userTo  = argByUser[argsMap[key].parent_id];
-                userToUserCount[argsMap[key].user_id + argByUser[argsMap[key].parent_id]]++;
-                if(userToUserCount[argsMap[key].user_id + argByUser[argsMap[key].parent_id]]>1)
-                    delete argsMap[key];
-            }
-        }
-    }
+    var argsMapFiltered = {};
 
     for(var key in argsMap){
         if (argsMap.hasOwnProperty(key)) {
             if(argsMap[key].parent_id){
                 var userFrom = argsMap[key].user_id;
                 var userTo  = argByUser[argsMap[key].parent_id];
+                userToUserCount[argsMap[key].user_id + argByUser[argsMap[key].parent_id]]++;
+                if(userToUserCount[argsMap[key].user_id + argByUser[argsMap[key].parent_id]]==1){
+                    argsMapFiltered[key] = {user_id:argsMap[key].user_id,parent_id:argsMap[key].parent_id};
+                }
+            }
+        }
+    }
+
+    for(var key in argsMapFiltered){
+        if (argsMapFiltered.hasOwnProperty(key)) {
+            if(argsMapFiltered[key].parent_id){
+                var userFrom = argsMapFiltered[key].user_id;
+                var userTo  = argByUser[argsMapFiltered[key].parent_id];
                 var count = userToUserCount[userFrom + userTo];
                 var edge = {"from":userFrom,"to":userTo, arrows: { enabled: true, to: true }, "physics":true,
-                            "label":count,"width":count/2, length: 350};
+                            "label":count,"width":count/1.4, length: 350};
                 edges.push(edge)
             }
         }
