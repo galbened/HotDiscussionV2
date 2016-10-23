@@ -74,7 +74,7 @@
                 </i>
             </div>
 
-            <div class="tblCell rowButtomMgr" style="width:3%; text-align:left; padding-left:2px" ng-if="!locked">
+            <div class="tblCell rowButtomMgr" style="width:3%; text-align:left; padding-left:2px" ng-if="!nodeCtrl.locked">
                 <span title="תגובה" class="glyphicon glyphicon-comment btn btn-primary btn-xs" aria-hidden="true" ng-click="nodeCtrl.newReplyPressed(node)"></span>
             </div>
             <!--div class="tblCell" style="width:5%; text-align:center" align="left">
@@ -89,5 +89,5 @@
 
 
     <treenode ng-if="((node.isFocused || (((node.depth + 1) % 10) != 0)) && (node.sub_arguments))"
-              focusing="node.isFocused || nodeCtrl.focusing" role="nodeCtrl.role" nodes='node.sub_arguments' tree="tree" options="options" ng-show="node.expanded" id="{{node._id}}"></treenode>
+              focusing="node.isFocused || nodeCtrl.focusing" locked="nodeCtrl.locked" role="nodeCtrl.role" nodes='node.sub_arguments' tree="tree" options="options" ng-show="node.expanded" id="{{node._id}}"></treenode>
 </div>

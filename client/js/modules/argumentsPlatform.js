@@ -275,6 +275,8 @@
 
                     $scope.content = result.discussion.content;
                     $scope.showContent = result.discussion.content;
+
+                    $scope.locked = result.discussion.locked;
                 });
             }
 
