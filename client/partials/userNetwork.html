@@ -1,0 +1,30 @@
+<div>
+
+    <div class="modal-header">
+        <h5 style="text-align: center" class="modal-title">User network graph</h5>
+    </div>
+
+    <div class="modal-body">
+
+        <style type="text/css">
+            body, html {
+                font-family: sans-serif;
+            }
+        </style>
+
+        <select class="form-control" ng-model="user" id="user" dir="ltr" ng-change="getNewUserGraph(user)"
+                ng-options="user as user.local.firstname + ' ' + user.local.lastname for user in users">
+            <option value=''>
+                - Non selected -
+            </option>
+        </select>
+
+        <vis-network ng-show="showGraph" data="data" options="options""></vis-network>
+
+    </div>
+
+    <div class="modal-footer" style="text-align: center">
+        <button class="btn btn-primary" type="button" ng-click="ok()">אישור</button>
+    </div>
+
+</div>

@@ -1,6 +1,6 @@
 (function(){
     angular.module('argumentsApp', ['tree.service','TreeWidget','btford.socket-io', 'socketio.factory','ngSanitize','ui.bootstrap',
-                                    'ui.tinymce','bootstrapModalApp','discussionChat','discussionCollaborationPad','ngVis'], function($locationProvider){
+                                    'ui.tinymce','bootstrapModalApp','discussionChat','discussionCollaborationPad','ngVis','graph.factory'], function($locationProvider){
         $locationProvider.html5Mode(true);
     })
         .controller('ArgumentsTreeController', ['TreeService','$scope', '$window', '$location','socketio','$rootScope', function (TreeService, $scope, $window, $location, socketio, $rootScope) {

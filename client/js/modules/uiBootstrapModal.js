@@ -69,6 +69,24 @@ angular.module('bootstrapModalApp').controller('ModalCtrl', function ($scope, $u
         })
     };
 
+    $scope.presentUserNetworkGraph = function (users) {
+
+        $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: '../partials/userNetwork.html',
+            controller: 'userNetworkGraphCtrl',
+            size: 'lg',
+            resolve: {
+                socket: function (){
+                    return socket;
+                },
+                users: function(){
+                    return users;
+                }
+            }
+        })
+    };
+
     $scope.copyConfirmationModal = function (index) {
         $uibModal.open({
             animation: false,
@@ -142,7 +160,6 @@ angular.module('bootstrapModalApp').controller('pmShowModalCtrl', function ($sco
     $scope.body = body;
 
     $scope.ok = function () {
-        //socket.emit('new-pm', {group_id:group_id,body:$scope.pmText});
         $uibModalInstance.close();
     };
 });
@@ -179,83 +196,61 @@ angular.module('bootstrapModalApp').controller('enterContentCtrl', function ($sc
     };
 });
 
-angular.module('bootstrapModalApp').controller('discussionNetworkGraphCtrl', function ($scope, $uibModalInstance, argsMap) {
+angular.module('bootstrapModalApp')
+    .controller('discussionNetworkGraphCtrl',
+        ['networkGraphFactory','$scope','$uibModalInstance','argsMap', function (networkGraphFactory, $scope, $uibModalInstance, argsMap) {
 
-    var users = {};
-    var argByUser = {};
-    var userToUserCount = {};
+    var data = networkGraphFactory.getDiscussionNetworkJSON(argsMap);
 
-    for(var key in argsMap){
-        if (argsMap.hasOwnProperty(key)) {
-            var name = argsMap[key].fname + " " + argsMap[key].lname;
-            name = name.substr(0,8);
-            users[argsMap[key].user_id] = {"user_id":argsMap[key].user_id, "name":name, "color":argsMap[key].color};
-            argByUser[argsMap[key]._id] = argsMap[key].user_id;
-
-        }
-    }
-
-    var nodes = [];
-    var edges = [];
-
-    for(var key in users){
-        if (users.hasOwnProperty(key)) {
-            var nodeJson = {"id":users[key].user_id,"label": users[key].name,"color":users[key].color,"shape":"circle","shadow":true,
-                             "scaling": {"label":{"enabled": true}},"shadow":true};
-            nodes.push(nodeJson);
-        }
-    }
-
-    for(var key in argsMap){
-        if (argsMap.hasOwnProperty(key)) {
-            if(argsMap[key].parent_id){
-                var userFrom = argsMap[key].user_id;
-                var userTo  = argByUser[argsMap[key].parent_id];
-                userToUserCount[argsMap[key].user_id + argByUser[argsMap[key].parent_id]]=0;
-            }
-        }
-    }
-
-    var argsMapFiltered = {};
-
-    for(var key in argsMap){
-        if (argsMap.hasOwnProperty(key)) {
-            if(argsMap[key].parent_id){
-                var userFrom = argsMap[key].user_id;
-                var userTo  = argByUser[argsMap[key].parent_id];
-                userToUserCount[argsMap[key].user_id + argByUser[argsMap[key].parent_id]]++;
-                if(userToUserCount[argsMap[key].user_id + argByUser[argsMap[key].parent_id]]==1){
-                    argsMapFiltered[key] = {user_id:argsMap[key].user_id,parent_id:argsMap[key].parent_id};
-                }
-            }
-        }
-    }
-
-    for(var key in argsMapFiltered){
-        if (argsMapFiltered.hasOwnProperty(key)) {
-            if(argsMapFiltered[key].parent_id){
-                var userFrom = argsMapFiltered[key].user_id;
-                var userTo  = argByUser[argsMapFiltered[key].parent_id];
-                var count = userToUserCount[userFrom + userTo];
-                var edge = {"from":userFrom,"to":userTo, arrows: { enabled: true, to: true }, "physics":true,
-                            "label":count,"width":count/1.4, length: 350};
-                edges.push(edge)
-            }
-        }
-    }
-
-    $scope.options = {
-        autoResize: true,
-        height: '800',
-        width: '100%'
-    };
+    $scope.options = data.options;
 
     $scope.data = {
-        "nodes": nodes,
-        "edges": edges
+        "nodes": data.nodes,
+        "edges": data.edges
     };
 
     $scope.ok = function () {
         $uibModalInstance.close();
     };
-});
+}]);
+
+angular.module('bootstrapModalApp')
+    .controller('userNetworkGraphCtrl',
+        ['networkGraphFactory','$scope','$uibModalInstance','socket', 'users', function (networkGraphFactory, $scope, $uibModalInstance, socket, users) {
+
+            $scope.users = users;
+            var user_id = "";
+
+            socket.on('sending-arguments-involving-user',function(args){
+                var argsMap = {};
+                var count = 0;
+
+                if(args.length==0){
+                    $scope.showGraph = false;
+                }
+                else{
+                    args.forEach(function(arg){
+                        argsMap[arg._id] = arg;
+                        count++;
+                        if(count==args.length){
+                            var json = networkGraphFactory.getUserNetworkJSON(argsMap,user_id);
+                            $scope.options = json.options;
+                            $scope.data = {
+                                "nodes": json.nodes,
+                                "edges": json.edges
+                            };
+                            $scope.showGraph = true;
+                        }
+                    });
+                }
+            });
+
+            $scope.getNewUserGraph = function(user){
+                user_id = user._id;
+                socket.emit('requesting-arguments-involving-user',{user_id:user_id});
+            };
+
+            $scope.ok = function () {
+                $uibModalInstance.close();
+            };
+    }]);

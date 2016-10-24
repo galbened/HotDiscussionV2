@@ -1,7 +1,7 @@
 (function() {
   'use strict';
   angular
-    .module('adminDashboardApp', ['btford.socket-io', 'socketio.factory','bootstrapModalApp','angularjs-dropdown-multiselect'])
+    .module('adminDashboardApp', ['btford.socket-io', 'socketio.factory','bootstrapModalApp','angularjs-dropdown-multiselect','ngVis','graph.factory'])
     .controller('adminDashboardCtrl', ['$scope','$http', '$window', 'socketio', function($scope, $http, $window, socketio){
 
       $scope.pressAdd = false;

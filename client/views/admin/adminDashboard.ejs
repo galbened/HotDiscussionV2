@@ -17,8 +17,12 @@
     <script type="text/javascript" src="/libs/lodash/dist/lodash.min.js"></script>
     <script type="text/javascript" src="/libs/angularjs-dropdown-multiselect/dist/angularjs-dropdown-multiselect.min.js"></script>
 
+    <script type="text/javascript" src="/libs/vis/dist/vis.min.js"></script>
+    <script type="text/javascript" src="/libs/angular-visjs/angular-vis.js"></script>
+
     <!-- LOCALs -->
     <script type="text/javascript" src="/js/configs/socketsFactory.js"></script>
+    <script type="text/javascript" src="/js/configs/graphJsonFactory.js"></script>
     <script type="text/javascript" src="/js/modules/adminDashboard.js"></script>
     <script type="text/javascript" src="/js/modules/uiBootstrapModal.js"></script>
     <!-- \\\\\\\\\\\\\\\\\\  JavaScript  \\\\\\\\\\\\\\\\\\ -->
@@ -38,12 +42,13 @@
       <header class="text-center">
           <div class="row">
 
-              <div class="col-md-2 text-right">
+              <div class="col-md-3 text-right">
+                  <button class="btn btn-xs btn-primary" ng-click="presentUserNetworkGraph(users)">גרף משתמש</button>
                   <button class="btn btn-xs btn-primary" ng-click="showLoggedUsers()">מי מחובר?</button>
                   <button class="btn btn-xs btn-primary" onclick="location.href='/admin/logout'">Log Out</button>
               </div>
 
-              <div class="col-md-8 text-center">
+              <div class="col-md-7 text-center">
                   <h1>מנהל המערכת, שלום רב!</h1>
               </div>
 

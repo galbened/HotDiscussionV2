@@ -403,6 +403,42 @@ module.exports = function(autoIncrement, io){
                     discussionNsp.emit('copied-discussion', {newDisc:res.newDisc,args_count:res.args_count});
                 });
             });
+
+            socket.on('requesting-arguments-involving-user',function(data){
+
+                var argsIDsOfUser = [];
+                Argument.find({user_id:data.user_id},function(err,argsByUser){
+                    if (err) throw err;
+
+                    var parentArgsIDs =[];
+
+                    for(var i=0;i<argsByUser.length;i++){
+                        if(argsByUser[i].parent_id)
+                            parentArgsIDs.push(argsByUser[i].parent_id);
+                    }
+
+                    if(argsByUser.length==0){
+                        socket.emit('sending-arguments-involving-user',[]);
+                    }
+                    else{
+                        var count = 0;
+                        argsByUser.forEach(function(arg){
+                            argsIDsOfUser.push(arg._id);
+                            count++;
+                            if(count == argsByUser.length){
+                                Argument.find({parent_id: {$in : argsIDsOfUser}},function(err,argsToUser){
+                                    if (err) throw err;
+                                    Argument.find({_id: {$in : parentArgsIDs}},function(err,parentArgs){
+                                        if (err) throw err;
+                                        var argsInvolingUser = argsByUser.concat(argsToUser.concat(parentArgs));
+                                        socket.emit('sending-arguments-involving-user',argsInvolingUser);
+                                    })
+                                })
+                            }
+                        })
+                    }
+                });
+            });
         }
     });
 
