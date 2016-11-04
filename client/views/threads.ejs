@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hot Discussions Platform</title>
+    <title>Discussions Platform</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.css" crossorigin="anonymous">
@@ -76,7 +76,6 @@
     </div>
 
     <footer style="margin-top:30px">
-        <p style="float: right">maintained by BGU</p>
         <div ng-if="role == 'admin' || role == 'moderator'" class="btn-lg btn-primary" style="float:left" ng-click="flipDiscussionLock()">
             <span ng-class="{'fa fa-unlock': locked}" title="פתח דיון לכתיבה"></span>
             <span ng-class="{'fa fa-lock': !locked}" title="נעל דיון לכתיבה"></span>
