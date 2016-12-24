@@ -24,13 +24,13 @@
 <body>
 <div class="container">
     <header class="text-center">
-        <h1>דף הרשמה ל"Discussions Platform"</h1>
+        <h1>שחזור סיסמה</h1>
     </header>
 
     <div class="row" id="form-title">
         <div class="col-md-2"></div>
         <div class="col-md-8 text-center">
-            <h4>אנא הכנס את הנתונים בשדות הבאים:</h4>
+            <h4>אנא הכנס את הקוד שקיבלת במייל ואת הסיסמה החדשה</h4>
         </div>
         <div class="col-md-2"></div>
     </div>
@@ -46,7 +46,16 @@
     <% } %>
 
 
-    <form class="form-horizontal" name="registerForm" action="/auth/register" method="post" dir="ltr">
+    <form class="form-horizontal" name="restoreForm" action="/auth/resetPass" method="post" dir="ltr">
+        <div class="form-group">
+            <div class="col-md-2"></div>
+            <label for="codeInput" class="col-md-3 control-label">verifying code:</label>
+            <div class="col-md-3">
+                <input type="text" class="form-control" id="codeInput" placeholder="code send by mail" name="code" required/>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+
         <div class="form-group">
             <div class="col-md-2"></div>
             <label for="usernameInput" class="col-md-3 control-label">username:</label>
@@ -58,66 +67,33 @@
 
         <div class="form-group">
             <div class="col-md-2"></div>
-            <label for="passwordInput" class="col-md-3 control-label">password:</label>
+            <label for="passwordInput" class="col-md-3 control-label">new password:</label>
             <div class="col-md-3">
-                <input type="password" class="form-control" id="passwordInput" placeholder="Password" name="password" required/>
-            </div>
-            <div class="col-md-4"></div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-2"></div>
-            <label for="passwordInput" class="col-md-3 control-label">First Name:</label>
-            <div class="col-md-3">
-                <input type="text" class="form-control" id="firstNameInput" placeholder="Your First Name" name="fname" required/>
-            </div>
-            <div class="col-md-4"></div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-2"></div>
-            <label for="passwordInput" class="col-md-3 control-label">Last Name:</label>
-            <div class="col-md-3">
-                <input type="text" class="form-control" id="lastNameInput" placeholder="Your Last Name" name="lname" required/>
-            </div>
-            <div class="col-md-4"></div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-2"></div>
-            <label for="passwordInput" class="col-md-3 control-label">Email:</label>
-            <div class="col-md-3">
-                <input type="text" class="form-control" id="emailInput" placeholder="Your email" name="email" required/>
+                <input type="password" class="form-control" id="passwordInput" placeholder="your new password" name="password" required/>
             </div>
             <div class="col-md-4"></div>
         </div>
 
         <div class="form-group">
             <div class="col-sm-offset-4 col-sm-2">
-                <button type="submit" class="btn btn-primary">Sign Up</button>
+                <button type="submit" class="btn btn-primary">שינוי סיסמה</button>
             </div>
             <div class="col-sm-2">
                 <button type="button" class="btn btn-warning" id="cancelBtn">Cancel</button>
-            </div>
-            <div class="col-sm-2">
-                <button type="button" class="btn btn-default btn-sm" id="resetBtn">Reset</button>
             </div>
         </div>
 
     </form>
 
     <footer>
-        <p>אין להשתמש בסיסמא ארגונית</p>
+        <p>ישלח לך מייל עם סיסמה חדשה</p>
     </footer>
 </div>
 
 <script>
     function init() {
         // Clear forms here
-        document.getElementById("usernameInput").value = "";
-        document.getElementById("passwordInput").value = "";
-        document.getElementById("firstNameInput").value = "";
-        document.getElementById("lastNameInput").value = "";
+        document.getElementById("emailInput").value = "";
     }
 
     window.onload = init;
@@ -127,7 +103,7 @@
         window.location.href = "/auth/login";
     });
 
-    $('#resetBtn').click(init);
+
 </script>
 </body>
 </html>
