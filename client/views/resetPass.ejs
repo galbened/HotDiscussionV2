@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Discussions Platform</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.css" crossorigin="anonymous">
+    <!-- JQuery -->
+    <script type="text/javascript" src="/libs/jquery/jquery.js"></script>
+    <!-- Bootstrap js -->
+    <script type="text/javascript" src="/libs/bootstrap/js/bootstrap.js"></script>
+    <!-- Angular js -->
+    <!--<script type="text/javascript" src="/libs/angular/angular.js"></script>
+    <script type="text/javascript" src="/libs/angular-route/angular-route.js"></script>-->
+
+    <!-- local custom -->
+    <link href="/resources/stylesheets/main.css" rel="stylesheet">
+    <!--<script type="text/javascript" src="/js/controllers/app.js"></script>-->
+</head>
+
+<body>
+<div class="container">
+    <header class="text-center">
+        <h1>שחזור סיסמה</h1>
+    </header>
+
+    <div class="row" id="form-title">
+        <div class="col-md-2"></div>
+        <div class="col-md-8 text-center">
+            <h4>אנא הכנס את הקוד שקיבלת במייל ואת הסיסמה החדשה</h4>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <% if (message.length > 0) { %>
+    <div class="row bg-danger text-center" id="register-error">
+        <div class="col-md-2"></div>
+        <div class="col-md-8 text-center">
+            <h4><%= message %></h4>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+    <% } %>
+
+
+    <form class="form-horizontal" name="restoreForm" action="/auth/resetPass" method="post" dir="ltr">
+        <div class="form-group">
+            <div class="col-md-2"></div>
+            <label for="codeInput" class="col-md-3 control-label">verifying code:</label>
+            <div class="col-md-3">
+                <input type="text" class="form-control" id="codeInput" placeholder="code send by mail" name="code" required/>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-2"></div>
+            <label for="usernameInput" class="col-md-3 control-label">username:</label>
+            <div class="col-md-3">
+                <input type="text" class="form-control" id="usernameInput" placeholder="Username" name="username" required/>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-2"></div>
+            <label for="passwordInput" class="col-md-3 control-label">new password:</label>
+            <div class="col-md-3">
+                <input type="password" class="form-control" id="passwordInput" placeholder="your new password" name="password" required/>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-2">
+                <button type="submit" class="btn btn-primary">שינוי סיסמה</button>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-warning" id="cancelBtn">Cancel</button>
+            </div>
+        </div>
+
+    </form>
+
+    <footer>
+        <p>ישלח לך מייל עם סיסמה חדשה</p>
+    </footer>
+</div>
+
+<script>
+    function init() {
+        // Clear forms here
+        document.getElementById("emailInput").value = "";
+    }
+
+    window.onload = init;
+
+    $('#cancelBtn').click(function(){
+        console.log('cancel clicked!');
+        window.location.href = "/auth/login";
+    });
+
+
+</script>
+</body>
+</html>
+
