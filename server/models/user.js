@@ -6,13 +6,11 @@ var userScheme = mongoose.Schema({
 		username: String,
 		password: String,
 		firstname: String,
-		email: String,
 		lastname: String,
 		color: String,
 		info: String,
 		unreadMessages: [{type:Schema.Types.ObjectId, ref: 'Pm'}],
-		role: String,
-		code: String
+		role: String
 	}
 });
 

@@ -57,46 +57,6 @@ module.exports = function(passport){
         //session:true
     }));
 
-
-    /* RESET PASSWORD */
-    router.get('/resetMail', function(req, res, next) {
-        res.render('resetMail', { message: req.flash('mailMessage')});
-    });
-
-    router.post('/resetMail', passport.authenticate('send-mail',{
-            successRedirect: '/auth/resetPass',
-            failureRedirect: '/auth/resetMail',
-            failureFlash: true
-            //session:true
-    }));
-
-
-    /* RESET PASSWORD */
-    router.get('/resetPass', function(req, res, next) {
-        res.render('resetPass', { message: req.flash('passwordMessage')});
-    });
-
-    router.post('/resetPass', passport.authenticate('change-password',{
-        successRedirect: '/auth/login',
-        failureRedirect: '/auth/resetPass',
-        failureFlash: true
-        //session:true
-    }));
-
-    /* RESET PASSWORD */
-    router.get('/resetMail', function(req, res, next) {
-        res.render('resetMail', { message: req.flash('registerMessage')});
-    });
-
-    router.post('/resetMail', passport.authenticate('send-mail',{
-        successRedirect: '/auth/resetPass',
-        failureRedirect: '/auth/resetMail',
-        failureFlash: true
-        //session:true
-    }));
-
-
-
     return router;
 
 
